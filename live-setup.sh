@@ -167,6 +167,7 @@ echo "127.0.0.1 localhost" >> /etc/hosts
 echo "127.0.1.1 ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
 echo "root:${ROOTPASS}" | chpasswd
+groupadd sudo
 useradd -m -G sudo,network -s /bin/bash ${USERNAME}
 echo "${USERNAME}:${USERPASS}" | chpasswd
 echo "%sudo ALL=(ALL) ALL" > /etc/sudoers.d/99_sudo
