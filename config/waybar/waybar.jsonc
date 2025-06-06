@@ -14,7 +14,7 @@
   ],
   // A button that shows current processes
   "custom/processcount": {
-    "exec": "echo `ps aux | wc -l`\"",
+    "exec": "echo `ps aux | wc -l`",
     "interval": 5,
     "return-type": "text",
     "format": "Processes: {}",
