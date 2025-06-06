@@ -1,0 +1,14 @@
+{
+  "layer": "top",
+  "modules-left": [
+    "hyprland/workspaces",
+    "custom/menu"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "battery",
+    "network"
+  ]
+}
