@@ -19,6 +19,6 @@
     "return-type": "text",
     "format": "  PS: {}  ",
     "format-alt": "  PS: {}  ",
-    "on-click": "waybar-menu"
+    "on-click": "kitty -e htop"
   }
 }
