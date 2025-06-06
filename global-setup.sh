@@ -12,4 +12,4 @@ rustup default stable
 
 # Fonts
 pacman --noconfirm -S \
-  otf-font-awesome ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
+  ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
