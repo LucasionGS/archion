@@ -161,6 +161,7 @@ hwclock --systohc
 sed -i "s/^#${LOCALE}/${LOCALE}/" /etc/locale.gen
 locale-gen
 echo "LANG=${LOCALE}" > /etc/locale.conf
+echo "KEYMAP=dk" > /etc/vconsole.conf
 
 echo "${HOSTNAME}" > /etc/hostname
 echo "127.0.0.1 localhost" >> /etc/hosts

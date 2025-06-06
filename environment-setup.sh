@@ -1,0 +1,1 @@
+pacman -Syu hyprland hyprpaper waybar hypridle hyprlock wofi mako openssh kitty
