@@ -11,7 +11,7 @@ if [[ ! -d ~/.config ]]; then
 fi
 
 # Copy configuration files
-# cp -r ./config/* ~/.config/ # Not yet?
+cp -r ./config/* ~/.config/ # Not yet?
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
@@ -31,6 +31,12 @@ rustup default stable
 # Install anyrun (https://github.com/anyrun-org/anyrun)
 yay -S --noconfirm \
   anyrun-git
+
+# Install swww
+yay -S --noconfirm \
+  swww
+
+systemctl enable --now swww.service
 
 # Install snap
 yay --noconfirm -S snapd
