@@ -14,11 +14,11 @@
   ],
   // A button that shows current processes
   "custom/processcount": {
-    "exec": "ps aux | wc -l",
+    "exec": "echo `ps aux | wc -l`\"",
     "interval": 5,
     "return-type": "text",
-    "format": "Processes: {output}",
-    "format-alt": "Processes: {output}",
+    "format": "Processes: {}",
+    "format-alt": "Processes: {}",
     "on-click": "waybar-menu"
   }
 }
