@@ -17,8 +17,8 @@
     "exec": "echo `ps aux | wc -l`",
     "interval": 5,
     "return-type": "text",
-    "format": "Processes: {}",
-    "format-alt": "Processes: {}",
+    "format": "  PS: {}  ",
+    "format-alt": "  PS: {}  ",
     "on-click": "waybar-menu"
   }
 }
