@@ -11,14 +11,31 @@ if ! sudo -n true; then
   exit 1
 fi
 
-sudo pacman -Syu \
+sudo pacman --noconfirm -Syu \
   hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel openssh
 
-# Install yay
-git clone https://aur.archlinux.org/yay.git /tmp/yay
-cd /tmp/yay
-makepkg -si --noconfirm
+if [[ ! -d /tmp/yay ]]; then
+  # Install yay
+  git clone https://aur.archlinux.org/yay.git /tmp/yay
+  cd /tmp/yay
+  makepkg -si --noconfirm
 
-cd -
+  cd -
 
+  # Clean up yay directory
+  rm -rf /tmp/yay
+fi
+
+
+# Install anyrun (https://github.com/anyrun-org/anyrun)
+# Install Rust toolchain
+sudo pacman -S --noconfirm rustup
+rustup default stable
+
+git clone https://github.com/anyrun-org/anyrun && cd anyrun
+cargo build --release
+cargo install --path anyrun/
+mkdir -p ~/.config/anyrun/plugins
+cp target/release/*.so ~/.config/anyrun/plugins
+cp examples/config.ron ~/.config/anyrun/config.ron
