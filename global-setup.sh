@@ -9,3 +9,7 @@ pacman --noconfirm -Syu \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland
 rustup default stable
+
+# Fonts
+pacman --noconfirm -S \
+  otf-font-awesome ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
