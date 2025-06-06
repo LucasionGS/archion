@@ -1,14 +1,24 @@
 {
   "layer": "top",
   "modules-left": [
-    "hyprland/workspaces",
-    "custom/menu"
+    "hyprland/workspaces"
+    // "custom/menu"
   ],
   "modules-center": [
     "clock"
   ],
   "modules-right": [
     "battery",
-    "network"
-  ]
+    "network",
+    "custom/processcount"
+  ],
+  // A button that shows current processes
+  "custom/processcount": {
+    "exec": "ps aux | wc -l",
+    "interval": 5,
+    "return-type": "text",
+    "format": "Processes: {output}",
+    "format-alt": "Processes: {output}",
+    "on-click": "waybar-menu"
+  }
 }
