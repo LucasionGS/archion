@@ -7,7 +7,8 @@ fi
 pacman --noconfirm -Syu \
   hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
-  pipewire wireplumber xdg-desktop-portal-hyprland
+  pipewire wireplumber xdg-desktop-portal-hyprland \
+  zenity htop
 rustup default stable
 
 # Fonts

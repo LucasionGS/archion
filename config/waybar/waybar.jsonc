@@ -20,5 +20,12 @@
     "format": "  PS: {}  ",
     "format-alt": "  PS: {}  ",
     "on-click": "kitty -e htop"
+  },
+  "custom/setwallpaper": {
+    "exec": "echo 'Set Wallpaper'",
+    "interval": 0,
+    "return-type": "text",
+    "format": "  Set Wallpaper  ",
+    "on-click": "bash -c '~/.config/archion/scripts/promptwallpaper.sh'"
   }
 }
