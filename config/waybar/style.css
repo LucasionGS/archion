@@ -165,13 +165,17 @@ button:hover {
 }
 
 @keyframes blink {
-    0%, 100% {
+    0% {
         background: linear-gradient(145deg, rgba(245, 60, 60, 0.9), rgba(231, 76, 60, 0.9));
         box-shadow: 0 0 20px rgba(245, 60, 60, 0.8);
     }
     50% {
         background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        background: linear-gradient(145deg, rgba(245, 60, 60, 0.9), rgba(231, 76, 60, 0.9));
+        box-shadow: 0 0 20px rgba(245, 60, 60, 0.8);
     }
 }
 
