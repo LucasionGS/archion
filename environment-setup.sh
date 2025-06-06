@@ -11,7 +11,9 @@ if ! sudo -n true; then
   exit 1
 fi
 
-sudo pacman -Syu hyprland hyprpaper waybar hypridle hyprlock wofi mako openssh kitty
+sudo pacman -Syu \
+  hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
+  base-devel openssh
 
 # Install yay
 git clone https://aur.archlinux.org/yay.git /tmp/yay
