@@ -1,61 +1,24 @@
-// {
-//   "layer": "top",
-//   "modules-left": [
-//     "hyprland/workspaces"
-//     // "custom/menu"
-//   ],
-//   "modules-center": [
-//     "clock"
-//   ],
-//   "modules-right": [
-//     "battery",
-//     "network",
-//     "custom/processcount"
-//   ],
-//   // A button that shows current processes
-//   "custom/processcount": {
-//     "exec": "ps aux | wc -l",
-//     "interval": 5,
-//     "return-type": "text",
-//     "format": "Processes: {output}",
-//     "format-alt": "Processes: {output}",
-//     "on-click": "waybar-menu"
-//   }
-// }
-
-[
-  {
-    "height": 20,
-    "layer": "bottom",
-    // "output": [
-    //   "Virtual-1"
-    // ],
-    "hyprland/workspaces": {
-      "active-only": true,
-      "all-outputs": false,
-      "show-special": true,
-      "move-to-monitor": true,
-      "format": "{icon} {windows}",
-      "format-window-separator": " ",
-      "format-icons": {
-        "1": "󰎤",
-        "2": "󰎧",
-        "3": "󰎪",
-        "default": "",
-        "empty": "󱓼",
-        "urgent": "󱨇"
-      },
-      "persistent-workspaces": {
-        "1": "Virtual-1"
-      },
-      "on-scroll-down": "hyprctl dispatch workspace e-1",
-      "on-scroll-up": "hyprctl dispatch workspace e+1",
-      "window-rewrite": {
-        "title<Steam>": ""
-      },
-      "window-rewrite-default": "",
-      "window-rewrite-separator": " ",
-      "sort-by": "number"
-    }
+{
+  "layer": "top",
+  "modules-left": [
+    "hyprland/workspaces"
+    // "custom/menu"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "battery",
+    "network",
+    "custom/processcount"
+  ],
+  // A button that shows current processes
+  "custom/processcount": {
+    "exec": "ps aux | wc -l",
+    "interval": 5,
+    "return-type": "text",
+    "format": "Processes: {output}",
+    "format-alt": "Processes: {output}",
+    "on-click": "waybar-menu"
   }
-]
+}
