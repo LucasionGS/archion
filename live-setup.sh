@@ -1,18 +1,11 @@
 #!/usr/bin/env bash
-# auto-arch-install.sh
 # Guided Arch Linux installation script for use from the official live ISO.
 # Disclaimer: THIS SCRIPT WILL ERASE DATA ON THE SELECTED DISK (or selected partitions in dual boot mode).
-# Read and understand before running. Tested 2025‑06 against Arch ISO 2025.05.01.
 
 set -euo pipefail
 
-# ---- helper functions ----
-error() { echo -e "\e[31mError:\e[0m $1" >&2; exit 1; }
-prompt() { read -rp "$1" "$2"; }
-confirm() {
-  read -rp "$1 [y/N]: " ans
-  [[ ${ans,,} == y || ${ans,,} == yes ]]
-}
+# --–– utility helpers -----
+source ./utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
 
 need() { command -v "$1" >/dev/null || error "$1 not found."; }
 
@@ -24,8 +17,7 @@ need lsblk
 need partprobe
 
 clear
-echo "Arch Linux Guided Installer"
-echo "==========================="
+header "Arch Linux Guided Installer"
 echo
 
 # ---- ensure network is up ----
@@ -89,8 +81,8 @@ fi
 
 prompt "Hostname for the new system: " HOSTNAME
 prompt "Username for primary user: " USERNAME
-read -rsp "Password for ${USERNAME}: " USERPASS; echo
-read -rsp "Password for root: " ROOTPASS; echo
+prompt_password "Password for ${USERNAME}: " USERPASS;
+prompt_password "Password for root: " ROOTPASS;
 prompt "Timezone (e.g. Europe/Copenhagen): " TIMEZONE
 prompt "Locale (e.g. en_US.UTF-8): " LOCALE
 
@@ -152,9 +144,9 @@ mount "$EFI_PART" /mnt/boot
 # ---- pacstrap ----
 echo "Installing base system (this may take a while) ..."
 if [[ $DUAL_BOOT == true ]]; then
-  pacstrap -K /mnt base linux linux-firmware nano vim networkmanager sudo grub efibootmgr os-prober
+  pacstrap -K /mnt base linux linux-firmware nano git vim networkmanager sudo grub efibootmgr os-prober
 else
-  pacstrap -K /mnt base linux linux-firmware nano vim networkmanager sudo grub efibootmgr
+  pacstrap -K /mnt base linux linux-firmware nano git vim networkmanager sudo grub efibootmgr
 fi
 
 # ---- fstab ----
