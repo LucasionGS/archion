@@ -5,15 +5,9 @@ if [[ $EUID == 0 ]]; then
   exit 1
 fi
 
-# Make sure the user can run sudo
-if ! sudo -n true; then
-  echo "You need to be able to run sudo on this user for this script to work."
-  exit 1
-fi
-
 sudo pacman --noconfirm -Syu \
   hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
-  base-devel openssh
+  base-devel openssh || { echo "Failed to install required packages. Check your network connection or sudo privileges."; exit 1; }
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
