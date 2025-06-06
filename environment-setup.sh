@@ -1,12 +1,17 @@
 #!/bin/bash
-# Must run as root
 set -e
-if [[ $EUID -ne 0 ]]; then
-  echo "This script must be run as root"
+if [[ $EUID == 0 ]]; then
+  echo "This script cannot be run as root. Please run as a normal user with sudo privileges."
   exit 1
 fi
 
-pacman -Syu hyprland hyprpaper waybar hypridle hyprlock wofi mako openssh kitty
+# Make sure the user can run sudo
+if ! sudo -n true; then
+  echo "You need to be able to run sudo on this user for this script to work."
+  exit 1
+fi
+
+sudo pacman -Syu hyprland hyprpaper waybar hypridle hyprlock wofi mako openssh kitty
 
 # Install yay
 git clone https://aur.archlinux.org/yay.git /tmp/yay
