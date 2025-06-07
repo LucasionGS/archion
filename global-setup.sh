@@ -8,9 +8,11 @@ pacman --noconfirm -Syu \
   hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
-  zenity htop
+  zenity htop \
+  fish
+
 rustup default stable
 
 # Fonts
 pacman --noconfirm -S \
-  ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
+  ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono

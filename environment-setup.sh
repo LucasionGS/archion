@@ -49,3 +49,10 @@ systemctl enable --now swww.service
 yay --noconfirm -S snapd
 # Enable snapd service
 sudo systemctl enable --now snapd.socket
+
+# Install oh-my-fish
+curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+
+# Install fish theme
+omf install bobthefish 
+omf theme bobthefish
