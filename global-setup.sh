@@ -5,7 +5,7 @@ if [[ $EUID != 0 ]]; then
 fi
 
 pacman --noconfirm -Syu \
-  hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
+  hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   less yazi jq fd 7zip fzf \
