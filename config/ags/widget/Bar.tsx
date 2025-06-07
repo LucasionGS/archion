@@ -2,7 +2,7 @@ import { App, Astal, Gtk, Gdk, Widget } from "astal/gtk3"
 import { GObject, Variable } from "astal"
 import AstalNetwork from "gi://AstalNetwork";
 import Network from "gi://AstalNetwork"
-import NM from "gi://NM?version=1.0";
+import Apps from "gi://AstalApps";
 import Hyprland from "gi://AstalHyprland";
 import AstalHyprland from "gi://AstalHyprland?version=0.1";
 
@@ -27,72 +27,118 @@ workspaceVar.watch("astal-hyprland", (stdout, workspaces) => {
             focusedWorkSpaceId = hyprland.get_focused_workspace().get_id();
             workspaceVar.set(new_workspaces);
         }, 100); // Wait for the next tick to ensure the workspaces are updated
-        return workspaces;
+        return new_workspaces;
     } catch (error) {
         console.error("Error parsing workspace output:", error);
         return workspaces;
     }
 });
 
+declare global {
+    var toggleSidebarLeft: (forceState?: boolean) => void;
+}
+
+// Sidebar state (global for command access)
+const sidebarVisible = Variable(false);
+globalThis.toggleSidebarLeft = (forceState?: boolean) => sidebarVisible.set(forceState ?? !sidebarVisible().get());
+
+// Register the sidebar toggle command
+
+function Sidebar() {
+    // Only render if visible
+    // if (!sidebarVisible()) return null;
+    return (
+        <window
+            className="SidebarPanelLeft"
+            anchor={Astal.WindowAnchor.LEFT | Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
+            exclusivity={Astal.Exclusivity.NORMAL}
+            application={App}
+            visible={sidebarVisible()}
+            child={
+                <box vertical={true} className="sidebar-content">
+                    {[
+                        // <label label="Sidebar" />,
+                        <SidebarContent_AppList />
+                    ]}
+                </box>
+            }
+        />
+    );
+}
+
 export default function Bar(gdkmonitor: Gdk.Monitor) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor;
 
     const network = Network.get_default();
 
-    return <window
-        className="TopBar"
-        gdkmonitor={gdkmonitor}
-        exclusivity={Astal.Exclusivity.EXCLUSIVE}
-        anchor={TOP | LEFT | RIGHT}
-        application={App}
-        child={
-            <centerbox>
-                <Workspaces />
-                <button
-                    className="red"
-                    onClicked="kitty"
-                    child={<label label="Terminal" />}
-                />
-                <box
-                    halign={Gtk.Align.END}
-                >
-                    <label
-                        label={
-                            network.wired.state === AstalNetwork.DeviceState.ACTIVATED
-                                ? "Wired"
-                                : (
-                                    network.wifi?.ssid ? network.wifi.ssid : "No internet"
-                                )
-                        }
-                    />
-                    <label halign={Gtk.Align.END} label={time().as(v => {
-                        // return v;
-                        const [
-                            _,
-                            dayName,
-                            monthName,
-                            day,
-                            hour,
-                            minute,
-                            second,
-                            ampm,
-                            zone,
-                            year
-                        ] = v.match(/(\w+)\s+(\w+)\s+(\d+)\s+(\d+):(\d+):(\d+)\s+(AM|PM)\s+(\w+)\s+(\d+)/) || [];
+    return <>
+        <window
+            className="TopBar"
+            gdkmonitor={gdkmonitor}
+            exclusivity={Astal.Exclusivity.EXCLUSIVE}
+            anchor={TOP | LEFT | RIGHT}
+            application={App}
+            child={
+                <centerbox>
+                    <box halign={Gtk.Align.START}>
+                        <button
+                            // className="blue"
+                            onClicked={() => {
+                                globalThis.toggleSidebarLeft();
+                            }}
+                            child={<label label={sidebarVisible().as(a => a ? ">" : "<")} />}
+                        />
+                        <button
+                            className="red"
+                            onClicked="xdg-open https://ionnet.dev"
+                            child={<label label="Archion" />}
+                        />
+                    </box>
+                    <Workspaces halign={Gtk.Align.CENTER} />
+                    <box
+                        halign={Gtk.Align.END}
+                    >
+                        <label
+                            label={
+                                network.wired.state === AstalNetwork.DeviceState.ACTIVATED
+                                    ? "Wired"
+                                    : (
+                                        network.wifi?.ssid ? network.wifi.ssid : "No internet"
+                                    )
+                            }
+                        />
+                        <label halign={Gtk.Align.END} label={time().as(v => {
+                            // return v;
+                            const [
+                                _,
+                                dayName,
+                                monthName,
+                                day,
+                                hour,
+                                minute,
+                                second,
+                                ampm,
+                                zone,
+                                year
+                            ] = v.match(/(\w+)\s+(\w+)\s+(\d+)\s+(\d+):(\d+):(\d+)\s+(AM|PM)\s+(\w+)\s+(\d+)/) || [];
 
-                        // return `${dayName}, ${monthName} ${day}, ${year} ${hour}:${minute}:${second} ${ampm}`;
-                        return `${dayName} ${monthName} ${day} ${year} ${hour}:${minute}:${second} ${ampm}`;
-                    })} />
-                </box>
-            </centerbox>
-        }
+                            // return `${dayName}, ${monthName} ${day}, ${year} ${hour}:${minute}:${second} ${ampm}`;
+                            return `${dayName} ${monthName} ${day} ${year} ${hour}:${minute}:${second} ${ampm}`;
+                        })} />
+                    </box>
+                </centerbox>
+            }
         />
+        <Sidebar />
+    </>;
 }
 
-function Workspaces() {
+function Workspaces(props: {
+    halign?: Gtk.Align
+}) {
     const workspaces = workspaceVar();
     
-    return <box halign={Gtk.Align.START}>
+    return <box halign={props.halign ?? Gtk.Align.BASELINE}>
         {workspaces.as(workspaces => {
             // Get the current focused workspace ID
             const totalToShow = 5; // Total number of workspaces to show
@@ -138,4 +184,26 @@ function Workspaces() {
             });
         })}
     </box>;
+}
+
+function SidebarContent_AppList() {
+    const apps = new Apps.Apps();
+    const appList = apps.get_list().sort((a, b) => a.get_name().localeCompare(b.get_name()));
+
+    return (
+        <box vertical={true} className="app-list">
+            {appList.map(app => (
+                <box>{[
+                    <icon iconSize={32} icon={app.get_icon_name()} className="app-icon" />,
+                    <button
+                        className="app-button"
+                        onClicked={() => {
+                            app.launch();
+                        }}
+                        child={<label label={app.get_name()} />}
+                    />
+                ]}</box>
+            ))}
+        </box>
+    );
 }
