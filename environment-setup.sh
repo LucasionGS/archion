@@ -5,6 +5,8 @@ if [[ $EUID == 0 ]]; then
   exit 1
 fi
 
+USER=$(whoami)
+
 # --–– utility helpers -----
 source ./utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
 
@@ -48,8 +50,6 @@ yay -S --noconfirm \
 # Install swww
 yay -S --noconfirm \
   swww
-
-systemctl enable --now swww.service
 
 # Install snap
 yay --noconfirm -S snapd
