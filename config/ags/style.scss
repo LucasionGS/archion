@@ -49,4 +49,14 @@ window.TopBar {
     label {
         padding: 0 8px;
     }
+
+    .workspace {
+        min-width: 48px;
+        &.focused {
+            background: rgba(0, 242, 255, 0.2);
+        }
+        &.empty {
+            background: rgba(0, 0, 0, 0.2);
+        }
+    }
 }
