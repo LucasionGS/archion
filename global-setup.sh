@@ -13,7 +13,8 @@ pacman --noconfirm -Syu \
   htop \
   neovim code \
   fish fisher \
-  cmake meson cpio pkg-config gcc
+  cmake meson cpio pkg-config gcc \
+  gjs go typescript esbuild gtk3 gtk-layer-shell json-glib
 
 # Refresh the hyprland packages
 hyprpm update
