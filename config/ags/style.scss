@@ -31,6 +31,9 @@ window.TopBar {
 
     // Colors
     button {
+        &.empty {
+            all: unset;
+        }
         &.red {
             background-color: #680000;
         }

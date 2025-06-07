@@ -1,5 +1,5 @@
 import { App, Astal, Gtk, Gdk, Widget } from "astal/gtk3"
-import { GObject, Variable } from "astal"
+import { execAsync, GObject, Variable } from "astal"
 import AstalNetwork from "gi://AstalNetwork";
 import Network from "gi://AstalNetwork"
 import Apps from "gi://AstalApps";
@@ -125,6 +125,13 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                             // return `${dayName}, ${monthName} ${day}, ${year} ${hour}:${minute}:${second} ${ampm}`;
                             return `${dayName} ${monthName} ${day} ${year} ${hour}:${minute}:${second} ${ampm}`;
                         })} />
+                        <button
+                            className="empty"
+                            onClicked={() => {
+                                execAsync("wleave");
+                            }}
+                            child={<label label="Exit" />}
+                        />
                     </box>
                 </centerbox>
             }
