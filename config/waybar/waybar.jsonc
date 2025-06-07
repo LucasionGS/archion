@@ -15,14 +15,14 @@
       "custom/processcount"
     ],
     // A button that shows current processes
-    "custom/processcount": {
-      "exec": "echo `ps aux | wc -l`",
-      "interval": 5,
-      "return-type": "text",
-      "format": "  PS: {}  ",
-      "format-alt": "  PS: {}  ",
-      "on-click": "kitty -e htop"
-    },
+    // "custom/processcount": { // Seems to break shortcuts when clicked?
+    //   "exec": "echo `ps aux | wc -l`",
+    //   "interval": 5,
+    //   "return-type": "text",
+    //   "format": "  PS: {}  ",
+    //   "format-alt": "  PS: {}  ",
+    //   "on-click": "kitty -e htop"
+    // },
     "custom/setwallpaper": {
       // "exec": "echo 'Set Wallpaper'",
       // "interval": 0,
@@ -30,5 +30,22 @@
       "format": "  Wallpaper  ",
       "on-click": "bash ~/.config/archion/scripts/promptwallpaper.sh"
     }
+  },
+
+  // Bottom bar for apps
+  {
+    "layer": "bottom",
+    "modules-left": [
+      "custom/launcher",
+      "custom/shortcuts"
+    ],
+    "modules-center": [
+      "custom/notifications"
+    ],
+    "modules-right": [
+      "custom/volume",
+      "custom/microphone",
+      "custom/keyboardlayout"
+    ]
   }
 ]
