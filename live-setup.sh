@@ -200,6 +200,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -d "$SCRIPT_DIR" ]]; then
   echo "Copying files from $SCRIPT_DIR to /mnt/home/${USERNAME}/archion"
   cp -r "$SCRIPT_DIR"/* /mnt/home/${USERNAME}/archion
+  arch-chroot /mnt /bin/bash <<EOF
+  chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/archion
+  chmod -R 755 /home/${USERNAME}/archion
+EOF
 else
   echo "Script directory not found. Skipping file copy."
 fi
