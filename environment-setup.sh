@@ -62,3 +62,10 @@ fisher install jorgebucaran/nvm.fish
 
 # Neovim setup (Will be set up when launched later)
 git clone https://github.com/LucasionGS/nvim-nvchad ~/.config/nvim
+
+
+# Visual studio code (Microsoft's version)
+# Note: This is the official version from Microsoft, not the open-source version. I like this one best
+yay -S --noconfirm visual-studio-code-bin
+# If unhappy with the official version, you can use the open-source version:
+# sudo pacman -S --noconfirm code
