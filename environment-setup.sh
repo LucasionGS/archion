@@ -1,17 +1,24 @@
 #!/bin/bash
 set -e
 if [[ $EUID == 0 ]]; then
-  echo "This script cannot be run as root. Please run as a normal user with sudo privileges."
+  echo "This script cannot be run as root. Please run without sudo, but as a normal user who has sudo privileges."
   exit 1
 fi
 
+CONFIG_DIR="$HOME/.config"
+
 # Move .config files to the user's home directory
-if [[ ! -d ~/.config ]]; then
-  mkdir -p ~/.config
+if [[ ! -d $CONFIG_DIR ]]; then
+  mkdir -p $CONFIG_DIR
 fi
 
 # Copy configuration files
-cp -r ./config/* ~/.config/ # Not yet?
+cp -r ./config/archion $CONFIG_DIR/archion
+cp -r ./config/hypr $CONFIG_DIR/hypr
+cp -r ./config/hyprpaper $CONFIG_DIR/hyprpaper
+cp -r ./config/kitty $CONFIG_DIR/kitty
+cp -r ./config/waybar $CONFIG_DIR/waybar
+cp -r ./config/anyrun $CONFIG_DIR/anyrun
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
