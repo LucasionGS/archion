@@ -42,8 +42,6 @@ declare global {
 const sidebarVisible = Variable(false);
 globalThis.toggleSidebarLeft = (forceState?: boolean) => sidebarVisible.set(forceState ?? !sidebarVisible().get());
 
-// Register the sidebar toggle command
-
 function Sidebar() {
     // Only render if visible
     // if (!sidebarVisible()) return null;

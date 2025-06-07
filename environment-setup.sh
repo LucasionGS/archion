@@ -5,6 +5,9 @@ if [[ $EUID == 0 ]]; then
   exit 1
 fi
 
+# --–– utility helpers -----
+source ./utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
+
 # Inform the user that it is possible they have to type in their password if they don't use passwordless sudo
 echo "You may be prompted for your password during the installation process if you do not have passwordless sudo configured."
 pause

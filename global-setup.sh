@@ -15,7 +15,19 @@ pacman --noconfirm -Syu \
   fish fisher \
   cmake meson cpio pkg-config gcc \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib \
-  vala vala-doc gobject-introspection
+  vala vala-doc gobject-introspection \
+  greetd greetd-gtkgreet polkit
+
+
+# Upload custom configs
+mkdir -p /etc/greetd
+cp -r ./configs/greetd/* /etc/greetd/
+
+
+# Finalize greetd
+systemctl enable --now polkit.service
+systemctl enable greetd.service
+systemctl set-default graphical.target
 
 # Refresh the hyprland packages
 hyprpm update
