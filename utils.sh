@@ -22,3 +22,7 @@ prompt_password() {
   read -rsp "$1" "$2"
   echo
 }
+
+pause() {
+  read -p "Press [Enter] to continue..."
+}

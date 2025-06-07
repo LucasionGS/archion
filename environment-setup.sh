@@ -5,6 +5,10 @@ if [[ $EUID == 0 ]]; then
   exit 1
 fi
 
+# Inform the user that it is possible they have to type in their password if they don't use passwordless sudo
+echo "You may be prompted for your password during the installation process if you do not have passwordless sudo configured."
+pause
+
 CONFIG_DIR="$HOME/.config"
 
 # Move .config files to the user's home directory
@@ -74,3 +78,8 @@ yay -S --noconfirm visual-studio-code-bin
 # Install Pyprland
 yay -S --noconfirm \
   pyprland-git
+
+
+# Install Astal / AGS for widgets
+yay -S --noconfirm libastal-meta
+yay -S --noconfirm aylurs-gtk-shell
