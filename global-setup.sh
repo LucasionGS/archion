@@ -14,7 +14,8 @@ pacman --noconfirm -Syu \
   neovim code \
   fish fisher \
   cmake meson cpio pkg-config gcc \
-  gjs go typescript esbuild gtk3 gtk-layer-shell json-glib
+  gjs go typescript esbuild gtk3 gtk-layer-shell json-glib \
+  vala vala-doc gobject-introspection
 
 # Refresh the hyprland packages
 hyprpm update

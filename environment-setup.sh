@@ -79,6 +79,9 @@ yay -S --noconfirm visual-studio-code-bin
 yay -S --noconfirm \
   pyprland-git
 
+# Install logout manager
+yay -S wleave-git
+
 
 # Install Astal / AGS for widgets
 yay -S --noconfirm libastal-meta
