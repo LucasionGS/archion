@@ -56,3 +56,9 @@ curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install 
 # Install fish theme
 omf install bobthefish 
 omf theme bobthefish
+
+# Install nvm for managing Node.js versions for fish shell
+fisher install jorgebucaran/nvm.fish
+
+# Neovim setup (Will be set up when launched later)
+git clone https://github.com/LucasionGS/nvim-nvchad ~/.config/nvim

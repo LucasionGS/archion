@@ -8,8 +8,11 @@ pacman --noconfirm -Syu \
   hyprland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
-  zenity htop \
-  fish
+  less yazi jq fd 7zip fzf \
+  nautilus nautilus-image-converter nautilus-share zenity \
+  htop \
+  neovim code \
+  fish fisher
 
 rustup default stable
 
