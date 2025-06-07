@@ -117,7 +117,7 @@ bash dev/reload.sh
 
 ## Extra Info & Troubleshooting
 
-- **Waybar config:** `~/.config/waybar/waybar.jsonc` and `style.css`
+<!-- - **Waybar config:** `~/.config/waybar/waybar.jsonc` and `style.css` -->
 - **Hyprland config:** `~/.config/hypr/`
 - **AGS widgets:** `~/.config/ags/`
 - **Kitty config:** `~/.config/kitty/kitty.conf`
@@ -129,14 +129,14 @@ bash dev/reload.sh
 - `global-setup.sh` — Core system packages (run as root)
 - `environment-setup.sh` — User environment (run as user)
 - `graphics-driver-setup.sh` — GPU driver helper (run as root)
-- `dev/reload.sh` — Reload Hyprland/Waybar (run as user)
+- `dev/reload.sh` — Reload Hyprland/AGS (run as user)
 
 ### Notes
 
 - **For dual boot:** Ensure you select the correct EFI and root partitions.
 - **For AUR packages:** `yay` is installed automatically if missing.
 - **For AGS bar:** Configs are in `config/ags/`.
-- **For wallpapers:** Use the Waybar "Wallpaper" button or `~/.config/archion/scripts/promptwallpaper.sh`.
+- **For wallpapers:** Use the shortcut Ctrl+Super+W when you get into the system and select a wallpaper.
 
 ---
 
