@@ -1,6 +1,7 @@
 [
   {
     "layer": "top",
+    "margin-top": 4,
     "modules-left": [
       "hyprland/workspaces"
       // "custom/menu"
