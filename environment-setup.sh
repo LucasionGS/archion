@@ -69,3 +69,8 @@ git clone https://github.com/LucasionGS/nvim-nvchad ~/.config/nvim
 yay -S --noconfirm visual-studio-code-bin
 # If unhappy with the official version, you can use the open-source version:
 # sudo pacman -S --noconfirm code
+
+
+# Install Pyprland
+yay -S --noconfirm \
+  pyprland-git

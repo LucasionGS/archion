@@ -12,7 +12,11 @@ pacman --noconfirm -Syu \
   nautilus nautilus-image-converter nautilus-share zenity \
   htop \
   neovim code \
-  fish fisher
+  fish fisher \
+  cmake meson cpio pkg-config gcc
+
+# Refresh the hyprland packages
+hyprpm update
 
 rustup default stable
 
