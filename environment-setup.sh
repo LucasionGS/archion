@@ -22,7 +22,6 @@ fi
 # Copy configuration files
 cp -r ./config/archion $CONFIG_DIR/archion
 cp -r ./config/hypr $CONFIG_DIR/hypr
-cp -r ./config/hyprpaper $CONFIG_DIR/hyprpaper
 cp -r ./config/kitty $CONFIG_DIR/kitty
 cp -r ./config/waybar $CONFIG_DIR/waybar
 cp -r ./config/anyrun $CONFIG_DIR/anyrun
