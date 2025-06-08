@@ -44,16 +44,12 @@ fi
 # Install Rust toolchain for compiling
 rustup default stable
 
-# Install anyrun (https://github.com/anyrun-org/anyrun)
+# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap
 yay -S --noconfirm \
-  anyrun-git
-
-# Install swww
-yay -S --noconfirm \
-  swww
-
-# Install snap
-yay --noconfirm -S snapd
+  anyrun-git \
+  swww \
+  snap \
+  snapd
 # Enable snapd service
 sudo systemctl enable --now snapd.socket
 
@@ -88,19 +84,12 @@ yay -S --noconfirm visual-studio-code-bin
 # sudo pacman -S --noconfirm code
 
 
-# Install Pyprland
+# Install Pyprland, wleave, Astal / AGS for widgets
 yay -S --noconfirm \
-  pyprland
-
-# Install logout manager
-yay -S --nocomfirm wleave-git
-
-# Install Astal / AGS for widgets
-yay -S --noconfirm libastal-meta
-yay -S --noconfirm aylurs-gtk-shell
-
-
-
+  pyprland \
+  wleave-git \
+  libastal-meta \
+  aylurs-gtk-shell
 
 
 
