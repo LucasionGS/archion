@@ -92,9 +92,19 @@ yay -S --noconfirm \
   pyprland
 
 # Install logout manager
-yay -S wleave-git
+yay -S --nocomfirm wleave-git
 
 
 # Install Astal / AGS for widgets
 yay -S --noconfirm libastal-meta
 yay -S --noconfirm aylurs-gtk-shell
+
+
+
+
+
+
+# Finished
+echo "--------------------- Installation complete! ---------------------"
+echo "Installation complete! Please reboot your system to apply changes."
+echo "--------------------- Installation complete! ---------------------"
