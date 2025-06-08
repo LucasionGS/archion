@@ -49,9 +49,26 @@ yay -S --noconfirm \
   anyrun-git \
   swww \
   snap \
-  snapd
+  snapd \
+  neofetch
+
 # Enable snapd service
 sudo systemctl enable --now snapd.socket
+
+# Apply partial config to neofetch
+CONFIG_DIR="$HOME/.config"
+if [[ ! -d $CONFIG_DIR/neofetch ]]; then
+  mkdir -p $CONFIG_DIR/neofetch
+fi
+
+## If the config already contains ### ARCHION CONFIG ###, we will not overwrite it
+if grep -q "### ARCHION CONFIG ###" "$CONFIG_DIR/neofetch/config.conf"; then
+  echo "Neofetch configuration already contains Archion settings. Skipping update."
+else
+  echo "" >> $CONFIG_DIR/neofetch/config.conf # Ensure there's a newline at the end of the file
+  cat ./config/neofetch/partial-config.conf >> $CONFIG_DIR/neofetch/config.conf
+  echo "Neofetch configuration updated with Archion settings."
+fi
 
 # Install oh-my-fish
 OMG_INSTALL_FILE="/tmp/omf-`whoami`-install"
@@ -90,7 +107,6 @@ yay -S --noconfirm \
   wleave-git \
   libastal-meta \
   aylurs-gtk-shell
-
 
 
 # Finished

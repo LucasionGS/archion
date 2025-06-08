@@ -36,11 +36,16 @@ workspaceVar.watch("astal-hyprland", (stdout, workspaces) => {
 
 declare global {
     var toggleSidebarLeft: (forceState?: boolean) => void;
+    var toggleStartMenu: (forceState?: boolean) => void;
 }
 
 // Sidebar state (global for command access)
 const sidebarVisible = Variable(false);
 globalThis.toggleSidebarLeft = (forceState?: boolean) => sidebarVisible.set(forceState ?? !sidebarVisible().get());
+
+// Start menu state (global for command access)
+const startMenuVisible = Variable(false);
+globalThis.toggleStartMenu = (forceState?: boolean) => startMenuVisible.set(forceState ?? !startMenuVisible().get());
 
 function Sidebar() {
     // Only render if visible
@@ -135,6 +140,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             }
         />
         <Sidebar />
+        <StartMenu />
     </>;
 }
 
@@ -199,7 +205,7 @@ function SidebarContent_AppList() {
         <box vertical={true} className="app-list">
             {appList.map(app => (
                 <box>{[
-                    <icon iconSize={32} icon={app.get_icon_name()} className="app-icon" />,
+                    <icon iconSize={2} icon={app.get_icon_name()} className="app-icon" />,
                     <button
                         className="app-button"
                         onClicked={() => {
@@ -210,5 +216,86 @@ function SidebarContent_AppList() {
                 ]}</box>
             ))}
         </box>
+    );
+}
+
+function StartMenu() {
+    const apps = new Apps.Apps();
+    const appList = apps.get_list();
+    const formattedApps = [
+        appList.slice(0, 6),
+        appList.slice(6, 12),
+        appList.slice(12, 18)
+    ];
+    return (
+        <window
+            className="StartMenu"
+            anchor={Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT}
+            exclusivity={Astal.Exclusivity.NORMAL}
+            application={App}
+            visible={startMenuVisible()}
+            child={
+                <box vertical={true} className="start-menu-content">
+                    <box className="search-container">
+                        <icon iconSize={16} icon="search-symbolic" />
+                        <entry placeholderText="Type here to search" hexpand={true} />
+                    </box>
+                    
+                    <box className="section-header">
+                        <label label="Pinned" />
+                        <button className="text-button" child={<label label="All apps" />} />
+                    </box>
+                    
+                    <box className="pinned-apps-container" vertical={true}>
+                        {formattedApps.map((row, rowIndex) => (
+                            <box className="pinned-apps" homogeneous={true}>
+                                {row.map(app => (
+                                    <button
+                                        className="app-tile"
+                                        onClicked={() => app.launch()}
+                                        child={
+                                            <box vertical={true} className="app-tile-content">
+                                                <icon iconSize={2} icon={app.get_icon_name()} />
+                                                <label label={app.get_name()} ellipsize={3} maxWidthChars={10} />
+                                            </box>
+                                        }
+                                    />
+                                ))}
+                            </box>
+                        ))}
+                    </box>
+
+                    
+                    {/* <box className="section-header">
+                        <label label="Recommended" />
+                        <button className="text-button" child={<label label="More" />} />
+                    </box> */}
+                    
+                    {/* <box className="recent-files">
+                        {Array.from({ length: 3 }, (_, i) => (
+                            <box className="recent-item">
+                                <icon iconSize={2} icon="file" />
+                                <box vertical={true}>
+                                    <label label={`Recent Document ${i + 1}`} xalign={0} />
+                                    <label label="Today" xalign={0} className="dim-label" />
+                                </box>
+                            </box>
+                        ))}
+                    </box> */}
+                    
+                    <box className="user-profile" hexpand={true}>
+                        <icon iconSize={2} icon="avatar-default-symbolic" />
+                        <label label="User" />
+                        <button 
+                            className="power-button" 
+                            hexpand={true} 
+                            halign={Gtk.Align.END}
+                            onClicked={() => execAsync("wleave")}
+                            child={<icon iconSize={20} icon="system-shutdown-symbolic" />} 
+                        />
+                    </box>
+                </box>
+            }
+        />
     );
 }
