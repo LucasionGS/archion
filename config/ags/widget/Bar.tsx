@@ -87,9 +87,9 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                         <button
                             // className="blue"
                             onClicked={() => {
-                                globalThis.toggleSidebarLeft();
+                                globalThis.toggleStartMenu();
                             }}
-                            child={<label label={sidebarVisible().as(a => a ? ">" : "<")} />}
+                            child={<label label={startMenuVisible().as(a => a ? ">" : "<")} />}
                         />
                         <button
                             className="red"
@@ -230,7 +230,7 @@ function StartMenu() {
     return (
         <window
             className="StartMenu"
-            anchor={Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT}
+            anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT}
             exclusivity={Astal.Exclusivity.NORMAL}
             application={App}
             visible={startMenuVisible()}

@@ -11,14 +11,14 @@ App.start({
         const args = request.split(" ");
         const cmd = args.shift();
         switch (cmd) {
-            case "sidebar-left": {
+            case "start-menu": {
                 // Toggle sidebar visibility
                 if (args.length > 0 && args[0] === "show") {
-                    globalThis.toggleSidebarLeft(true);
+                    globalThis.toggleStartMenu(true);
                 } else if (args.length > 0 && args[0] === "hide") {
-                    globalThis.toggleSidebarLeft(false);
+                    globalThis.toggleStartMenu(false);
                 } else {
-                    globalThis.toggleSidebarLeft();
+                    globalThis.toggleStartMenu();
                 }
                 break;
             }
