@@ -72,7 +72,12 @@ fish -c "omf theme bobthefish"
 fish -c "fisher install jorgebucaran/nvm.fish"
 
 # Neovim setup (Will be set up when launched later)
-git clone https://github.com/LucasionGS/nvim-nvchad ~/.config/nvim
+if [[ ! -d $CONFIG_DIR/nvim ]]; then
+  # Install Neovim
+  git clone https://github.com/LucasionGS/nvim-nvchad $CONFIG_DIR/nvim || true # If it already exists, it will not clone again
+else
+  echo "Neovim configuration already exists in $CONFIG_DIR/nvim. Skipping clone."
+fi
 
 
 # Visual studio code (Microsoft's version)
