@@ -8,7 +8,7 @@ pacman --noconfirm -Syu \
   hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
-  less yazi jq fd 7zip fzf \
+  wget less yazi jq fd 7zip fzf \
   nautilus nautilus-image-converter nautilus-share zenity \
   htop \
   neovim code \

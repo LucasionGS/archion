@@ -57,7 +57,12 @@ yay --noconfirm -S snapd
 sudo systemctl enable --now snapd.socket
 
 # Install oh-my-fish
-curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+OMG_INSTALL_FILE="/tmp/omf-`whoami`-install"
+wget https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install -O $OMG_INSTALL_FILE
+chmod +x $OMG_INSTALL_FILE
+fish -c "$OMG_INSTALL_FILE --noninteractive --yes"
+# Clean
+rm -f $OMG_INSTALL_FILE
 
 # Install fish theme
 fish -c "omf install bobthefish "
@@ -79,7 +84,7 @@ yay -S --noconfirm visual-studio-code-bin
 
 # Install Pyprland
 yay -S --noconfirm \
-  pyprland-git
+  pyprland
 
 # Install logout manager
 yay -S wleave-git
