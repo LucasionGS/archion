@@ -15,11 +15,10 @@ echo "You may be prompted for your password during the installation process if y
 pause
 
 CONFIG_DIR="$HOME/.config"
+APP_DIR="$HOME/.apps"
 
-# Move .config files to the user's home directory
-if [[ ! -d $CONFIG_DIR ]]; then
-  mkdir -p $CONFIG_DIR
-fi
+if [[ ! -d $CONFIG_DIR ]]; then mkdir -p $CONFIG_DIR; fi
+if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
 
 # Copy configuration files
 cp -r ./config/archion    $CONFIG_DIR/archion
@@ -44,13 +43,14 @@ fi
 # Install Rust toolchain for compiling
 rustup default stable
 
-# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap
+# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap, neofetch, and rofi
 yay -S --noconfirm \
   anyrun-git \
   swww \
   snap \
   snapd \
-  neofetch
+  neofetch \
+  rofi
 
 # Enable snapd service
 sudo systemctl enable --now snapd.socket
@@ -107,6 +107,11 @@ yay -S --noconfirm \
   wleave-git \
   libastal-meta \
   aylurs-gtk-shell
+
+# Install FSSH (Fish SSH Connection Manager) from local
+cp -r ./apps/fssh $APP_DIR/fssh
+# Install FSSH
+fish $APP_DIR/fssh
 
 
 # Install beekeeper
