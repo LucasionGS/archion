@@ -79,7 +79,7 @@ fish -c "$OMG_INSTALL_FILE --noninteractive --yes"
 rm -f $OMG_INSTALL_FILE
 
 # Install fish theme
-fish -c "omf install bobthefish "
+fish -c "omf install bobthefish"
 fish -c "omf theme bobthefish"
 
 # Install nvm for managing Node.js versions for fish shell

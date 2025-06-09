@@ -16,7 +16,8 @@ pacman --noconfirm -Syu \
   cmake meson cpio pkg-config gcc \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib \
   vala vala-doc gobject-introspection \
-  greetd greetd-gtkgreet polkit
+  greetd greetd-gtkgreet polkit \
+  thunderbird
 
 
 # Upload custom configs
