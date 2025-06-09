@@ -24,7 +24,7 @@ Archion is a set of scripts and configuration files for setting up a modern Arch
 - Hyprland Wayland compositor with custom configs
 - AGS (Aylur's Gtk Shell) widgets and bar
 - Kitty, Nautilus, VS Code, Neovim, and more
-- Themed Waybar, AnyRun, and other desktop tools
+- Themed Astal components, AnyRun, and other desktop tools
 - Easy reload and update scripts
 
 ---
@@ -107,7 +107,7 @@ sudo bash graphics-driver-setup.sh
 
 ## Reloading the Environment
 
-To reload Hyprland and Waybar after config changes:
+To reload Hyprland and AGS after config changes:
 
 ```bash
 bash dev/reload.sh
@@ -117,7 +117,6 @@ bash dev/reload.sh
 
 ## Extra Info & Troubleshooting
 
-<!-- - **Waybar config:** `~/.config/waybar/waybar.jsonc` and `style.css` -->
 - **Hyprland config:** `~/.config/hypr/`
 - **AGS widgets:** `~/.config/ags/`
 - **Kitty config:** `~/.config/kitty/kitty.conf`
