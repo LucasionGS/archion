@@ -97,7 +97,7 @@ window.StartMenu {
     color: white;
     border-radius: 18px;
     box-shadow: 0 8px 32px 0 rgba(0,0,0,0.35);
-    padding: 24px 28px 18px 28px;   
+    padding: 24px 28px 18px 28px;
     border: 1.5px solid rgba(255,255,255,0.08);
     
     .start-menu-content {
@@ -144,12 +144,13 @@ window.StartMenu {
             // background: rgba(255,255,255,0.04);
             background: transparent;
             color: white;
-            border-radius: 12px;
+            border-radius: 0;
+            border: 0 solid;
+            outline: none;
             padding: 10px 0 6px 0;
-            min-width: 80px;
+            min-width: 120px;
             transition: background 0.15s;
             // Simulate horizontal and vertical gap
-            margin: 0 8px 10px 0;
             &:hover {
                 background: rgba(80, 80, 80, 0.18);
             }

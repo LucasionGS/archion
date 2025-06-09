@@ -109,6 +109,9 @@ yay -S --noconfirm \
   aylurs-gtk-shell
 
 
+# Install beekeeper
+sudo snap install beekeeper-studio
+
 # Finished
 echo "--------------------- Installation complete! ---------------------"
 echo "Installation complete! Please reboot your system to apply changes."

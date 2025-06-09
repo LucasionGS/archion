@@ -110,7 +110,18 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
                                     )
                             }
                         />
-                        <label halign={Gtk.Align.END} label={time().as(v => {
+                        {/* <box>
+                            {[<icon iconName={
+                                network.wired.state === AstalNetwork.DeviceState.ACTIVATED
+                                    ? "network-wired-symbolic"
+                                    : (
+                                        network.wifi?.ssid ?
+                                        "network-wireless-symbolic" :
+                                        "network-offline-symbolic"
+                                    )
+                            } iconSize={2} />]}
+                        </box> */}
+                        <label label={time().as(v => {
                             // return v;
                             const [
                                 _,
@@ -223,9 +234,10 @@ function StartMenu() {
     const apps = new Apps.Apps();
     const appList = apps.get_list();
     const formattedApps = [
-        appList.slice(0, 6),
-        appList.slice(6, 12),
-        appList.slice(12, 18)
+        appList.slice(0, 4),
+        appList.slice(4, 8),
+        appList.slice(8, 12),
+        appList.slice(12, 16)
     ];
     return (
         <window
@@ -237,13 +249,15 @@ function StartMenu() {
             child={
                 <box vertical={true} className="start-menu-content">
                     <box className="search-container">
-                        <icon iconSize={16} icon="search-symbolic" />
+                        <icon iconSize={16} icon="system-search-symbolic" />
                         <entry placeholderText="Type here to search" hexpand={true} />
                     </box>
                     
                     <box className="section-header">
-                        <label label="Pinned" />
-                        <button className="text-button" child={<label label="All apps" />} />
+                        {[
+                            <label label="Pinned" />,
+                            // <button className="text-button" child={<label label="All apps" />} />
+                        ]}
                     </box>
                     
                     <box className="pinned-apps-container" vertical={true}>
@@ -252,11 +266,14 @@ function StartMenu() {
                                 {row.map(app => (
                                     <button
                                         className="app-tile"
-                                        onClicked={() => app.launch()}
+                                        onClicked={() => {
+                                            app.launch();
+                                            startMenuVisible.set(false);
+                                        }}
                                         child={
                                             <box vertical={true} className="app-tile-content">
                                                 <icon iconSize={2} icon={app.get_icon_name()} />
-                                                <label label={app.get_name()} ellipsize={3} maxWidthChars={10} />
+                                                <label label={app.get_name()} ellipsize={3} maxWidthChars={20} />
                                             </box>
                                         }
                                     />
