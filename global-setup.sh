@@ -4,8 +4,10 @@ if [[ $EUID != 0 ]]; then
   exit 1
 fi
 
+pacman --noconfirm -Syu
+
 pacman --noconfirm -Syu \
-  hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock wofi mako kitty \
+  sudo hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
@@ -15,23 +17,22 @@ pacman --noconfirm -Syu \
   fish fisher \
   cmake meson cpio pkg-config gcc \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib \
-  vala vala-doc gobject-introspection \
+  vala gobject-introspection \
   greetd greetd-gtkgreet polkit \
   thunderbird
+
+# vala-doc ?
 
 
 # Upload custom configs
 mkdir -p /etc/greetd
-cp -r ./configs/greetd/* /etc/greetd/
+cp -r ./etc/greetd/* /etc/greetd/
 
 
 # Finalize greetd
-systemctl enable --now polkit.service
+systemctl enable --now polkit.service || true
 systemctl enable greetd.service
 systemctl set-default graphical.target
-
-# Refresh the hyprland packages
-hyprpm update
 
 rustup default stable
 

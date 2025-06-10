@@ -70,6 +70,10 @@ else
   echo "Neofetch configuration updated with Archion settings."
 fi
 
+# Refresh the hyprland packages
+hyprpm update
+
+
 # Install oh-my-fish
 OMG_INSTALL_FILE="/tmp/omf-`whoami`-install"
 wget https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install -O $OMG_INSTALL_FILE
@@ -103,12 +107,13 @@ yay -S --noconfirm visual-studio-code-bin
 # sudo pacman -S --noconfirm code
 
 
-# Install Pyprland, wleave, Astal / AGS for widgets
+# Install Pyprland, wleave, Astal / AGS for widgets, Hyprshell for Window switcher
 yay -S --noconfirm \
   pyprland \
   wleave-git \
   libastal-meta \
-  aylurs-gtk-shell
+  aylurs-gtk-shell \
+  hyprshell
 
 # Install FSSH (Fish SSH Connection Manager) from local
 cp -r ./apps/fssh $APP_DIR/fssh
