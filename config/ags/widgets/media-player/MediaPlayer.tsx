@@ -22,8 +22,9 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
     const coverArt = bind(player, "coverArt").as(c =>
         `background-image: url('${c}')`)
 
-    const playerIcon = bind(player, "entry").as(e =>
-        Astal.Icon.lookup_icon(e) ? e : "audio-x-generic-symbolic")
+    // const playerIcon = bind(player, "entry").as(e =>
+    //     Astal.Icon.lookup_icon(e) ? e : "audio-x-generic-symbolic")
+    const playerIcon = bind(player, "entry").as(e => "audio-x-generic-symbolic")
 
     const position = bind(player, "position").as(p => player.length > 0
         ? p / player.length : 0)

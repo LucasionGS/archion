@@ -16,12 +16,10 @@ pacman --noconfirm -Syu \
   neovim code \
   fish fisher \
   cmake meson cpio pkg-config gcc \
-  gjs go typescript esbuild gtk3 gtk-layer-shell json-glib \
-  vala gobject-introspection \
+  gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
+  vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird
-
-# vala-doc ?
+  thunderbird flameshot
 
 
 # Upload custom configs
