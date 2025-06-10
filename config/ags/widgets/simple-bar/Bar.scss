@@ -1,17 +1,20 @@
 @use "sass:color";
-
-$bg: #212223;
-$fg: #f1f1f1;
-$accent: #378DF7;
-$radius: 7px;
+@use "../../variables" as *;
 
 window.Bar {
     border: none;
     box-shadow: none;
-    background-color: $bg;
+    // background-color: transparentize($color: $bg, $amount: 0.3);
+    background: radial-gradient(
+        circle at 60% 50%,
+        color.adjust($secondary, $alpha: -0.4),
+        color.adjust($accent, $alpha: -0.4),
+        color.adjust($bg, $alpha: -0.2)
+    );
     color: $fg;
     font-size: 1.1em;
     font-weight: bold;
+    border-radius: 8px;
 
     label {
         margin: 0 8px;
@@ -66,6 +69,10 @@ window.Bar {
         background-size: contain;
     }
 
+    .Media button {
+        all: unset;
+    }
+
     .Battery label {
         padding-left: 0;
         margin-left: 0;
@@ -101,6 +108,14 @@ window.Bar {
             min-height: 1em;
             min-width: 1em;
             margin: -.2em;
+        }
+    }
+
+    .LeaveButton {
+        margin-left: 8px;
+        margin-right: 8px;
+        button {
+            all: unset;
         }
     }
 }

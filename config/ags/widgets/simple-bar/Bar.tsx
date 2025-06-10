@@ -1,5 +1,5 @@
 import { App } from "astal/gtk3"
-import { Variable, GLib, bind } from "astal"
+import { Variable, GLib, bind, execAsync } from "astal"
 import { Astal, Gtk, Gdk } from "astal/gtk3"
 import Hyprland from "gi://AstalHyprland"
 import Mpris from "gi://AstalMpris"
@@ -7,6 +7,8 @@ import Battery from "gi://AstalBattery"
 import Wp from "gi://AstalWp"
 import Network from "gi://AstalNetwork"
 import Tray from "gi://AstalTray"
+import Cava from "gi://AstalCava"
+
 
 function SysTray() {
     const tray = Tray.get_default()
@@ -27,17 +29,31 @@ function SysTray() {
 function Wifi() {
     const network = Network.get_default()
     const wifi = bind(network, "wifi")
+    const ethernet = bind(network, "wired")
 
-    return <box visible={wifi.as(Boolean)}>
-        {wifi.as(wifi => wifi && (
-            <icon
-                tooltipText={bind(wifi, "ssid").as(String)}
-                className="Wifi"
-                icon={bind(wifi, "iconName")}
-            />
-        ))}
-    </box>
-
+    return (
+        <box>
+            <box visible={wifi.as(Boolean)}>
+                {wifi.as(wifi => wifi && ([
+                    <icon
+                        tooltipText={bind(wifi, "ssid").as(String)}
+                        className="Wifi"
+                        icon={bind(wifi, "iconName")}
+                    />
+                ]))}
+            </box>
+            <box visible={ethernet.as(Boolean)}>
+                {ethernet.as(eth => eth && ([
+                    <icon
+                        tooltipText={bind(eth, "iconName").as(String)}
+                        className="Ethernet"
+                        icon={bind(eth, "iconName").as(String)}
+                        // icon="network-wired-symbolic"
+                    />
+                ]))}
+            </box>
+        </box>
+    );
 }
 
 function AudioSlider() {
@@ -65,11 +81,19 @@ function BatteryLevel() {
     </box>
 }
 
-function Media() {
+function Media(props: {
+    displayMediaPlayer?: Variable<boolean>
+}) {
+    const { displayMediaPlayer } = props
     const mpris = Mpris.get_default()
+    // const cava = Cava.get_default()!
+
+    // cava.connect("notify::values", () => {
+    //     print(cava.values)
+    // })
 
     return <box className="Media">
-        {bind(mpris, "players").as(ps => ps[0] ? (
+        {bind(mpris, "players").as(ps => [ps[0] ? (
             <box>
                 <box
                     className="Cover"
@@ -78,15 +102,24 @@ function Media() {
                         `background-image: url('${cover}');`
                     )}
                 />
-                <label
+                <button
+                    onClick={() => displayMediaPlayer?.set(!displayMediaPlayer()?.get())}
                     label={bind(ps[0], "metadata").as(() =>
                         `${ps[0].title} - ${ps[0].artist}`
                     )}
                 />
+                {/* Visualizer? */}
+                {/* <box
+                    className="Cover"
+                    valign={Gtk.Align.CENTER}
+                    css={bind(ps[0], "coverArt").as(cover =>
+                        `background-image: url('${cover}');`
+                    )}
+                /> */}
             </box>
         ) : (
-            <label label="Nothing Playing" />
-        ))}
+            <label label="Archion" />
+        )])}
     </box>
 }
 
@@ -133,28 +166,48 @@ function Time({ format = "%H:%M - %A %e." }) {
     />
 }
 
-export default function Bar(monitor: Gdk.Monitor) {
+function Leave() {
+    const leaver = "wleave";
+
+    return <box className="LeaveButton">
+        {[<button
+            onClicked={() => execAsync(leaver)}
+            tooltipText="Logout"
+        >
+            <icon icon="system-log-out" />
+        </button>]}
+    </box>
+}
+
+export default function Bar(monitor: Gdk.Monitor, variables?: {
+    displayMediaPlayer?: Variable<boolean>
+}) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
+    const { displayMediaPlayer } = variables ?? {}
 
     return <window
         className="Bar"
         gdkmonitor={monitor}
+        margin={8}
         exclusivity={Astal.Exclusivity.EXCLUSIVE}
         anchor={TOP | LEFT | RIGHT}>
-        <centerbox>
+        <centerbox
+            heightRequest={32}
+        >
             <box hexpand halign={Gtk.Align.START}>
                 <Workspaces />
                 <FocusedClient />
             </box>
             <box>
-                <Media />
+                <Media displayMediaPlayer={displayMediaPlayer} />
             </box>
             <box hexpand halign={Gtk.Align.END} >
                 <SysTray />
-                <Wifi />
                 <AudioSlider />
+                <Wifi />
                 <BatteryLevel />
                 <Time />
+                <Leave />
             </box>
         </centerbox>
     </window>

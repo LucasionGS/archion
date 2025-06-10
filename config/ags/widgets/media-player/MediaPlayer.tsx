@@ -1,6 +1,6 @@
 import { Astal, Gtk } from "astal/gtk3"
 import Mpris from "gi://AstalMpris"
-import { bind } from "astal"
+import { bind, Variable } from "astal"
 
 function lengthStr(length: number) {
     const min = Math.floor(length / 60)
@@ -85,11 +85,14 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
     </box>
 }
 
-export default function MprisPlayers() {
-    const mpris = Mpris.get_default()
-    return <box vertical>
-        {bind(mpris, "players").as(arr => arr.map(player => (
-            <MediaPlayer player={player} />
-        )))}
-    </box>
+export default function MprisPlayers(show: Variable<boolean>) {
+    const mpris = Mpris.get_default();
+    
+    return (
+        <box visible={show()} vertical>
+            {bind(mpris, "players").as(arr => arr.map(player => (
+                <MediaPlayer player={player} />
+            )))}
+        </box>
+    );
 }

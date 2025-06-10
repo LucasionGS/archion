@@ -27,6 +27,9 @@ cp -r ./config/ags        $CONFIG_DIR/ags
 cp -r ./config/kitty      $CONFIG_DIR/kitty
 cp -r ./config/waybar     $CONFIG_DIR/waybar
 cp -r ./config/anyrun     $CONFIG_DIR/anyrun
+cp -r ./config/rofi       $CONFIG_DIR/rofi
+cp -r ./config/wleave     $CONFIG_DIR/wleave
+cp -r ./config/fish       $CONFIG_DIR/fish
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
@@ -50,7 +53,8 @@ yay -S --noconfirm \
   snap \
   snapd \
   neofetch \
-  rofi
+  rofi \
+  libcava
 
 # Enable snapd service
 sudo systemctl enable --now snapd.socket

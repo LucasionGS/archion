@@ -1,6 +1,5 @@
-// https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
-$fg-color: #{"@theme_fg_color"};
-$bg-color: #{"@theme_bg_color"};
+@use "sass:color";
+@use "../../variables" as *;
 
 window {
     all: unset;
@@ -8,7 +7,14 @@ window {
 
 box.MediaPlayer {
     padding: .6rem;
-    background-color: $bg-color;
+    // background-color: $bg;
+    border-radius: 0 0 9px 9px;
+    background: radial-gradient(
+        circle at 0% 125%,
+        color.adjust($secondary, $alpha: -0.4),
+        color.adjust($accent, $alpha: -0.4),
+        color.adjust($bg, $alpha: -0.2)
+    );
 
     box.cover-art {
         min-width: 120px;
@@ -35,7 +41,7 @@ box.MediaPlayer {
         }
 
         highlight {
-            background-color: $fg-color;
+            background-color: $fg;
         }
 
         slider {

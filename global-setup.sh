@@ -7,7 +7,7 @@ fi
 pacman --noconfirm -Syu
 
 pacman --noconfirm -Syu \
-  sudo hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock wofi mako kitty \
+  sudo hyprland xorg-xwayland hyprpaper waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi mako kitty \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
@@ -19,7 +19,7 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird flameshot
+  thunderbird flameshot clipse
 
 
 # Upload custom configs
