@@ -1,6 +1,67 @@
 @use "sass:color";
 @use "../../variables" as *;
 
+@keyframes gradient-position {
+    0% {
+        background: radial-gradient(
+            circle at 60% 50%,
+            color.adjust($secondary, $alpha: -0.4),
+            color.adjust($accent, $alpha: -0.4),
+            color.adjust($bg, $alpha: -0.2)
+        );
+    }
+    // 40% {
+    //     background: radial-gradient(
+    //         circle at 10% 35%,
+    //         color.adjust($secondary, $alpha: -0.4),
+    //         color.adjust($accent, $alpha: -0.4),
+    //         color.adjust($bg, $alpha: -0.2)
+    //     );
+    // }
+
+    // 60% {
+    //     background: radial-gradient(
+    //         circle at 30% 60%,
+    //         color.adjust($secondary, $alpha: -0.4),
+    //         color.adjust($accent, $alpha: -0.4),
+    //         color.adjust($bg, $alpha: -0.2)
+    //     );
+    // }
+    
+    25% {
+        background: radial-gradient(
+            circle at 25% 10%,
+            color.adjust($secondary, $alpha: -0.4),
+            color.adjust($accent, $alpha: -0.4),
+            color.adjust($bg, $alpha: -0.2)
+        );
+    }
+    50% {
+        background: radial-gradient(
+            circle at 40% 80%,
+            color.adjust($secondary, $alpha: -0.4),
+            color.adjust($accent, $alpha: -0.4),
+            color.adjust($bg, $alpha: -0.2)
+        );
+    }
+    75% {
+        background: radial-gradient(
+            circle at 75% 30%,
+            color.adjust($secondary, $alpha: -0.4),
+            color.adjust($accent, $alpha: -0.4),
+            color.adjust($bg, $alpha: -0.2)
+        );
+    }
+    // 100% {
+    //     background: radial-gradient(
+    //         circle at 60% 50%,
+    //         color.adjust($secondary, $alpha: -0.4),
+    //         color.adjust($accent, $alpha: -0.4),
+    //         color.adjust($bg, $alpha: -0.2)
+    //     );
+    // }
+}
+
 window.Bar {
     border: none;
     box-shadow: none;
@@ -11,6 +72,9 @@ window.Bar {
         color.adjust($accent, $alpha: -0.4),
         color.adjust($bg, $alpha: -0.2)
     );
+    // Use animation, comment out to make it a static gradient
+    animation: gradient-position 30s ease infinite;
+
     color: $fg;
     font-size: 1.1em;
     font-weight: bold;
