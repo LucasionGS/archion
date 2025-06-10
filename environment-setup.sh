@@ -84,6 +84,8 @@ fish -c "omf theme bobthefish"
 
 # Install nvm for managing Node.js versions for fish shell
 fish -c "fisher install jorgebucaran/nvm.fish"
+# Install z for Working directory shortcuts
+fish -c "fisher install jethrokuan/z"
 
 # Neovim setup (Will be set up when launched later)
 if [[ ! -d $CONFIG_DIR/nvim ]]; then
