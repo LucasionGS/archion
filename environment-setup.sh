@@ -117,8 +117,10 @@ yay -S --noconfirm \
   pyprland \
   wleave-git \
   libastal-meta \
-  aylurs-gtk-shell \
-  hyprshell
+  aylurs-gtk-shell
+
+# https://github.com/H3rmt/hyprswitch
+cargo install hyprshell
 
 # Install FSSH (Fish SSH Connection Manager) from local
 cp -r ./apps/fssh $APP_DIR/fssh
