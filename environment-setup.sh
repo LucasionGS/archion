@@ -30,6 +30,7 @@ cp -r ./config/anyrun     $CONFIG_DIR/anyrun
 cp -r ./config/rofi       $CONFIG_DIR/rofi
 cp -r ./config/wleave     $CONFIG_DIR/wleave
 cp -r ./config/fish       $CONFIG_DIR/fish
+cp -r ./config/gtk-3.0    $CONFIG_DIR/gtk-3.0
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay

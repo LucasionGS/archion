@@ -1,12 +1,11 @@
 @use "sass:string";
+@use "../../variables" as *;
 
 @function gtkalpha($c, $a) {
     @return string.unquote("alpha(#{$c},#{$a})");
 }
 
 // https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
-$fg-color: #{"@theme_fg_color"};
-$bg-color: #{"@theme_bg_color"};
 $error: red;
 
 window.NotificationPopups {
@@ -27,10 +26,10 @@ eventbox.Notification {
     >box {
         min-width: 400px;
         border-radius: 13px;
-        background-color: $bg-color;
+        background-color: $bg;
         margin: .5rem 1rem .5rem 1rem;
         box-shadow: 2px 3px 8px 0 gtkalpha(black, .4);
-        border: 1pt solid gtkalpha($fg-color, .03);
+        border: 1pt solid gtkalpha($fg, .03);
     }
 
     &.critical>box {
@@ -51,7 +50,7 @@ eventbox.Notification {
 
     .header {
         padding: .5rem;
-        color: gtkalpha($fg-color, 0.5);
+        color: gtkalpha($secondary, 0.9);
 
         .app-icon {
             margin: 0 .4rem;
@@ -79,7 +78,7 @@ eventbox.Notification {
 
     separator {
         margin: 0 .4rem;
-        background-color: gtkalpha($fg-color, .1);
+        background-color: gtkalpha($fg, .1);
     }
 
     .content {
@@ -88,15 +87,15 @@ eventbox.Notification {
 
         .summary {
             font-size: 1.2em;
-            color: $fg-color;
+            color: $fg;
         }
 
         .body {
-            color: gtkalpha($fg-color, 0.8);
+            color: gtkalpha($fg, 0.8);
         }
 
         .image {
-            border: 1px solid gtkalpha($fg-color, .02);
+            border: 1px solid gtkalpha($fg, .02);
             margin-right: .5rem;
             border-radius: 9px;
             min-width: 100px;
