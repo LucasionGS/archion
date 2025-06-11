@@ -8,7 +8,7 @@ import FontSettings from "./categories/FontSettings"
 import NetworkSettings from "./categories/NetworkSettings"
 import SystemSettings from "./categories/SystemSettings"
 import Bluetooth from "gi://AstalBluetooth"
-import { IonTheme } from "../../IonTheme"
+// import { IonTheme } from "../../IonTheme"
 
 interface SettingsCategory {
     id: string
@@ -58,12 +58,12 @@ const settingsCategories: SettingsCategory[] = [
         icon: "preferences-desktop-font-symbolic",
         component: FontSettings
     },
-    // {
-    //     id: "system",
-    //     name: "System",
-    //     icon: "preferences-system-symbolic",
-    //     component: SystemSettings
-    // }
+    {
+        id: "system",
+        name: "System",
+        icon: "preferences-system-symbolic",
+        component: SystemSettings
+    }
 ]
 
 function SettingsSidebar({ activeCategory, onCategoryChange }: {

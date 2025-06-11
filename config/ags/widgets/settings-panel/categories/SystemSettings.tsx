@@ -63,7 +63,7 @@ export default function SystemSettings() {
                     <box className="setting-control" hexpand halign={Gtk.Align.END}>
                         <switch 
                             active={autoUpdates()}
-                            onNotify={() => autoUpdates.set(!autoUpdates.get())}
+                            onButtonPressEvent={() => autoUpdates.set(!autoUpdates.get())}
                         />
                     </box>
                 </box>
@@ -88,7 +88,7 @@ export default function SystemSettings() {
                     <box className="setting-control" hexpand halign={Gtk.Align.END}>
                         <switch 
                             active={autoLogin()}
-                            onNotify={() => autoLogin.set(!autoLogin.get())}
+                            onButtonPressEvent={() => autoLogin.set(!autoLogin.get())}
                         />
                     </box>
                 </box>
