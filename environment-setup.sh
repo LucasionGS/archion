@@ -76,7 +76,7 @@ else
 fi
 
 # Refresh the hyprland packages
-hyprpm update
+# hyprpm update
 
 
 # Install oh-my-fish
