@@ -21,16 +21,16 @@ if [[ ! -d $CONFIG_DIR ]]; then mkdir -p $CONFIG_DIR; fi
 if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
 
 # Copy configuration files
-cp -r ./config/archion    $CONFIG_DIR/archion
-cp -r ./config/hypr       $CONFIG_DIR/hypr
-cp -r ./config/ags        $CONFIG_DIR/ags
-cp -r ./config/kitty      $CONFIG_DIR/kitty
-cp -r ./config/waybar     $CONFIG_DIR/waybar
-cp -r ./config/anyrun     $CONFIG_DIR/anyrun
-cp -r ./config/rofi       $CONFIG_DIR/rofi
-cp -r ./config/wleave     $CONFIG_DIR/wleave
-cp -r ./config/fish       $CONFIG_DIR/fish
-cp -r ./config/gtk-3.0    $CONFIG_DIR/gtk-3.0
+cp -r ./config/archion    $CONFIG_DIR/.
+cp -r ./config/hypr       $CONFIG_DIR/.
+cp -r ./config/ags        $CONFIG_DIR/.
+cp -r ./config/kitty      $CONFIG_DIR/.
+cp -r ./config/waybar     $CONFIG_DIR/.
+cp -r ./config/anyrun     $CONFIG_DIR/.
+cp -r ./config/rofi       $CONFIG_DIR/.
+cp -r ./config/wleave     $CONFIG_DIR/.
+cp -r ./config/fish       $CONFIG_DIR/.
+cp -r ./config/gtk-3.0    $CONFIG_DIR/.
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
@@ -125,11 +125,15 @@ cargo install hyprshell
 # Install FSSH (Fish SSH Connection Manager) from local
 cp -r ./apps/fssh $APP_DIR/fssh
 # Install FSSH
-fish $APP_DIR/fssh
-
+fish $APP_DIR/fish/install.fish
 
 # Install beekeeper
-sudo snap install beekeeper-studio
+if [[ command -v beekeeper-studio &> /dev/null ]]; then
+  echo "Beekeeper Studio is already installed."
+else
+  echo "Installing Beekeeper Studio..."
+  sudo snap install beekeeper-studio
+fi
 
 # Finished
 echo "--------------------- Installation complete! ---------------------"
