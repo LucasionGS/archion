@@ -12,7 +12,7 @@ import { Variable } from "astal";
 
 const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
-const displaySettingsPanel = new Variable(true);
+const displaySettingsPanel = new Variable(false);
 
 const toggleBoolVar = (variable: Variable<boolean>, state: "toggle" | "show" | "hide") => {
     switch (state) {
