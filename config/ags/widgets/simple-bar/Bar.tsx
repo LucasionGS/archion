@@ -166,13 +166,16 @@ function Time({ format = "%H:%M - %A %e." }) {
     />
 }
 
-function Leave() {
-    const leaver = "wleave";
+function SystemMenuButton(props: {
+    displaySystemMenu?: Variable<boolean>
+}) {
+    const { displaySystemMenu } = props
+    // const leaver = "wleave";
 
-    return <box className="LeaveButton">
+    return <box className="SystemMenuButton">
         {[<button
-            onClicked={() => execAsync(leaver)}
-            tooltipText="Logout"
+            onClicked={() => displaySystemMenu?.set(!displaySystemMenu?.get())}
+            tooltipText="System"
         >
             <icon icon="system-log-out" />
         </button>]}
@@ -180,10 +183,11 @@ function Leave() {
 }
 
 export default function Bar(monitor: Gdk.Monitor, variables?: {
-    displayMediaPlayer?: Variable<boolean>
+    displayMediaPlayer?: Variable<boolean>,
+    displaySystemMenu?: Variable<boolean>
 }) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
-    const { displayMediaPlayer } = variables ?? {}
+    const { displayMediaPlayer, displaySystemMenu } = variables ?? {}
 
     return <window
         className="Bar"
@@ -199,7 +203,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                 <FocusedClient />
             </box>
             <box>
-                <Media displayMediaPlayer={displayMediaPlayer} />
+                {[<Media displayMediaPlayer={displayMediaPlayer} />]}
             </box>
             <box hexpand halign={Gtk.Align.END} >
                 <SysTray />
@@ -207,7 +211,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                 <Wifi />
                 <BatteryLevel />
                 <Time />
-                <Leave />
+                <SystemMenuButton displaySystemMenu={displaySystemMenu} />
             </box>
         </centerbox>
     </window>

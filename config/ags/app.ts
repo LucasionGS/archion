@@ -6,9 +6,11 @@ import MprisPlayers from "./widgets/media-player/MediaPlayer";
 import OSD from "./widgets/osd/OSD";
 import Bar from "./widgets/simple-bar/Bar";
 import NotificationPopups from "./widgets/notifications/NotificationPopups";
+import SystemMenu from "./widgets/system-menu/SystemMenu";
 import { Variable } from "astal";
 
 const displayMediaPlayer = new Variable(false);
+const displaySystemMenu = new Variable(true);
 
 App.start({
     css: style,
@@ -23,25 +25,16 @@ App.start({
         new Widget.Window(
             {
                 anchor: TOP,
-                exclusivity: Astal.Exclusivity.NORMAL,
-                // onButtonPressEvent: (self, event) => {
-                //     const [, _x, _y] = event.get_coords()
-                //     const { x, y, width, height } = self
-                //         .get_child()!
-                //         .get_allocation()
-
-                //     const xOut = _x < x || _x > x + width
-                //     const yOut = _y < y || _y > y + height
-
-                //     print("Clicked outside:", xOut, yOut);
-
-                //     // clicked outside
-                //     if (xOut || yOut) {
-                //         displayMediaPlayer.set(false);
-                //     }
-                // }
+                exclusivity: Astal.Exclusivity.NORMAL
             },
             MprisPlayers(displayMediaPlayer)
+        );
+        new Widget.Window(
+            {
+                anchor: TOP | RIGHT,
+                exclusivity: Astal.Exclusivity.NORMAL
+            },
+            SystemMenu(displaySystemMenu)
         );
         App.get_monitors().forEach(monitor => {
             // try {
@@ -50,7 +43,8 @@ App.start({
             //     console.error("Failed to initialize OSD:", error);
             // }
             Bar(monitor, {
-                displayMediaPlayer
+                displayMediaPlayer,
+                displaySystemMenu
             });
             NotificationPopups(monitor);
         });

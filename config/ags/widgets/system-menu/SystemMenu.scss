@@ -1,0 +1,159 @@
+@use "sass:color";
+@use "../../variables" as *;
+
+window {
+    all: unset;
+}
+
+box.SystemMenu {
+    padding: 1rem;
+    border-radius: $radius;
+    margin: 0.5rem;
+    border: 1pt solid color.adjust($fg, $alpha: -0.9);
+    // background-color: $bg;
+
+    background: radial-gradient(
+        circle at 0% 120%,
+        color.adjust($secondary, $alpha: -0.4),
+        color.adjust($accent, $alpha: -0.2),
+        color.adjust($bg, $alpha: -0.4)
+    );
+
+    .system-status {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1pt solid color.adjust($fg, $alpha: -0.9);
+
+        .status-header {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 0.8rem;
+            color: $fg;
+        }
+
+        .status-item {
+            padding: 0.3rem 0;
+            
+            icon {
+                margin-right: 0.8rem;
+            }
+
+            label {
+                font-size: 0.9em;
+                color: color.adjust($fg, $alpha: -0.2);
+            }
+        }
+    }
+
+    .system-menu-row {
+        margin: 0.4rem 0;
+    }
+
+    .system-menu-button {
+        all: unset;
+        min-width: 24px;
+        min-height: 24px;
+        border-radius: $radius;
+        background-color: color.adjust($bg, $lightness: 5%);
+        border: 1pt solid color.adjust($fg, $alpha: -0.8);
+        padding: 1rem;
+        margin: 0.4rem;
+
+        &:hover {
+            background-color: color.adjust($bg, $lightness: 10%);
+            border-color: color.adjust($fg, $alpha: -0.6);
+        }
+
+        &:active {
+            background-color: color.adjust($bg, $lightness: 15%);
+        }
+
+        icon {
+            color: $fg;
+        }
+
+        label {
+            font-size: 0.85em;
+            font-weight: 500;
+            color: $fg;
+        }
+
+        &.power-button {
+            background-color: color.adjust(red, $alpha: -0.8);
+            border-color: color.adjust(red, $alpha: -0.6);
+
+            &:hover {
+                background-color: color.adjust(red, $alpha: -0.7);
+            }
+
+            icon {
+                color: red;
+            }
+        }
+
+        &.session-button {
+            background-color: color.adjust(orange, $alpha: -0.8);
+            border-color: color.adjust(orange, $alpha: -0.6);
+
+            &:hover {
+                background-color: color.adjust(orange, $alpha: -0.7);
+            }
+
+            icon {
+                color: orange;
+            }
+        }
+
+        &.settings-button {
+            background-color: color.adjust($secondary, $alpha: -0.8);
+            border-color: color.adjust($secondary, $alpha: -0.6);
+
+            &:hover {
+                background-color: color.adjust($secondary, $alpha: -0.7);
+            }
+
+            icon {
+                color: $secondary;
+            }
+        }
+
+        &.app-button {
+            background-color: color.adjust($bg, $alpha: -0.8);
+            border-color: color.adjust($bg, $alpha: -0.6);
+
+            &:hover {
+                background-color: color.adjust($bg, $alpha: -0.7);
+            }
+
+            icon {
+                color: $fg;
+            }
+        }
+
+        &.toggle-active {
+            background-color: color.adjust(green, $alpha: -0.8);
+            border-color: color.adjust(green, $alpha: -0.6);
+
+            &:hover {
+                background-color: color.adjust(green, $alpha: -0.7);
+            }
+
+            icon {
+                color: green;
+            }
+        }
+
+        &.toggle-inactive {
+            background-color: color.adjust($fg, $alpha: -0.9);
+            border-color: color.adjust($fg, $alpha: -0.8);
+
+            &:hover {
+                background-color: color.adjust($fg, $alpha: -0.8);
+            }
+
+            icon {
+                color: color.adjust($fg, $alpha: -0.4);
+            }
+        }
+    }
+}
