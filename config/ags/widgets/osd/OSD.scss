@@ -1,13 +1,13 @@
-$fg-color: #{"@theme_fg_color"};
-$bg-color: #{"@theme_bg_color"};
+@use "sass:color";
+@use "../../variables" as *;
 
 window.OSD {
     box.OSD {
         border-radius: 100px;
-        background-color: $bg-color;
+        background-color: $bg;
         padding: 13px 16px;
         margin: 13px;
-        box-shadow: 3px 3px 7px 0 rgba(0,0,0,.4);
+        box-shadow: 3px 3px 7px 0 rgba(0, 0, 0, 0.4);
     }
 
     icon {
@@ -20,7 +20,7 @@ window.OSD {
 
     levelbar {
         trough {
-            margin: 1 .6rem;
+            margin: 1px 0.6rem;
         }
 
         block {

@@ -1,0 +1,387 @@
+@use "sass:color";
+@use "../../variables" as *;
+
+window.SettingsPanel {
+    all: unset;
+}
+
+.settings-panel-backdrop {
+    background-color: color.adjust(black, $alpha: -0.3);
+    padding: 0.25rem;
+    border-radius: $radius;
+}
+
+.settings-panel-container {
+    background-color: $bg;
+    border-radius: $radius;
+    border: 1pt solid color.adjust($fg, $alpha: -0.9);
+    min-width: 800px;
+    min-height: 600px;
+    // max-width: 1000px;
+    // max-height: 700px;
+}
+
+.settings-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1pt solid color.adjust($fg, $alpha: -0.9);
+    
+    .settings-title {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: $fg;
+    }
+    
+    .close-button {
+        all: unset;
+        min-width: 32px;
+        min-height: 32px;
+        border-radius: $radius;
+        background-color: color.adjust($bg, $lightness: 5%);
+        border: 1pt solid color.adjust($fg, $alpha: -0.8);
+        
+        &:hover {
+            background-color: color.adjust(red, $alpha: -0.8);
+            border-color: red;
+        }
+        
+        icon {
+            color: $fg;
+        }
+    }
+}
+
+.settings-main {
+    min-height: 500px;
+}
+
+// Sidebar styles
+.settings-sidebar {
+    min-width: 200px;
+    // max-width: 250px;
+    background-color: color.adjust($bg, $lightness: 2%);
+    border-right: 1pt solid color.adjust($fg, $alpha: -0.9);
+    padding: 1rem 0;
+    
+    .sidebar-title {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: $fg;
+        padding: 0 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .sidebar-categories {
+        // Categories container
+    }
+    
+    .sidebar-category {
+        all: unset;
+        padding: 0.8rem 1rem;
+        margin: 0.2rem 0.5rem;
+        border-radius: $radius;
+        background-color: transparent;
+        border: 1pt solid transparent;
+        
+        &:hover {
+            background-color: color.adjust($bg, $lightness: 5%);
+            border-color: color.adjust($fg, $alpha: -0.8);
+        }
+        
+        &.active {
+            background-color: color.adjust($accent, $alpha: -0.8);
+            border-color: $accent;
+            
+            icon, label {
+                color: $accent;
+            }
+        }
+        
+        box {
+            icon {
+                margin-right: 0.8rem;
+                color: $fg;
+            }
+            
+            label {
+                font-size: 0.9em;
+                color: $fg;
+            }
+        }
+    }
+}
+
+// Content area styles
+.settings-content {
+    padding: 1rem 1.5rem;
+    
+    .content-header {
+        margin-bottom: 1.5rem;
+        
+        .content-title {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: $fg;
+        }
+    }
+    
+    .content-scrollable {
+        .content-body {
+            padding: 0.5rem;
+        }
+    }
+}
+
+// Category content styles
+.settings-category {
+    padding-bottom: 1rem;
+}
+
+.setting-group {
+    margin-bottom: 2rem;
+    
+    .group-title {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: $fg;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1pt solid color.adjust($fg, $alpha: -0.9);
+    }
+}
+
+.setting-item {
+    padding: 0.8rem 0;
+    margin: 0.5rem 0;
+    border-radius: $radius;
+    
+    &:hover {
+        background-color: color.adjust($bg, $lightness: 2%);
+    }
+    
+    label {
+        color: $fg;
+        font-size: 0.95em;
+        
+        &.setting-description {
+            font-size: 0.85em;
+            color: color.adjust($fg, $alpha: -0.3);
+            margin-top: 0.2rem;
+        }
+    }
+    
+    .setting-control {
+        min-width: 150px;
+        
+        slider {
+            margin-right: 0.8rem;
+            
+            trough {
+                background-color: color.adjust($fg, $alpha: -0.8);
+                border-radius: $radius;
+                min-height: 6px;
+            }
+            
+            highlight {
+                background-color: $accent;
+                border-radius: $radius;
+            }
+            
+            slider {
+                background-color: $fg;
+                border-radius: $radius;
+                min-height: 16px;
+                min-width: 16px;
+                margin: -5px;
+            }
+        }
+        
+        switch {
+            background-color: color.adjust($fg, $alpha: -0.8);
+            border-radius: 12px;
+            min-width: 24px;
+            min-height: 24px;
+            
+            &:checked {
+                background-color: $accent;
+            }
+            
+            slider {
+                background-color: $fg;
+                border-radius: 12px;
+                min-width: 12px;
+                min-height: 20px;
+                margin: 2px;
+            }
+        }
+    }
+}
+
+// Button styles
+.dropdown-button {
+    all: unset;
+    padding: 0.5rem 1rem;
+    border-radius: $radius;
+    background-color: color.adjust($bg, $lightness: 5%);
+    border: 1pt solid color.adjust($fg, $alpha: -0.8);
+    min-width: 120px;
+    
+    &:hover {
+        background-color: color.adjust($bg, $lightness: 8%);
+        border-color: color.adjust($fg, $alpha: -0.6);
+    }
+    
+    label {
+        color: $fg;
+        font-size: 0.9em;
+    }
+}
+
+.action-button {
+    all: unset;
+    padding: 0.6rem 1.2rem;
+    border-radius: $radius;
+    background-color: color.adjust($accent, $alpha: -0.8);
+    border: 1pt solid $accent;
+    
+    &:hover {
+        background-color: color.adjust($accent, $alpha: -0.7);
+    }
+    
+    label {
+        color: $accent;
+        font-weight: 500;
+    }
+}
+
+// Theme-specific components
+.theme-options {
+    margin-top: 0.8rem;
+    
+    .theme-option {
+        all: unset;
+        padding: 0.8rem;
+        margin: 0.4rem 0.4rem 0.4rem 0;
+        border-radius: $radius;
+        background-color: color.adjust($bg, $lightness: 5%);
+        border: 2pt solid transparent;
+        
+        &:hover {
+            border-color: color.adjust($fg, $alpha: -0.8);
+        }
+        
+        &.active {
+            border-color: $accent;
+        }
+        
+        box {
+            .theme-preview {
+                min-width: 60px;
+                min-height: 40px;
+                border-radius: $radius;
+                margin-bottom: 0.5rem;
+                border: 1pt solid color.adjust($fg, $alpha: -0.8);
+            }
+            
+            label {
+                font-size: 0.85em;
+                color: $fg;
+            }
+        }
+    }
+}
+
+.color-options {
+    margin-top: 0.8rem;
+    
+    .color-option {
+        all: unset;
+        padding: 0.3rem;
+        margin: 0.3rem 0.3rem 0.3rem 0;
+        border-radius: $radius;
+        border: 2pt solid transparent;
+        
+        &:hover {
+            border-color: color.adjust($fg, $alpha: -0.6);
+        }
+        
+        &.active {
+            border-color: $fg;
+        }
+        
+        .color-preview {
+            min-width: 32px;
+            min-height: 32px;
+            border-radius: $radius;
+            border: 1pt solid color.adjust($fg, $alpha: -0.8);
+        }
+    }
+}
+
+// Device list styles
+.device-list {
+    margin-top: 1rem;
+    
+    .device-item {
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: $radius;
+        background-color: color.adjust($bg, $lightness: 3%);
+        border: 1pt solid color.adjust($fg, $alpha: -0.9);
+        
+        icon {
+            margin-right: 1rem;
+            color: $fg;
+        }
+        
+        .device-name {
+            font-weight: 500;
+            color: $fg;
+            margin-bottom: 0.2rem;
+        }
+        
+        .device-status {
+            font-size: 0.85em;
+            color: color.adjust($fg, $alpha: -0.3);
+        }
+        
+        .device-controls {
+            .device-button {
+                all: unset;
+                padding: 0.4rem 0.8rem;
+                border-radius: $radius;
+                font-size: 0.85em;
+                font-weight: 500;
+                
+                &.connect {
+                    background-color: color.adjust(green, $alpha: -0.8);
+                    border: 1pt solid green;
+                    color: green;
+                    
+                    &:hover {
+                        background-color: color.adjust(green, $alpha: -0.7);
+                    }
+                }
+                
+                &.disconnect {
+                    background-color: color.adjust(orange, $alpha: -0.8);
+                    border: 1pt solid orange;
+                    color: orange;
+                    
+                    &:hover {
+                        background-color: color.adjust(orange, $alpha: -0.7);
+                    }
+                }
+                
+                &.pair {
+                    background-color: color.adjust($accent, $alpha: -0.8);
+                    border: 1pt solid $accent;
+                    color: $accent;
+                    
+                    &:hover {
+                        background-color: color.adjust($accent, $alpha: -0.7);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -182,12 +182,28 @@ function SystemMenuButton(props: {
     </box>
 }
 
+function SettingsButton(props: {
+    displaySettingsPanel?: Variable<boolean>
+}) {
+    const { displaySettingsPanel } = props
+
+    return <box className="SettingsButton">
+        {[<button
+            onClicked={() => displaySettingsPanel?.set(!displaySettingsPanel.get())}
+            tooltipText="Settings"
+        >
+            <icon icon="preferences-system-symbolic" />
+        </button>]}
+    </box>
+}
+
 export default function Bar(monitor: Gdk.Monitor, variables?: {
     displayMediaPlayer?: Variable<boolean>,
-    displaySystemMenu?: Variable<boolean>
+    displaySystemMenu?: Variable<boolean>,
+    displaySettingsPanel?: Variable<boolean>
 }) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
-    const { displayMediaPlayer, displaySystemMenu } = variables ?? {}
+    const { displayMediaPlayer, displaySystemMenu, displaySettingsPanel } = variables ?? {}
 
     return <window
         className="Bar"
@@ -212,6 +228,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                 <BatteryLevel />
                 <Time />
                 <SystemMenuButton displaySystemMenu={displaySystemMenu} />
+                <SettingsButton displaySettingsPanel={displaySettingsPanel} />
             </box>
         </centerbox>
     </window>

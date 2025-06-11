@@ -152,12 +152,17 @@ function SystemStatus() {
         <box className="system-status" vertical>
             <label className="status-header" label="System Status" />
             <box className="status-items" vertical>
-                {battery.isPresent && (
+                {battery.isPresent ? (
                     <box className="status-item">
                         <icon icon={bind(battery, "batteryIconName")} />
                         <label label={bind(battery, "percentage").as(p => 
                             `Battery: ${Math.floor(p * 100)}%`
                         )} />
+                    </box> 
+                ) : (
+                    <box className="status-item">
+                        <icon icon="battery-empty-symbolic" />
+                        <label label="Battery: Not Present" />
                     </box>
                 )}
                 
@@ -170,12 +175,17 @@ function SystemStatus() {
                     } />
                 </box>
 
-                {speaker && (
+                {speaker ? (
                     <box className="status-item">
                         <icon icon={bind(speaker, "volumeIcon")} />
                         <label label={bind(speaker, "volume").as(v => 
                             `Volume: ${Math.floor(v * 100)}%`
                         )} />
+                    </box>
+                ) : (
+                    <box className="status-item">
+                        <icon icon="audio-volume-muted-symbolic" />
+                        <label label="Audio: Not Available" />
                     </box>
                 )}
             </box>

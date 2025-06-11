@@ -7,15 +7,53 @@ import OSD from "./widgets/osd/OSD";
 import Bar from "./widgets/simple-bar/Bar";
 import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
+import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import { Variable } from "astal";
 
 const displayMediaPlayer = new Variable(false);
-const displaySystemMenu = new Variable(true);
+const displaySystemMenu = new Variable(false);
+const displaySettingsPanel = new Variable(true);
+
+const toggleBoolVar = (variable: Variable<boolean>, state: "toggle" | "show" | "hide") => {
+    switch (state) {
+        case "toggle":
+            variable.set(!variable.get());
+            break;
+        case "show":
+            variable.set(true);
+            break;
+        case "hide":
+            variable.set(false);
+            break;
+        default:
+            console.warn(`Unknown state: ${state}`);
+            break;
+    }
+}
 
 App.start({
     css: style,
     requestHandler(request, res) {
-        print(request)
+        const args = request.split(" ").map(arg => arg.trim()).filter(arg => arg.length > 0);
+        const cmd = args.shift();
+        switch (cmd) {
+            case "settings":
+                toggleBoolVar(displaySettingsPanel, args[0] as any);
+                break;
+        
+            case "media":
+                toggleBoolVar(displayMediaPlayer, args[0] as any);
+                break;
+
+            case "system":
+                toggleBoolVar(displaySystemMenu, args[0] as any);
+                break;
+                
+            default:
+                break;
+        }
+
+        
         res("ok")
     },
     main() {
@@ -36,6 +74,10 @@ App.start({
             },
             SystemMenu(displaySystemMenu)
         );
+        
+        // Settings Panel - centered overlay
+        SettingsPanel(displaySettingsPanel);
+        
         App.get_monitors().forEach(monitor => {
             // try {
             //     OSD(monitor);
@@ -44,7 +86,8 @@ App.start({
             // }
             Bar(monitor, {
                 displayMediaPlayer,
-                displaySystemMenu
+                displaySystemMenu,
+                displaySettingsPanel
             });
             NotificationPopups(monitor);
         });

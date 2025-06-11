@@ -157,3 +157,33 @@ box.SystemMenu {
         }
     }
 }
+
+
+scrollable.dropdown-menu {
+    min-width: 200px;
+    min-height: 300px;
+    padding: 0.5rem;
+    border-radius: $radius;
+    background-color: color.adjust($bg, $lightness: 5%);
+    border: 1pt solid color.adjust($fg, $alpha: -0.9);
+
+    // .menu-item {
+    //     padding: 0.5rem;
+    //     border-radius: $radius;
+    //     margin-bottom: 0.2rem;
+
+    //     &:hover {
+    //         background-color: color.adjust($bg, $lightness: 10%);
+    //     }
+
+    //     &.active {
+    //         background-color: color.adjust($secondary, $alpha: -0.6);
+    //         color: $fg;
+    //     }
+
+    //     label {
+    //         font-size: 0.9em;
+    //         color: $fg;
+    //     }
+    // }
+}
