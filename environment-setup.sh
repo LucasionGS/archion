@@ -23,6 +23,7 @@ if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
 # Copy configuration files
 cp -r ./config/archion    $CONFIG_DIR/.
 cp -r ./config/hypr       $CONFIG_DIR/.
+cp -r ./config/hyprshell  $CONFIG_DIR/.
 cp -r ./config/ags        $CONFIG_DIR/.
 cp -r ./config/kitty      $CONFIG_DIR/.
 cp -r ./config/waybar     $CONFIG_DIR/.
