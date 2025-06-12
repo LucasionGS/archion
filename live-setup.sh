@@ -9,6 +9,17 @@ source ./utils.sh || { echo "utils.sh not found. Run from the script directory."
 
 need() { command -v "$1" >/dev/null || error "$1 not found."; }
 
+# Function to get proper partition name based on disk type
+get_partition() {
+  local disk="$1"
+  local part_num="$2"
+  if [[ $disk =~ [0-9]$ ]]; then
+    echo "${disk}p${part_num}"
+  else
+    echo "${disk}${part_num}"
+  fi
+}
+
 # ---- pre-flight checks ----
 [[ $EUID -eq 0 ]] || error "Run as root from the live ISO."
 need pacstrap
@@ -95,8 +106,8 @@ if [[ $DUAL_BOOT == false ]]; then
   sgdisk -n2:0:0     -t2:8300 -c2:"Arch Linux root" "$DISK"
   partprobe "$DISK"
 
-  EFI_PART="${DISK}1"
-  ROOT_PART="${DISK}2"
+  EFI_PART=$(get_partition "$DISK" 1)
+  ROOT_PART=$(get_partition "$DISK" 2)
 else
   echo "Setting up dual boot partitions ..."
   
@@ -106,7 +117,7 @@ else
     PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
     PART_NUM=$((PART_NUM + 1))
     sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:"EFI System Partition" "$DISK"
-    EFI_PART="${DISK}${PART_NUM}"
+    EFI_PART=$(get_partition "$DISK" "$PART_NUM")
   fi
   
   if [[ $CREATE_ROOT == true ]]; then
@@ -114,7 +125,7 @@ else
     PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
     PART_NUM=$((PART_NUM + 1))
     sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:"Arch Linux root" "$DISK"
-    ROOT_PART="${DISK}${PART_NUM}"
+    ROOT_PART=$(get_partition "$DISK" "$PART_NUM")
   fi
   
   partprobe "$DISK"
