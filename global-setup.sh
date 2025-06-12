@@ -37,6 +37,9 @@ rustup default stable
 pacman --noconfirm -S \
   ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
 
-# Install hyprshell globally
-# https://github.com/H3rmt/hyprswitch
-sudo cargo install hyprshell
+# Audio compatibility
+pacman --noconfirm -S \
+  sof-firmware \
+  alsa-firmware \
+  alsa-utils \
+  pipewire-pulse

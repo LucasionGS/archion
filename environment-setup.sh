@@ -148,6 +148,10 @@ else
   yay -S --noconfirm google-chrome
 fi
 
+# Install hyprshell
+# https://github.com/H3rmt/hyprswitch
+cargo install hyprshell
+
 # Finished
 echo "--------------------- Installation complete! ---------------------"
 echo "Installation complete! Please reboot your system to apply changes."
