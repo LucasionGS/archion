@@ -128,9 +128,6 @@ yay -S --noconfirm \
   libastal-meta \
   aylurs-gtk-shell
 
-# https://github.com/H3rmt/hyprswitch
-cargo install hyprshell
-
 # Install FSSH (Fish SSH Connection Manager) from local
 cp -r $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
 # Install FSSH
@@ -142,6 +139,13 @@ if [[ command -v beekeeper-studio &> /dev/null ]]; then
 else
   echo "Installing Beekeeper Studio..."
   sudo snap install beekeeper-studio
+fi
+
+if [[ command -v google-chrome-stable &> /dev/null ]]; then
+  echo "Google Chrome is already installed."
+else
+  echo "Installing Google Chrome..."
+  yay -S --noconfirm google-chrome
 fi
 
 # Finished

@@ -13,7 +13,7 @@ pacman --noconfirm -Syu \
   wget less yazi jq fd 7zip fzf \
   nautilus nautilus-image-converter nautilus-share zenity \
   htop \
-  neovim code \
+  neovim \
   fish fisher \
   cmake meson cpio pkg-config gcc \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
@@ -36,3 +36,7 @@ rustup default stable
 # Fonts
 pacman --noconfirm -S \
   ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
+
+# Install hyprshell globally
+# https://github.com/H3rmt/hyprswitch
+sudo cargo install hyprshell
