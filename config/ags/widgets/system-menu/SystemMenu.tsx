@@ -24,7 +24,8 @@ function SystemMenuButton({ icon, label, action, className = "" }: SystemMenuAct
     )
 }
 
-function SystemMenuGrid() {
+function SystemMenuGrid(props: { systemVisible: Variable<boolean> }) {
+    const { systemVisible } = props
     const battery = Battery.get_default()
     const network = Network.get_default()
     const speaker = Wp.get_default()?.audio.defaultSpeaker
@@ -69,7 +70,7 @@ function SystemMenuGrid() {
             {
                 icon: "preferences-system-symbolic",
                 label: "Settings",
-                action: () => execAsync("gnome-control-center"),
+                action: () => execAsync("astal settings show"),
                 className: "settings-button"
             }
         ],
@@ -133,7 +134,11 @@ function SystemMenuGrid() {
                         <SystemMenuButton
                             icon={action.icon}
                             label={action.label}
-                            action={action.action}
+                            action={() => {
+                                action.action();
+                                // Hide the menu after action
+                                systemVisible.set(false);
+                            }}
                             className={action.className}
                         />
                     ))}
@@ -197,7 +202,7 @@ export default function SystemMenu(show: Variable<boolean>) {
     return (
         <box visible={show()} className="SystemMenu" vertical>
             <SystemStatus />
-            <SystemMenuGrid />
+            <SystemMenuGrid systemVisible={show} />
         </box>
     );
 }

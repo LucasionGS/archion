@@ -227,8 +227,8 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                 <Wifi />
                 <BatteryLevel />
                 <Time />
-                <SystemMenuButton displaySystemMenu={displaySystemMenu} />
                 <SettingsButton displaySettingsPanel={displaySettingsPanel} />
+                <SystemMenuButton displaySystemMenu={displaySystemMenu} />
             </box>
         </centerbox>
     </window>

@@ -156,18 +156,18 @@ window.Bar {
         }
 
         trough {
-            background-color: color.adjust($fg, $alpha: -0.8);
+            background-color: color.adjust($secondary, $alpha: -0.8);
             border-radius: $radius;
         }
 
         highlight {
-            background-color: $accent;
+            background-color: $secondary;
             min-height: .8em;
             border-radius: $radius;
         }
 
         slider {
-            background-color: $fg;
+            background-color: $secondary;
             border-radius: $radius;
             min-height: 1em;
             min-width: 1em;
