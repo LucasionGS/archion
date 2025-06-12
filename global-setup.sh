@@ -19,7 +19,7 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird flameshot clipse
+  thunderbird flameshot clipse gparted
 
 
 # Upload custom configs
