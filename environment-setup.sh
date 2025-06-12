@@ -6,9 +6,10 @@ if [[ $EUID == 0 ]]; then
 fi
 
 USER=$(whoami)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 # --–– utility helpers -----
-source ./utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
+source $SCRIPT_DIR/utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
 
 # Inform the user that it is possible they have to type in their password if they don't use passwordless sudo
 echo "You may be prompted for your password during the installation process if you do not have passwordless sudo configured."
@@ -21,17 +22,17 @@ if [[ ! -d $CONFIG_DIR ]]; then mkdir -p $CONFIG_DIR; fi
 if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
 
 # Copy configuration files
-cp -r ./config/archion    $CONFIG_DIR/.
-cp -r ./config/hypr       $CONFIG_DIR/.
-cp -r ./config/hyprshell  $CONFIG_DIR/.
-cp -r ./config/ags        $CONFIG_DIR/.
-cp -r ./config/kitty      $CONFIG_DIR/.
-cp -r ./config/waybar     $CONFIG_DIR/.
-cp -r ./config/anyrun     $CONFIG_DIR/.
-cp -r ./config/rofi       $CONFIG_DIR/.
-cp -r ./config/wleave     $CONFIG_DIR/.
-cp -r ./config/fish       $CONFIG_DIR/.
-cp -r ./config/gtk-3.0    $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
+cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
@@ -44,6 +45,9 @@ if [[ ! -d /tmp/yay ]]; then
   # Clean up yay directory
   rm -rf /tmp/yay
 fi
+
+# Update the system packages
+yay -Syu --noconfirm
 
 # Install Rust toolchain for compiling
 rustup default stable
@@ -68,12 +72,15 @@ if [[ ! -d $CONFIG_DIR/neofetch ]]; then
   mkdir -p $CONFIG_DIR/neofetch
 fi
 
+# Run once
+neofetch
+
 ## If the config already contains ### ARCHION CONFIG ###, we will not overwrite it
 if grep -q "### ARCHION CONFIG ###" "$CONFIG_DIR/neofetch/config.conf"; then
   echo "Neofetch configuration already contains Archion settings. Skipping update."
 else
   echo "" >> $CONFIG_DIR/neofetch/config.conf # Ensure there's a newline at the end of the file
-  cat ./config/neofetch/partial-config.conf >> $CONFIG_DIR/neofetch/config.conf
+  cat $SCRIPT_DIR/config/neofetch/partial-config.conf >> $CONFIG_DIR/neofetch/config.conf
   echo "Neofetch configuration updated with Archion settings."
 fi
 
@@ -125,7 +132,7 @@ yay -S --noconfirm \
 cargo install hyprshell
 
 # Install FSSH (Fish SSH Connection Manager) from local
-cp -r ./apps/fssh $APP_DIR/fssh
+cp -r $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
 # Install FSSH
 fish $APP_DIR/fish/install.fish
 
