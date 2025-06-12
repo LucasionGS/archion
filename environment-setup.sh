@@ -48,7 +48,7 @@ fi
 # Install Rust toolchain for compiling
 rustup default stable
 
-# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap, neofetch, and rofi
+# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap, neofetch, rofi, cava, and clipse
 yay -S --noconfirm \
   anyrun-git \
   swww \
@@ -56,7 +56,8 @@ yay -S --noconfirm \
   snapd \
   neofetch \
   rofi \
-  libcava
+  libcava \
+  clipse
 
 # Enable snapd service
 sudo systemctl enable --now snapd.socket

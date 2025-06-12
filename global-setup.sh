@@ -19,8 +19,7 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird flameshot clipse gparted
-
+  thunderbird flameshot gparted
 
 # Upload custom configs
 mkdir -p /etc/greetd
