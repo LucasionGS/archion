@@ -42,7 +42,7 @@ confirm "Proceed with installation?" || exit 0
 # --–– install functions -----
 install_nvidia() {
   header "Installing NVIDIA proprietary driver stack"
-  pacman -S --needed --noconfirm nvidia nvidia-utils nvidia-settings lib32-nvidia-utils
+  pacman -S --needed --noconfirm nvidia nvidia-utils nvidia-settings
   if confirm "System uses linux‑lts kernel as well?"; then pacman -S --needed --noconfirm nvidia-lts; fi
   if confirm "Enable DRM modeset for tear‑free consoles?"; then
     sed -i '/^GRUB_CMDLINE_LINUX=/ s/"$/ nvidia-drm.modeset=1"/' /etc/default/grub
