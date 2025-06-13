@@ -146,9 +146,17 @@ yay -S --noconfirm \
   aylurs-gtk-shell
 
 # Install FSSH (Fish SSH Connection Manager) from local
-cp -r $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
+if [[ $ARCHION_DEV == "true" ]]; then
+  echo "Running in development mode. Linking FSSH application directory..."
+  ln -sf $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
+else
+  if [[ ! -d $APP_DIR/fssh ]]; then
+    mkdir -p $APP_DIR/fssh
+  fi
+fi
+
 # Install FSSH
-fish $APP_DIR/fish/install.fish
+# fish $APP_DIR/fish/install.fish
 
 # Install beekeeper
 if [[ command -v beekeeper-studio &> /dev/null ]]; then
@@ -168,6 +176,9 @@ fi
 # Install hyprshell
 # https://github.com/H3rmt/hyprswitch
 cargo install hyprshell
+
+# For a sexy settings panel (should customize it???)
+yay -S --noconfirm better-control-git
 
 # Finished
 echo "--------------------- Installation complete! ---------------------"

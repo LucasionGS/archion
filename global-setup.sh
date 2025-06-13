@@ -22,15 +22,8 @@ pacman --noconfirm -Syu \
   thunderbird flameshot gparted cava
 
 # Upload custom configs
-if [[ $ARCHION_DEV == "true" ]]; then
-  # Link instead
-  echo "Running in development mode. Linking configuration files instead of copying them..."
-  sleep 2
-  ln -sf ./etc/greetd /etc/.
-else
-  mkdir -p /etc/greetd
-  cp -r ./etc/greetd/* /etc/greetd/
-fi
+mkdir -p /etc/greetd
+cp -r ./etc/greetd/* /etc/greetd/
 
 
 # Finalize greetd
