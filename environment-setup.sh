@@ -21,18 +21,35 @@ APP_DIR="$HOME/.apps"
 if [[ ! -d $CONFIG_DIR ]]; then mkdir -p $CONFIG_DIR; fi
 if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
 
-# Copy configuration files
-cp -r $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
-cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
+if [[ $ARCHION_DEV == "true" ]]; then
+  echo "Running in development mode. Linking configuration files instead of copying them..."
+  sleep 2
+  # Link configuration files for development mode
+  ln -sf $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
+  ln -sf $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
+else
+  # Copy configuration files
+  cp -r $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
+  cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
+fi
 
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
@@ -68,7 +85,7 @@ sudo systemctl enable --now snapd.socket
 
 # Apply partial config to neofetch
 CONFIG_DIR="$HOME/.config"
-if [[ ! -d $CONFIG_DIR/neofetch ]]; then
+if [[ ! -d $CONFIG_DIR/neof1h ]]; then
   mkdir -p $CONFIG_DIR/neofetch
 fi
 

@@ -19,11 +19,18 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird flameshot gparted
+  thunderbird flameshot gparted cava
 
 # Upload custom configs
-mkdir -p /etc/greetd
-cp -r ./etc/greetd/* /etc/greetd/
+if [[ $ARCHION_DEV == "true" ]]; then
+  # Link instead
+  echo "Running in development mode. Linking configuration files instead of copying them..."
+  sleep 2
+  ln -sf ./etc/greetd /etc/.
+else
+  mkdir -p /etc/greetd
+  cp -r ./etc/greetd/* /etc/greetd/
+fi
 
 
 # Finalize greetd
