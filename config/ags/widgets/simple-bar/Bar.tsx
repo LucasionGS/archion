@@ -8,6 +8,7 @@ import Wp from "gi://AstalWp"
 import Network from "gi://AstalNetwork"
 import Tray from "gi://AstalTray"
 import Cava from "gi://AstalCava"
+import Pango from "gi://Pango"
 
 
 function SysTray() {
@@ -19,17 +20,18 @@ function SysTray() {
                 tooltipMarkup={bind(item, "tooltipMarkup")}
                 usePopover={false}
                 actionGroup={bind(item, "actionGroup").as(ag => ["dbusmenu", ag])}
-                menuModel={bind(item, "menuModel")}>
-                <icon gicon={bind(item, "gicon")} />
-            </menubutton>
+                menuModel={bind(item, "menuModel")}
+                child={<icon gicon={bind(item, "gicon")} />}
+            />
         )))}
     </box>
 }
 
 function Wifi() {
-    const network = Network.get_default()
-    const wifi = bind(network, "wifi")
-    const ethernet = bind(network, "wired")
+    const network = Network.get_default();
+    const wifi = bind(network, "wifi");
+    const ethernet = bind(network, "wired");
+    const ethernetState = bind(network.wired, "state");
 
     return (
         <box>
@@ -42,13 +44,12 @@ function Wifi() {
                     />
                 ]))}
             </box>
-            <box visible={ethernet.as(Boolean)}>
+            <box visible={ethernetState.as(a => a === Network.DeviceState.ACTIVATED)}>
                 {ethernet.as(eth => eth && ([
                     <icon
                         tooltipText={bind(eth, "iconName").as(String)}
                         className="Ethernet"
                         icon={bind(eth, "iconName").as(String)}
-                        // icon="network-wired-symbolic"
                     />
                 ]))}
             </box>
@@ -86,7 +87,8 @@ function Media(props: {
 }) {
     const { displayMediaPlayer } = props
     const mpris = Mpris.get_default()
-    // const cava = Cava.get_default()!
+    const cava = Cava.get_default()!
+    const cavaValues = bind(cava, "values");
 
     // cava.connect("notify::values", () => {
     //     print(cava.values)
@@ -109,13 +111,19 @@ function Media(props: {
                     )}
                 />
                 {/* Visualizer? */}
-                {/* <box
-                    className="Cover"
-                    valign={Gtk.Align.CENTER}
-                    css={bind(ps[0], "coverArt").as(cover =>
-                        `background-image: url('${cover}');`
-                    )}
-                /> */}
+                <box className="Visualizer">
+                    {/* @ts-ignore */}
+                    {bind(cava, "bars").as(bars => (
+                        <box className="Cava">
+                            {new Array(bars).map((_, i) => (
+                                <box
+                                    className="Cava-Bar"
+                                    css={cavaValues.as(values => `min-height: ${+(values[i].toFixed(2)) * 100}%; min-width: 3px;`)}
+                                />
+                            ))}
+                        </box>
+                    ))}
+                </box>
             </box>
         ) : (
             <label label="Archion" />
@@ -151,6 +159,7 @@ function FocusedClient() {
         visible={focused.as(Boolean)}>
         {focused.as(client => (
             client && <label label={bind(client, "title").as(String)} />
+            // client && <label label={bind(client, "title").as(String)} ellipsize={Pango.EllipsizeMode.END} />
         ))}
     </box>
 }
@@ -176,9 +185,8 @@ function SystemMenuButton(props: {
         {[<button
             onClicked={() => displaySystemMenu?.set(!displaySystemMenu?.get())}
             tooltipText="System"
-        >
-            <icon icon="system-log-out" />
-        </button>]}
+            child={<icon icon="system-log-out" />}
+        />]}
     </box>
 }
 

@@ -14,4 +14,4 @@ if status is-interactive
     set fish_greeting
 end
 # FSSH - Fish SSH Connection Manager
-source ./apps/fssh/fssh.fish
+source ~/.apps/fssh/fssh.fish

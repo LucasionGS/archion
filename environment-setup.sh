@@ -180,6 +180,9 @@ cargo install hyprshell
 # For a sexy settings panel (should customize it???)
 yay -S --noconfirm better-control-git
 
+# Install Hyprshot for screenshots
+yay -S --noconfirm hyprshot-git
+
 # Finished
 echo "--------------------- Installation complete! ---------------------"
 echo "Installation complete! Please reboot your system to apply changes."
