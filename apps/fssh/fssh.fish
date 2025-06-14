@@ -545,4 +545,4 @@ complete -c fssh -n '__fish_use_subcommand' -a 'c a ls e rm s cp k kl t find x i
 # Connection name completion for relevant commands
 complete -c fssh -n '__fish_seen_subcommand_from connect c edit e remove rm delete del show s test t' -a '(jq -r "keys[]" ~/.config/fssh/connections.json 2>/dev/null)'
 
-echo "FSSH loaded! Type 'fssh help' for usage information."
+# echo "FSSH loaded! Type 'fssh help' for usage information."
