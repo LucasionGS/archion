@@ -8,11 +8,13 @@ import Bar from "./widgets/simple-bar/Bar";
 import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
+import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
 import { Variable } from "astal";
 
 const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
 const displaySettingsPanel = new Variable(false);
+const displayWindowManager = new Variable(false);
 
 const toggleBoolVar = (variable: Variable<boolean>, state: "toggle" | "show" | "hide") => {
     switch (state) {
@@ -48,13 +50,34 @@ App.start({
             case "system":
                 toggleBoolVar(displaySystemMenu, args[0] as any);
                 break;
+
+            case "window-manager":
+                if (args[0] == "toggle" || args[0] == "show" || args[0] == "hide") {
+                    toggleBoolVar(displayWindowManager, args[0] as any);
+                }
+
+                switch (args[0]) {
+                    case "next":
+                        WindowManagerController.navigateNext();
+                        break;
+                    case "previous":
+                        WindowManagerController.navigatePrev();
+                        break;
+                    case "select":
+                        WindowManagerController.selectCurrent();
+                        break;
+                    case "state":
+                        return res(displayWindowManager.get() ? "open" : "closed");
+                }
+                
+                break;
                 
             default:
                 break;
         }
 
         
-        res("ok")
+        return res("ok")
     },
     main() {
         const { TOP, LEFT, RIGHT, BOTTOM } = Astal.WindowAnchor;
@@ -77,6 +100,16 @@ App.start({
         
         // Settings Panel - centered overlay
         SettingsPanel(displaySettingsPanel);
+        
+        // Window Manager - centered overlay
+        new Widget.Window(
+            {
+                anchor: 0, // No anchor, will be centered
+                exclusivity: Astal.Exclusivity.IGNORE,
+                keymode: Astal.Keymode.ON_DEMAND
+            },
+            WindowManager(displayWindowManager)
+        );
         
         App.get_monitors().forEach(monitor => {
             // try {

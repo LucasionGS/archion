@@ -1,0 +1,250 @@
+@use "sass:color";
+@use "../../variables" as *;
+
+box.WindowManager {
+    background: color.adjust(black, $alpha: -0.25);
+    border-radius: $radius;
+    .window-manager-container {
+        padding: 2rem;
+        border-radius: $radius;
+        margin: 0.2rem;
+        border: 2pt solid color.adjust($accent, $alpha: -0.4);
+        min-width: 1200px;
+        min-height: 400px;
+        
+        background: radial-gradient(
+            circle at 30% 10%,
+            color.adjust($accent, $alpha: -0.7),
+            color.adjust($secondary, $alpha: -0.5),
+            color.adjust($bg, $alpha: -0.2)
+        );
+        
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .window-manager-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1pt solid color.adjust($fg, $alpha: -0.8);
+        
+        icon {
+            margin-right: 0.5rem;
+            color: $accent;
+        }
+        
+        .window-manager-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: $fg;
+            margin-bottom: 0.5rem;
+        }
+        
+        .window-manager-hint {
+            font-size: 0.9em;
+            color: color.adjust($fg, $alpha: -0.4);
+            font-style: italic;
+        }
+    }
+    
+    .window-manager-scroll {
+        border-radius: $radius;
+        
+        scrollbar {
+            all: initial;
+            
+            &.horizontal {
+                min-height: 8px;
+            }
+            
+            &.vertical {
+                min-width: 8px;
+            }
+            
+            trough {
+                all: initial;
+                background: color.adjust($bg, $alpha: -0.8);
+                border-radius: 4px;
+            }
+            
+            slider {
+                all: initial;
+                background: color.adjust($accent, $alpha: -0.4);
+                border-radius: 4px;
+                min-width: 8px;
+                min-height: 8px;
+                transition: all 150ms ease;
+                
+                &:hover {
+                    background: color.adjust($accent, $alpha: -0.2);
+                }
+            }
+        }
+    }
+    
+    .window-manager-workspaces {
+        padding: 1rem;
+    }
+    
+    .window-manager-workspace {
+        padding: 1.5rem;
+        border-radius: $radius;
+        border: 1pt solid color.adjust($fg, $alpha: -0.9);
+        background: color.adjust($bg, $alpha: -0.7);
+        transition: all 200ms ease;
+        
+        &:not(:last-child) {
+            margin-bottom: 1.5rem;
+        }
+        
+        &:hover {
+            border-color: color.adjust($secondary, $alpha: -0.6);
+            background: color.adjust($bg, $alpha: -0.5);
+        }
+        
+        .workspace-header {
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1pt solid color.adjust($fg, $alpha: -0.9);
+            
+            .workspace-icon {
+                margin-right: 0.8rem;
+                color: $secondary;
+            }
+            
+            .workspace-name {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: $accent;
+                margin-bottom: 0.3rem;
+            }
+            
+            .client-count {
+                font-size: 0.9em;
+                color: color.adjust($fg, $alpha: -0.3);
+            }
+        }
+    }
+    
+    .window-manager-client {
+        all: initial;
+        padding: 1.2rem;
+        border-radius: $radius;
+        border: 2pt solid transparent;
+        background: color.adjust($bg, $alpha: -0.9);
+        min-width: 160px;
+        min-height: 120px;
+        transition: all 200ms ease;
+        
+        &:hover {
+            background: color.adjust($secondary, $alpha: -0.9);
+            border-color: color.adjust($secondary, $alpha: -0.6);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        &.active {
+            border-color: $accent;
+            background: color.adjust($accent, $alpha: -0.85);
+            box-shadow: 0 0 20px color.adjust($accent, $alpha: -0.4);
+            
+            .client-title {
+                color: color.adjust($accent, $lightness: 25%);
+                font-weight: bold;
+            }
+            
+            .client-class {
+                color: color.adjust($accent, $lightness: 15%);
+            }
+            
+            icon {
+                opacity: 1.2;  // Use opacity instead of filter
+            }
+        }
+        
+        box {
+            icon {
+                margin-bottom: 0.8rem;
+                opacity: 0.9;
+                transition: all 200ms ease;
+            }
+            
+            .client-title {
+                color: $fg;
+                font-size: 1em;
+                font-weight: 600;
+                margin-bottom: 0.4rem;
+                transition: all 200ms ease;
+            }
+            
+            .client-class {
+                color: color.adjust($fg, $alpha: -0.5);
+                font-size: 0.8em;
+                font-style: italic;
+                transition: all 200ms ease;
+            }
+        }
+    }
+    
+    .window-manager-controls {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1pt solid color.adjust($fg, $alpha: -0.8);
+        
+        .window-manager-control-button {
+            all: initial;
+            padding: 0.8rem 1.5rem;
+            border-radius: $radius;
+            border: 1pt solid color.adjust($fg, $alpha: -0.8);
+            background: color.adjust($bg, $alpha: -0.8);
+            transition: all 150ms ease;
+            min-width: 80px;
+            
+            box {
+                icon {
+                    margin-right: 0.5rem;
+                    color: color.adjust($fg, $alpha: -0.2);
+                }
+                
+                label {
+                    color: $fg;
+                    font-weight: 500;
+                }
+            }
+            
+            &:hover {
+                background: color.adjust($secondary, $alpha: -0.8);
+                border-color: color.adjust($secondary, $alpha: -0.5);
+            }
+            
+            &.primary {
+                background: color.adjust($accent, $alpha: -0.8);
+                border-color: color.adjust($accent, $alpha: -0.5);
+                
+                box {
+                    icon, label {
+                        color: color.adjust($accent, $lightness: 20%);
+                    }
+                }
+                
+                &:hover {
+                    background: color.adjust($accent, $alpha: -0.6);
+                    border-color: $accent;
+                    box-shadow: 0 4px 16px color.adjust($accent, $alpha: -0.6);
+                }
+            }
+        }
+    }
+}
+
+// Animation keyframes
+@keyframes window-manager-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+box.WindowManager {
+    animation: window-manager-fade-in 250ms ease-out;
+}
