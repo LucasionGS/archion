@@ -14,8 +14,8 @@ box.WindowManager {
         
         background: radial-gradient(
             circle at 30% 10%,
-            color.adjust($accent, $alpha: -0.7),
             color.adjust($secondary, $alpha: -0.5),
+            color.adjust($accent, $alpha: -0.7),
             color.adjust($bg, $alpha: -0.2)
         );
         
