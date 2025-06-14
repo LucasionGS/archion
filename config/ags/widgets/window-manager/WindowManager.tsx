@@ -268,9 +268,7 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
     return (
         <box className="window-manager-container" vertical spacing={20}>
             <box className="window-manager-header">
-                <icon icon="preferences-system-windows" iconSize={24} />
-                <label className="window-manager-title" label="Window Manager" />
-                <label className="window-manager-hint" label="Alt+Tab to navigate • Enter to select • Esc to cancel" />
+                {[<icon icon="preferences-system-windows" iconSize={24} />]}
             </box>
             
             <scrollable
