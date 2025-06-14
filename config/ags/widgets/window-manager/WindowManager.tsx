@@ -105,12 +105,12 @@ function WorkspaceContainer({
                 />
                 <label
                     className="workspace-name"
-                    label={`Workspace ${workspace.id}${workspace.name ? ` - ${workspace.name}` : ""}`}
+                    label={`Workspace - ${workspace.name || workspace.id}`}
                 />
-                <label
+                {/* <label
                     className="client-count"
                     label={clients.as(c => `${c.length} window${c.length !== 1 ? 's' : ''}`)}
-                />
+                /> */}
             </box>
             <box className="workspace-clients" spacing={16}>
                 {clients.as(clientList =>
@@ -155,19 +155,22 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
     )
 
     // Get workspaces with clients only
-    const workspacesWithClients = bind(hypr, "workspaces").as(workspaces =>
-        workspaces
+    const workspacesWithClientsVar = Variable<Hyprland.Workspace[]>([]);
+    const workspacesWithClients = bind(workspacesWithClientsVar).as(workspaces =>
+        hypr.get_workspaces()
         .filter(ws => !(ws.id >= -99 && ws.id <= -2)) // Filter special workspaces
         .filter(ws => ws.get_clients().length > 0) // Only workspaces with clients
         .sort((a, b) => a.id - b.id)
-    )
+    );
+
+    bind(hypr, "workspaces").subscribe((ws) => workspacesWithClientsVar.set(ws));
+    bind(hypr, "clients").subscribe(() => workspacesWithClientsVar.set(hypr.get_workspaces()));
     
     selectedWorkspaceAndClientIndex.subscribe(([wsIndex, clientIndex]) => {
         // Get size of workspaces and clients
         const clientsPrior = workspaceContainerWidth.slice(0, wsIndex).reduce((a, b) => a + b + 6, 0);
         scrollAdjustment.set_value(clientsPrior);
-
-        print(`Selected workspace: ${wsIndex}`);
+        // print(`Selected workspace: ${wsIndex}`);
     });
 
     // Reset selection when widget becomes visible
@@ -188,7 +191,6 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
             const currentClient = hypr.get_focused_client()
             const currentWorkspaceClients = workspaces[selectedWorkspaceIndex.get()]?.get_clients() || [];
             const currentClientIndex = currentWorkspaceClients.findIndex(client => client.address === currentClient.address)
-            print(`Current client index: ${currentClientIndex}`)
             selectedClientIndex.set(Math.max(0, currentClientIndex))
         }
     })
