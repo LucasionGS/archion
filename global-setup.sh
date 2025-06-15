@@ -19,7 +19,10 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird gparted cava man-db
+  thunderbird gparted cava man-db cronie
+
+# Enable services
+systemctl enable --now cronie.service
 
 # Upload custom configs
 mkdir -p /etc/greetd
