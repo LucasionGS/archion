@@ -137,6 +137,17 @@ window.Bar {
         all: unset;
     }
 
+    .Wifi {
+        margin: 0 2px;
+    }
+    .Wifi label {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .Battery {
+        margin: 0 2px;
+    }
     .Battery label {
         padding-left: 0;
         margin-left: 0;
@@ -187,6 +198,79 @@ window.Bar {
         margin-right: 8px;
         button {
             all: unset;
+        }
+    }
+
+    .CpuUsage, 
+    .RamUsage,
+    .NetworkUsage {
+        margin: 0 4px;
+        padding: 2px 6px;
+        
+        icon {
+            margin-right: 4px;
+            color: $accent;
+        }
+        
+        label {
+            font-size: 0.9em;
+            margin: 0 2px;
+        }
+        
+        levelbar {
+            * {
+                all: unset;
+            }
+            
+            trough {
+                background-color: color.adjust($secondary, $alpha: -0.8);
+                border-radius: 2px;
+                min-height: 4px;
+            }
+            
+            block {
+                background-color: $secondary;
+                border-radius: 2px;
+                
+                &.filled {
+                    background-color: $accent;
+                }
+                
+                &.high {
+                    background-color: color.adjust($error, $alpha: -0.2);
+                }
+            }
+        }
+    }
+    
+    .CpuUsage {
+        icon {
+            color: color.adjust($secondary, $lightness: 10%);
+        }
+        
+        levelbar block.filled {
+            background-color: color.adjust($secondary, $lightness: 10%);
+        }
+    }
+    
+    .RamUsage {
+        icon {
+            color: color.adjust($green, $lightness: -10%);
+        }
+        
+        levelbar block.filled {
+            background-color: color.adjust($green, $lightness: -10%);
+        }
+    }
+    
+    .NetworkUsage {
+        icon {
+            color: color.adjust($fg, $lightness: 5%);
+        }
+        
+        label {
+            font-size: 0.8em;
+            color: color.adjust($fg, $alpha: -0.1);
         }
     }
 }

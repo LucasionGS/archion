@@ -13,7 +13,7 @@ import { bind, execAsync, Variable } from "astal";
 import AstalHyprland from "gi://AstalHyprland";
 import app from "astal/gtk3/app";
 
-const hypr = AstalHyprland.get_default();
+// const hypr = AstalHyprland.get_default();
 
 const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
