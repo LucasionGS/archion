@@ -28,4 +28,4 @@ swww img "$RANDOM_WALLPAPER"
 # Cron job to run this script 1 minute
 # $ crontab -e
 # Add the following line to run the script every minute
-# * * * * * bash ~/.config/archion/cron/cycle-wallpaper.sh >/dev/null 2>&1
+# * * * * * hyprctl -i 0 dispatch exec "bash ~/.config/archion/cron/cycle-wallpaper.sh" >/dev/null
