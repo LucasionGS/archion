@@ -108,11 +108,11 @@ App.start({
             
             // Settings Panel - centered overlay
             SettingsPanel(displaySettingsPanel);
-            // try {
-            //     OSD(monitor);
-            // } catch (error) {
-            //     console.error("Failed to initialize OSD:", error);
-            // }
+            try {
+                OSD(monitor);
+            } catch (error) {
+                console.error("Failed to initialize OSD:", error);
+            }
             Bar(monitor, {
                 displayMediaPlayer,
                 displaySystemMenu,
