@@ -142,8 +142,9 @@ function Workspaces() {
                 <button
                     className={bind(hypr, "focusedWorkspace").as(fw =>
                         ws === fw ? "focused" : "")}
-                    onClicked={() => ws.focus()}>
-                    {ws.id}
+                    onClicked={() => ws.focus()}
+                    label={ws.id.toString()}
+                >
                 </button>
             ))
         )}
@@ -158,7 +159,7 @@ function FocusedClient() {
         className="Focused"
         visible={focused.as(Boolean)}>
         {focused.as(client => (
-            client && <label label={bind(client, "title").as(String)} />
+            client && [<label label={bind(client, "title").as(String)} />]
             // client && <label label={bind(client, "title").as(String)} ellipsize={Pango.EllipsizeMode.END} />
         ))}
     </box>
@@ -199,9 +200,8 @@ function SettingsButton(props: {
         {[<button
             onClicked={() => displaySettingsPanel?.set(!displaySettingsPanel.get())}
             tooltipText="Settings"
-        >
-            <icon icon="preferences-system-symbolic" />
-        </button>]}
+            child={<icon icon="preferences-system-symbolic" />}
+        />]}
     </box>
 }
 
@@ -218,26 +218,31 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
         gdkmonitor={monitor}
         margin={8}
         exclusivity={Astal.Exclusivity.EXCLUSIVE}
-        anchor={TOP | LEFT | RIGHT}>
-        <centerbox
-            heightRequest={32}
-        >
-            <box hexpand halign={Gtk.Align.START}>
-                <Workspaces />
-                <FocusedClient />
-            </box>
-            <box>
-                {[<Media displayMediaPlayer={displayMediaPlayer} />]}
-            </box>
-            <box hexpand halign={Gtk.Align.END} >
-                <SysTray />
-                <AudioSlider />
-                <Wifi />
-                <BatteryLevel />
-                <Time />
-                <SettingsButton displaySettingsPanel={displaySettingsPanel} />
-                <SystemMenuButton displaySystemMenu={displaySystemMenu} />
-            </box>
-        </centerbox>
-    </window>
+        anchor={TOP | LEFT | RIGHT}
+        child={(
+            <centerbox
+                heightRequest={32}
+                child={(
+                    <>
+                        <box hexpand halign={Gtk.Align.START}>
+                        <Workspaces />
+                        <FocusedClient />
+                    </box>
+                    <box>
+                        {[<Media displayMediaPlayer={displayMediaPlayer} />]}
+                    </box>
+                    <box hexpand halign={Gtk.Align.END} >
+                        <SysTray />
+                        <AudioSlider />
+                        <Wifi />
+                        <BatteryLevel />
+                        <Time />
+                        <SettingsButton displaySettingsPanel={displaySettingsPanel} />
+                        <SystemMenuButton displaySystemMenu={displaySystemMenu} />
+                    </box>
+                    </>
+                )}
+            />
+        )}
+    />
 }
