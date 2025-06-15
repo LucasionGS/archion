@@ -90,7 +90,7 @@ function MonitorSettings({ monitors, selectedMonitor }: {
                 if (!monitor) {
                     return [
                         <box className="no-selection" vertical halign={Gtk.Align.CENTER}>
-                            <icon icon="display" iconSize={48} />
+                            <icon icon="preferences-desktop-display" iconSize={48} />
                             <label label="Select a monitor to configure" />
                         </box>
                     ]

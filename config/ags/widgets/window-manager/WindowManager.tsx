@@ -319,7 +319,7 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
                     onClicked={selectCurrent}
                     child={
                         <box spacing={4}>
-                            <icon icon="dialog-ok" iconSize={16} />
+                            <icon icon="checkbox-checked-symbolic" iconSize={16} />
                             <label label="Select" />
                         </box>
                     }
