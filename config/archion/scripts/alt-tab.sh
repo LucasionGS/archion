@@ -37,4 +37,5 @@ if [ "$OPEN_STATE" = "open" ]; then
 elif [ $NAV = false ]; then
   # If the window manager is closed, open it
   astal window-manager show
+  astal window-manager next
 fi

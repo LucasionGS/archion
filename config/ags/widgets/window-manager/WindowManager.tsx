@@ -1,6 +1,7 @@
 import { Astal, Gtk } from "astal/gtk3"
 import { bind, Binding, Variable } from "astal"
 import Hyprland from "gi://AstalHyprland"
+import { Icon } from "astal/gtk3/widget"
 
 export class WindowManagerController {
     public static navigateNext: () => void
@@ -16,6 +17,11 @@ interface WorkspaceClientProps {
 
 const workspaceContainerWidth: number[] = [];
 
+const selectedWorkspaceIndex = Variable(0)
+const selectedClientIndex = Variable(0)
+const selectedWorkspaceAndClientIndex: Variable<[number, number]> = Variable([0, 0]); // Should be read only
+const scrollAdjustment = Gtk.Adjustment.new(0, 0, 100, 1, 10, 0);
+
 function WorkspaceClient({ client, isActive, onSelect }: WorkspaceClientProps) {
     return (
         <button
@@ -25,7 +31,7 @@ function WorkspaceClient({ client, isActive, onSelect }: WorkspaceClientProps) {
                 <box vertical spacing={8}>
                     <icon
                         icon={bind(client, "class").as((cls) => getIconForClass(cls || ""))}
-                        iconSize={48}
+                        css="icon { font-size: 64px; }"
                     />
                     <label
                         className="client-title"
@@ -70,8 +76,8 @@ function getIconForClass(className: string): string {
         "signal": "signal-desktop",
     }
 
-    const lowerClass = className.toLowerCase()
-    return iconMap[lowerClass] || "application-x-executable"
+    const existing = Astal.Icon.lookup_icon(className)?.get_filename();
+    return existing || iconMap[className.toLowerCase()] || "application-x-executable"
 }
 
 interface WorkspaceContainerProps {
@@ -136,10 +142,6 @@ function WorkspaceContainer({
 
 function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
     const hypr = Hyprland.get_default()
-    const selectedWorkspaceIndex = Variable(0)
-    const selectedClientIndex = Variable(0)
-    const selectedWorkspaceAndClientIndex: Variable<[number, number]> = Variable([0, 0]); // Should be read only
-    const scrollAdjustment = Gtk.Adjustment.new(0, 0, 100, 1, 10, 0);
 
     selectedClientIndex.subscribe(
         () => selectedWorkspaceAndClientIndex.set([

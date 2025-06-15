@@ -9,7 +9,11 @@ import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
-import { Variable } from "astal";
+import { bind, Variable } from "astal";
+import AstalHyprland from "gi://AstalHyprland";
+import app from "astal/gtk3/app";
+
+const hypr = AstalHyprland.get_default();
 
 const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
@@ -102,14 +106,15 @@ App.start({
         SettingsPanel(displaySettingsPanel);
         
         // Window Manager - centered overlay
-        new Widget.Window(
-            {
-                anchor: 0, // No anchor, will be centered
-                exclusivity: Astal.Exclusivity.IGNORE,
-                keymode: Astal.Keymode.ON_DEMAND
-            },
-            WindowManager(displayWindowManager)
-        );
+        // new Widget.Window(
+        //     {
+        //         // gdkmonitor: bind(hypr!, "focusedMonitor").as(m => app.get_monitors().find(monitor => monitor === m.id)),
+        //         anchor: 0, // No anchor, will be centered 
+        //         exclusivity: Astal.Exclusivity.IGNORE,
+        //         keymode: Astal.Keymode.ON_DEMAND
+        //     },
+        //     WindowManager(displayWindowManager)
+        // );
         
         App.get_monitors().forEach(monitor => {
             // try {
@@ -123,6 +128,16 @@ App.start({
                 displaySettingsPanel
             });
             NotificationPopups(monitor);
+
+            new Widget.Window(
+                {
+                    gdkmonitor: monitor,
+                    anchor: 0, // No anchor, will be centered 
+                    exclusivity: Astal.Exclusivity.IGNORE,
+                    keymode: Astal.Keymode.ON_DEMAND
+                },
+                WindowManager(displayWindowManager)
+            );
         });
     }
 })
