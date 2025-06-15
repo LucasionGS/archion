@@ -4,7 +4,7 @@ import style from "./style.scss"
 import Applauncher from "./widgets/applauncher/Applauncher";
 import MprisPlayers from "./widgets/media-player/MediaPlayer";
 import OSD from "./widgets/osd/OSD";
-import Bar from "./widgets/simple-bar/Bar";
+import Bar from "./widgets/bar/Bar";
 import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
@@ -15,7 +15,7 @@ import app from "astal/gtk3/app";
 
 const hypr = AstalHyprland.get_default();
 
-const displayMediaPlayer = new Variable(false);
+const displayMediaPlayer = new Varia ble(false);
 const displaySystemMenu = new Variable(false);
 const displaySettingsPanel = new Variable(false);
 const displayWindowManager = new Variable(false);
