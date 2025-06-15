@@ -15,7 +15,7 @@ import app from "astal/gtk3/app";
 
 const hypr = AstalHyprland.get_default();
 
-const displayMediaPlayer = new Varia ble(false);
+const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
 const displaySettingsPanel = new Variable(false);
 const displayWindowManager = new Variable(false);
