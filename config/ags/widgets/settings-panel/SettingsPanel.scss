@@ -72,6 +72,7 @@ window.SettingsPanel {
     
     .sidebar-categories {
         // Categories container
+        min-width: 0; // Allow natural sizing
     }
     
     .sidebar-category {
@@ -383,5 +384,123 @@ window.SettingsPanel {
                 }
             }
         }
+    }
+}
+
+// Display Management Styles
+.display-canvas {
+    margin: 1rem 0;
+    padding: 2rem;
+    background-color: color.adjust($bg, $lightness: 3%);
+    border-radius: $radius;
+    border: 1pt solid color.adjust($fg, $alpha: -0.9);
+    
+    .monitor-layout {
+        min-height: 200px;
+        min-width: 400px;
+        // GTK3 doesn't support position property - using natural flow layout
+    }
+    
+    .monitor-display {
+        all: initial;
+        padding: 1rem;
+        border-radius: $radius;
+        border: 2pt solid color.adjust($fg, $alpha: -0.8);
+        background-color: color.adjust($bg, $lightness: 10%);
+        margin: 0.5rem;
+        min-width: 150px;
+        min-height: 100px;
+        transition: all 200ms ease;
+        
+        &:hover {
+            border-color: color.adjust($accent, $alpha: -0.5);
+            background-color: color.adjust($accent, $alpha: -0.9);
+        }
+        
+        &.selected {
+            border-color: $accent;
+            background-color: color.adjust($accent, $alpha: -0.8);
+            box-shadow: 0 0 15px color.adjust($accent, $alpha: -0.6);
+        }
+        
+        &.primary {
+            border-color: color.adjust($secondary, $alpha: -0.5);
+            
+            &.selected {
+                border-color: $secondary;
+                background-color: color.adjust($secondary, $alpha: -0.8);
+                box-shadow: 0 0 15px color.adjust($secondary, $alpha: -0.6);
+            }
+        }
+        
+        .monitor-content {
+            .monitor-name {
+                color: $fg;
+                font-weight: bold;
+                font-size: 0.9em;
+                margin-bottom: 0.3rem;
+            }
+            
+            .monitor-resolution {
+                color: color.adjust($fg, $alpha: -0.2);
+                font-size: 0.8em;
+                margin-bottom: 0.2rem;
+            }
+            
+            .monitor-id {
+                color: color.adjust($fg, $alpha: -0.4);
+                font-size: 0.7em;
+                font-style: italic;
+            }
+            
+            .primary-badge {
+                color: $secondary;
+                font-size: 0.7em;
+                font-weight: bold;
+                margin-top: 0.3rem;
+            }
+        }
+    }
+}
+
+.monitor-settings {
+    min-height: 300px;
+    
+    .no-selection {
+        padding: 3rem;
+        
+        icon {
+            color: color.adjust($fg, $alpha: -0.5);
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            color: color.adjust($fg, $alpha: -0.4);
+            font-style: italic;
+        }
+    }
+}
+
+.display-settings-main {
+    min-height: 400px;
+}
+
+.pos-button {
+    all: initial;
+    padding: 0.3rem 0.6rem;
+    border-radius: $radius;
+    background-color: color.adjust($bg, $lightness: 5%);
+    border: 1pt solid color.adjust($fg, $alpha: -0.8);
+    min-width: 24px;
+    
+    &:hover {
+        background-color: color.adjust($accent, $alpha: -0.8);
+        border-color: $accent;
+    }
+    
+    label {
+        color: $fg;
+        font-size: 0.9em;
+        font-weight: bold;
     }
 }

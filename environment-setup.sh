@@ -51,6 +51,10 @@ else
   cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
 fi
 
+# Create autogen files
+mkdir -p        "$CONFIG_DIR/hypr/configs/autogen"
+create_autogen  "$CONFIG_DIR/hypr/configs/autogen/monitors.conf"
+
 if [[ ! -d /tmp/yay ]]; then
   # Install yay
   git clone https://aur.archlinux.org/yay.git /tmp/yay

@@ -1,4 +1,4 @@
-import { App, Astal, Gtk, Widget } from "astal/gtk3"
+import { App, Astal, Gdk, Gtk, Widget } from "astal/gtk3"
 import style from "./style.scss"
 
 import Applauncher from "./widgets/applauncher/Applauncher";
@@ -9,7 +9,7 @@ import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
-import { bind, Variable } from "astal";
+import { bind, execAsync, Variable } from "astal";
 import AstalHyprland from "gi://AstalHyprland";
 import app from "astal/gtk3/app";
 
@@ -85,38 +85,29 @@ App.start({
     },
     main() {
         const { TOP, LEFT, RIGHT, BOTTOM } = Astal.WindowAnchor;
-        // Initialize widgets
-        // Applauncher();
-        new Widget.Window(
-            {
-                anchor: TOP,
-                exclusivity: Astal.Exclusivity.NORMAL
-            },
-            MprisPlayers(displayMediaPlayer)
-        );
-        new Widget.Window(
-            {
-                anchor: TOP | RIGHT,
-                exclusivity: Astal.Exclusivity.NORMAL
-            },
-            SystemMenu(displaySystemMenu)
-        );
         
-        // Settings Panel - centered overlay
-        SettingsPanel(displaySettingsPanel);
-        
-        // Window Manager - centered overlay
-        // new Widget.Window(
-        //     {
-        //         // gdkmonitor: bind(hypr!, "focusedMonitor").as(m => app.get_monitors().find(monitor => monitor === m.id)),
-        //         anchor: 0, // No anchor, will be centered 
-        //         exclusivity: Astal.Exclusivity.IGNORE,
-        //         keymode: Astal.Keymode.ON_DEMAND
-        //     },
-        //     WindowManager(displayWindowManager)
-        // );
-        
-        App.get_monitors().forEach(monitor => {
+        const initialize = (monitor: Gdk.Monitor) => {
+            // Initialize widgets
+            // Applauncher();
+            new Widget.Window(
+                {
+                    gdkmonitor: monitor,
+                    anchor: TOP,
+                    exclusivity: Astal.Exclusivity.NORMAL
+                },
+                MprisPlayers(displayMediaPlayer)
+            );
+            new Widget.Window(
+                {
+                    gdkmonitor: monitor,
+                    anchor: TOP | RIGHT,
+                    exclusivity: Astal.Exclusivity.NORMAL
+                },
+                SystemMenu(displaySystemMenu)
+            );
+            
+            // Settings Panel - centered overlay
+            SettingsPanel(displaySettingsPanel);
             // try {
             //     OSD(monitor);
             // } catch (error) {
@@ -138,6 +129,16 @@ App.start({
                 },
                 WindowManager(displayWindowManager)
             );
+        };
+        
+        App.get_monitors().forEach(initialize);
+        // When new monitors are added, reloading ags is required
+        App.connect("monitor-added", (event, monitor) => {
+            initialize(monitor);
+        });
+        App.connect("monitor-removed", (event, monitor) => {
+            // Handle monitor removal if necessary
+            console.log("Monitor removed:", monitor);
         });
     }
 })
