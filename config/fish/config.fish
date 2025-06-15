@@ -8,6 +8,9 @@ set -g theme_display_docker_machine yes
 set -gx PATH $HOME/.local/bin $PATH
 set -gx PATH /var/lib/snapd/snap/bin $PATH
 
+function wsudo
+    sudo /bin/env WAYLAND_DISPLAY="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"  XDG_RUNTIME_DIR=/user/run/0 "$argv"
+end
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
