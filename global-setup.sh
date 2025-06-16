@@ -28,6 +28,14 @@ systemctl enable --now cronie.service
 mkdir -p /etc/greetd
 cp -r ./etc/greetd/* /etc/greetd/
 
+# Create gtkgreet config directory
+mkdir -p /etc/gtkgreet
+cp -r ./etc/gtkgreet/* /etc/gtkgreet/ 2>/dev/null || true
+
+# Create directory for greeter background images
+mkdir -p /etc/gtkgreet/images
+cp -r ./etc/gtkgreet/images/* /etc/gtkgreet/images/ 2>/dev/null || true
+
 
 # Finalize greetd
 systemctl enable --now polkit.service || true
