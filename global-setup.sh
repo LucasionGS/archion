@@ -7,7 +7,7 @@ fi
 pacman --noconfirm -Syu
 
 pacman --noconfirm -Syu \
-  sudo hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi mako kitty xdotool \
+  sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi mako kitty xdotool \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
