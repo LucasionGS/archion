@@ -123,8 +123,8 @@ fish -c "omf theme bobthefish"
 
 # Install nvm for managing Node.js versions for fish shell
 fish -c "fisher install jorgebucaran/nvm.fish"
-# Install z for Working directory shortcuts
-fish -c "fisher install jethrokuan/z"
+# Use the real zoxide as its compatible with fish
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 
 # Neovim setup (Will be set up when launched later)
 if [[ ! -d $CONFIG_DIR/nvim ]]; then
@@ -186,6 +186,12 @@ yay -S --noconfirm better-control-git
 
 # Install Hyprshot for screenshots
 yay -S --noconfirm hyprshot-git
+
+# Install deno
+wget https://deno.land/install.sh -O /tmp/deno-install.sh
+sh /tmp/deno-install.sh -y
+# Clean up the deno install script
+rm -f /tmp/deno-install.sh
 
 # Finished
 echo "--------------------- Installation complete! ---------------------"

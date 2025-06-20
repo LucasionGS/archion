@@ -18,3 +18,6 @@ if status is-interactive
 end
 # FSSH - Fish SSH Connection Manager
 source ~/.apps/fssh/fssh.fish
+
+# Source zoxide for the z command
+zoxide init fish | source
