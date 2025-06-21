@@ -9,11 +9,11 @@ set -gx PATH $HOME/.local/bin $PATH
 set -gx PATH /var/lib/snapd/snap/bin $PATH
 
 function wsudo
-    sudo /bin/env WAYLAND_DISPLAY="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"  XDG_RUNTIME_DIR=/user/run/0 "$argv"
+    sudo /bin/env WAYLAND_DISPLAY="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"  XDG_RUNTIME_DIR=/user/run/0 $argv
 end
 
 function x
-    sudo -E "$argv"
+    sudo -E $argv
 end
 
 if status is-interactive
