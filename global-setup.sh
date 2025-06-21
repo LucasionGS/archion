@@ -11,7 +11,7 @@ pacman --noconfirm -Syu \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
-  nautilus nautilus-image-converter nautilus-share zenity \
+  nautilus nautilus-image-converter nautilus-share zenity thunar \
   htop \
   neovim \
   fish fisher \
