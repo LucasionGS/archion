@@ -175,6 +175,14 @@ else
   yay -S --noconfirm google-chrome
 fi
 
+# snap-store
+if [[ command -v snap-store &> /dev/null ]]; then
+  echo "Snap Store is already installed."
+else
+  echo "Installing Snap Store..."
+  sudo snap install snap-store
+fi
+
 
 # For a sexy settings panel (should customize it???)
 yay -S --noconfirm better-control-git
