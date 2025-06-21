@@ -7,7 +7,7 @@ fi
 pacman --noconfirm -Syu
 
 pacman --noconfirm -Syu \
-  sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi mako kitty xdotool \
+  sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi kitty xdotool \
   base-devel rustup openssh \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
@@ -19,7 +19,7 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit \
-  thunderbird gparted cava man-db cronie
+  thunderbird gparted cava man-db cronie blueman
 
 # Enable services
 systemctl enable --now cronie.service

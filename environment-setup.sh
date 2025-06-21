@@ -27,7 +27,6 @@ if [[ $ARCHION_DEV == "true" ]]; then
   # Link configuration files for development mode
   ln -sf $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
@@ -40,7 +39,6 @@ else
   # Copy configuration files
   cp -r $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/hyprshell  $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
@@ -142,7 +140,7 @@ yay -S --noconfirm visual-studio-code-bin
 # sudo pacman -S --noconfirm code
 
 
-# Install Pyprland, wleave, Astal / AGS for widgets, Hyprshell for Window switcher
+# Install Pyprland, wleave, Astal / AGS for widgets
 yay -S --noconfirm \
   pyprland \
   wleave-git \
@@ -177,9 +175,6 @@ else
   yay -S --noconfirm google-chrome
 fi
 
-# Install hyprshell
-# https://github.com/H3rmt/hyprswitch
-cargo install hyprshell
 
 # For a sexy settings panel (should customize it???)
 yay -S --noconfirm better-control-git
