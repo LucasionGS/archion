@@ -18,7 +18,7 @@ pacman --noconfirm -Syu \
   cmake meson cpio pkg-config gcc \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
-  greetd greetd-gtkgreet polkit \
+  greetd greetd-gtkgreet polkit hyprpolkitagent \
   thunderbird gparted cava man-db cronie blueman
 
 # Enable services
