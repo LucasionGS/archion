@@ -193,6 +193,16 @@ sh /tmp/deno-install.sh -y
 # Clean up the deno install script
 rm -f /tmp/deno-install.sh
 
+
+# Setup HyprPM and Hyprspace
+hyprpm update
+# Install Hyprspace
+hyprpm add https://github.com/KZDKM/Hyprspace
+hyprpm enable Hyprspace
+
+# Install official plugins
+hyprpm add https://github.com/hyprwm/hyprland-plugins
+
 # Finished
 echo "--------------------- Installation complete! ---------------------"
 echo "Installation complete! Please reboot your system to apply changes."
