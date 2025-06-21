@@ -12,6 +12,10 @@ function wsudo
     sudo /bin/env WAYLAND_DISPLAY="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"  XDG_RUNTIME_DIR=/user/run/0 "$argv"
 end
 
+function x
+    sudo -E "$argv"
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
     set fish_greeting
