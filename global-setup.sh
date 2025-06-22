@@ -8,7 +8,7 @@ pacman --noconfirm -Syu
 
 pacman --noconfirm -Syu \
   sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi kitty xdotool \
-  base-devel rustup openssh \
+  base-devel rustup openssh inetutils \
   pipewire wireplumber xdg-desktop-portal-hyprland \
   wget less yazi jq fd 7zip fzf \
   nautilus nautilus-image-converter nautilus-share zenity thunar \

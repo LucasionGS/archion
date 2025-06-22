@@ -31,7 +31,7 @@ if [[ $ARCHION_DEV == "true" ]]; then
   ln -sf $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
+  # ln -sf $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
   ln -sf $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
@@ -43,7 +43,7 @@ else
   cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
+  # cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
   cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
@@ -205,6 +205,18 @@ hyprpm enable Hyprspace
 
 # Install official plugins
 hyprpm add https://github.com/hyprwm/hyprland-plugins
+
+# Customize rofi # https://github.com/adi1090x/rofi?tab=readme-ov-file
+git clone --depth=1 https://github.com/adi1090x/rofi.git /tmp/rofi-custom
+cd /tmp/rofi-custom
+chmod +x setup.sh
+bash setup.sh
+cd ..
+# Clean up the rofi custom directory
+rm -rf /tmp/rofi-custom
+
+# Set Type 3 launcher to use Style 2
+sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh"
 
 # Finished
 echo "--------------------- Installation complete! ---------------------"
