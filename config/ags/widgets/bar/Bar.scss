@@ -114,10 +114,16 @@ window.Bar {
     }
 
     .SysTray {
-        margin-right: 8px;
-
+        margin-left: 4px;
+        margin-right: 4px;
         button {
-            padding: 0 4px;
+            margin: 0 2px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            border-bottom: $green 2px solid;
+            color: $fg;
+            font-size: 1.1em;
         }
     }
 
