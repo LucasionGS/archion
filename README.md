@@ -142,9 +142,3 @@ bash dev/reload.sh
 ## Contributing
 
 PRs and issues welcome!
-
----
-
-## License
-
-MIT (or specify your license)
