@@ -9,7 +9,8 @@ pacman --noconfirm -Syu
 pacman --noconfirm -Syu \
   sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi kitty xdotool \
   base-devel rustup openssh inetutils \
-  pipewire wireplumber xdg-desktop-portal-hyprland \
+  pipewire wireplumber \
+  xdg-desktop-portal-hyprland xdg-desktop-portal-wlr xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
   wget less yazi jq fd 7zip fzf \
   nautilus nautilus-image-converter nautilus-share zenity thunar \
   htop \
@@ -19,7 +20,8 @@ pacman --noconfirm -Syu \
   gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs \
   vala valadoc wireplumber brightnessctl gobject-introspection \
   greetd greetd-gtkgreet polkit hyprpolkitagent \
-  thunderbird gparted cava man-db cronie blueman
+  thunderbird gparted cava man-db cronie blueman \
+  flatpak
 
 # Enable services
 systemctl enable --now cronie.service
