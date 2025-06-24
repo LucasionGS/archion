@@ -9,11 +9,15 @@ import NotificationPopups from "./widgets/notifications/NotificationPopups";
 import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
-import { bind, execAsync, Variable } from "astal";
+import BackgroundImages, { BackgroundImageConfig, updateConfig as updateBgConfig } from "./widgets/background-images/BackgroundImages";
+import { bind, execAsync, Variable, readFile, readFileAsync, exec, monitorFile } from "astal";
 import AstalHyprland from "gi://AstalHyprland";
 import app from "astal/gtk3/app";
 
 // const hypr = AstalHyprland.get_default();
+
+export const HOME = exec(["bash", "-c", "realpath ~"]);
+export const CONFIG_DIR = HOME + "/.config/ags/configs"
 
 const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
@@ -129,6 +133,31 @@ App.start({
                 },
                 WindowManager(displayWindowManager)
             );
+
+            try {
+                // Get booru collector config
+                const booruConfig = getConfig("booru-collector");
+                
+                // Initialize background images
+                new Widget.Window(
+                    {
+                        gdkmonitor: monitor,
+                        anchor: 0, // No anchor, will be at the bottom layer
+                        exclusivity: Astal.Exclusivity.EXCLUSIVE,
+                        layer: Astal.Layer.BACKGROUND
+                    },
+                    BackgroundImages(booruConfig)
+                );
+
+                monitorFile(CONFIG_DIR + "/booru-collector.json", async () => {
+                    try {
+                        const newConfig = getConfig("booru-collector");
+                        updateBgConfig(newConfig);
+                    } catch (error) {
+                        console.error("Failed to update booru collector config:", error);
+                    }
+                });
+            } catch (error) { }
         };
         
         App.get_monitors().forEach(initialize);
@@ -142,3 +171,16 @@ App.start({
         });
     }
 })
+
+interface ConfigTypes {
+    "booru-collector": BackgroundImageConfig
+}
+
+function getConfig<T extends keyof ConfigTypes>(name: T): ConfigTypes[T] {
+    const path = HOME + "/.config/ags/configs/" + name + ".json";
+    const config = readFile(path);
+    if (!config) {
+        throw new Error("No config found");
+    }
+    return JSON.parse(config);
+}

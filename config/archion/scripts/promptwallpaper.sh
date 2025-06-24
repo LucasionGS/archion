@@ -3,7 +3,7 @@ ARCHION_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/archion"
 
 clean_cache() {
   # Remove old wallpapers from the active directory
-  rm -f "$ARCHION_DIR/.wallpapers_active/*.(jpg|jpeg|png|gif)"
+  rm -f $ARCHION_DIR/.wallpapers_active/*
 }
 
 mkdir -p "$HOME/Pictures/Wallpapers"
