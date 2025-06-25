@@ -13,7 +13,7 @@ pacman --noconfirm -Syu \
   xdg-desktop-portal-hyprland xdg-desktop-portal-wlr xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
   wget less yazi jq fd 7zip fzf \
   nautilus nautilus-image-converter nautilus-share zenity thunar \
-  htop \
+  htop btop \
   neovim \
   fish fisher \
   cmake meson cpio pkg-config gcc \
