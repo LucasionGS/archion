@@ -10,7 +10,7 @@ import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
 import BackgroundImages, { BackgroundImageConfig, updateConfig as updateBgConfig } from "./widgets/background-images/BackgroundImages";
-import { bind, execAsync, Variable, readFile, readFileAsync, exec, monitorFile } from "astal";
+import { bind, execAsync, Variable, readFile, readFileAsync, exec, monitorFile, writeFileAsync } from "astal";
 import AstalHyprland from "gi://AstalHyprland";
 import app from "astal/gtk3/app";
 
@@ -23,6 +23,7 @@ const displayMediaPlayer = new Variable(false);
 const displaySystemMenu = new Variable(false);
 const displaySettingsPanel = new Variable(false);
 const displayWindowManager = new Variable(false);
+const displayBooruImagesToggle = new Variable<boolean | undefined>(undefined);
 
 const toggleBoolVar = (variable: Variable<boolean>, state: "toggle" | "show" | "hide") => {
     switch (state) {
@@ -120,7 +121,8 @@ App.start({
             Bar(monitor, {
                 displayMediaPlayer,
                 displaySystemMenu,
-                displaySettingsPanel
+                displaySettingsPanel,
+                displayBooruImagesToggle
             });
             NotificationPopups(monitor);
 
@@ -149,15 +151,31 @@ App.start({
                     BackgroundImages(booruConfig)
                 );
 
+                displayBooruImagesToggle.set(booruConfig.enabled ?? true);
+
                 monitorFile(CONFIG_DIR + "/booru-collector.json", async () => {
                     try {
                         const newConfig = getConfig("booru-collector");
                         updateBgConfig(newConfig);
+                        displayBooruImagesToggle.set(newConfig.enabled ?? true);
                     } catch (error) {
                         console.error("Failed to update booru collector config:", error);
                     }
                 });
-            } catch (error) { }
+
+                displayBooruImagesToggle.subscribe(async (enabled) => {
+                    if (enabled === undefined) return;
+                    try {
+                        const config = getConfig("booru-collector");
+                        config.enabled = enabled;
+                        await writeFileAsync(CONFIG_DIR + "/booru-collector.json", JSON.stringify(config, null, 2));
+                    } catch (error) {
+                        console.error("Failed to update booru collector config file:", error);
+                    }
+                });
+            } catch (error) {
+                displayBooruImagesToggle.set(undefined);
+            }
         };
         
         App.get_monitors().forEach(initialize);

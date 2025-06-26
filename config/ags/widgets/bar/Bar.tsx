@@ -310,6 +310,28 @@ function SystemMenuButton(props: {
     </box>
 }
 
+function BooruImagesToggle(props: {
+    displayBooruImagesToggle?: Variable<boolean | undefined>
+}) {
+    const { displayBooruImagesToggle } = props
+
+    return <box className="BarButton" visible={displayBooruImagesToggle?.().as(a => a !== undefined) ?? false}>
+        {[<button
+            onClicked={() => displayBooruImagesToggle?.set(!displayBooruImagesToggle?.get())}
+            tooltipText="Booru Images Toggle"
+            child={
+                // 
+                displayBooruImagesToggle?.().as(a => 
+                    a !== false
+                        ? <icon icon="help-browser-symbolic" css="color: green" />
+                        : <icon icon="help-browser-symbolic" css="color: red" />
+                ) ?? undefined
+            }
+            // child={<icon icon="system-log-out" />}
+        />]}
+    </box>
+}
+
 function SettingsButton(props: {
     displaySettingsPanel?: Variable<boolean>
 }) {
@@ -327,10 +349,16 @@ function SettingsButton(props: {
 export default function Bar(monitor: Gdk.Monitor, variables?: {
     displayMediaPlayer?: Variable<boolean>,
     displaySystemMenu?: Variable<boolean>,
-    displaySettingsPanel?: Variable<boolean>
+    displaySettingsPanel?: Variable<boolean>,
+    displayBooruImagesToggle?: Variable<boolean | undefined>,
 }) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
-    const { displayMediaPlayer, displaySystemMenu, displaySettingsPanel } = variables ?? {}
+    const {
+        displayMediaPlayer,
+        displaySystemMenu,
+        displaySettingsPanel,
+        displayBooruImagesToggle,
+    } = variables ?? {}
 
     return <window
         className="Bar"
@@ -359,6 +387,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                             <Wifi />
                             <BatteryLevel />
                             <Time />
+                            <BooruImagesToggle displayBooruImagesToggle={displayBooruImagesToggle} />
                             <SettingsButton displaySettingsPanel={displaySettingsPanel} />
                             <SystemMenuButton displaySystemMenu={displaySystemMenu} />
                         </box>

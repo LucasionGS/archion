@@ -1,3 +1,10 @@
+/********************************************************************************************\
+|**** As a disclaimer, this widget is built for a private piece of software I developed. ****|
+|**** This means you will likely not have much success using it.                         ****|
+|**** You could reverse engineer a solution, but I will not provide support for it.      ****|
+|**** Perhaps I will make a public version of the private software in the future.        ****|
+\********************************************************************************************/
+
 import { App, Astal, Gtk, Gdk } from "astal/gtk3"
 import { execAsync, timeout, Variable, bind, AstalIO } from "astal"
 import { GLib } from "astal"
@@ -19,6 +26,7 @@ interface ICollectionItem {
 }
 
 export interface BackgroundImageConfig {
+  enabled?: boolean
   protocol: "http" | "https"
   serverIp: string
   collections: number[]
@@ -31,6 +39,7 @@ export interface BackgroundImageConfig {
 }
 
 const defaultConfig: BackgroundImageConfig = {
+  enabled: true,
   protocol: "http",
   serverIp: "localhost:3800",
   collections: [],
@@ -377,7 +386,8 @@ function createBackgroundImages(): Gtk.Widget {
   
   // Function to update images
   async function updateImages() {
-    if (!config.get()) {
+    if (!config.get() || config.get()!.enabled === false) {
+      allImages.set([])
       return;
     }
     

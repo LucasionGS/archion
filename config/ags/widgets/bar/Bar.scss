@@ -206,6 +206,13 @@ window.Bar {
             all: unset;
         }
     }
+    .BarButton {
+        margin-left: 8px;
+        margin-right: 8px;
+        button {
+            all: unset;
+        }
+    }
 
     .CpuUsage, 
     .RamUsage,
