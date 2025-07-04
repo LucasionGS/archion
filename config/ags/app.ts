@@ -10,6 +10,7 @@ import SystemMenu from "./widgets/system-menu/SystemMenu";
 import SettingsPanel from "./widgets/settings-panel/SettingsPanel";
 import WindowManager, { WindowManagerController } from "./widgets/window-manager/WindowManager";
 import BackgroundImages, { BackgroundImageConfig, updateConfig as updateBgConfig } from "./widgets/background-images/BackgroundImages";
+import Calendar from "./widgets/calendar/Calendar";
 import { bind, execAsync, Variable, readFile, readFileAsync, exec, monitorFile, writeFileAsync } from "astal";
 import AstalHyprland from "gi://AstalHyprland";
 import app from "astal/gtk3/app";
@@ -24,6 +25,7 @@ const displaySystemMenu = new Variable(false);
 const displaySettingsPanel = new Variable(false);
 const displayWindowManager = new Variable(false);
 const displayBooruImagesToggle = new Variable<boolean | undefined>(undefined);
+const displayCalendar = new Variable(false);
 
 const toggleBoolVar = (variable: Variable<boolean>, state: "toggle" | "show" | "hide") => {
     switch (state) {
@@ -58,6 +60,10 @@ App.start({
 
             case "system":
                 toggleBoolVar(displaySystemMenu, args[0] as any);
+                break;
+
+            case "calendar":
+                toggleBoolVar(displayCalendar, args[0] as any);
                 break;
 
             case "window-manager":
@@ -110,6 +116,9 @@ App.start({
                 },
                 SystemMenu(displaySystemMenu)
             );
+
+            // Calendar widget
+            Calendar({ displayCalendar });
             
             // Settings Panel - centered overlay
             SettingsPanel(displaySettingsPanel);
@@ -122,7 +131,8 @@ App.start({
                 displayMediaPlayer,
                 displaySystemMenu,
                 displaySettingsPanel,
-                displayBooruImagesToggle
+                displayBooruImagesToggle,
+                displayCalendar
             });
             NotificationPopups(monitor);
 

@@ -286,4 +286,27 @@ window.Bar {
             color: color.adjust($fg, $alpha: -0.1);
         }
     }
+
+    .Time {
+        background-color: transparent;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 6px;
+        color: $fg;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: color.adjust($bg, $alpha: -0.3);
+            color: $fg;
+        }
+        
+        &:active {
+            background-color: color.adjust($bg, $alpha: -0.1);
+        }
+        
+        label {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+    }
 }

@@ -284,14 +284,16 @@ function FocusedClient() {
     </box>
 }
 
-function Time({ format = "%H:%M - %A %e." }) {
+function Time({ format = "%H:%M - %A %e.", displayCalendar }: { format?: string, displayCalendar?: Variable<boolean> }) {
     const time = Variable<string>("").poll(1000, () =>
         GLib.DateTime.new_now_local().format(format)!)
 
-    return <label
+    return <button
         className="Time"
         onDestroy={() => time.drop()}
-        label={time()}
+        onClicked={() => displayCalendar?.set(!displayCalendar?.get())}
+        tooltipText="Click to open calendar"
+        child={<label label={time()} />}
     />
 }
 
@@ -351,6 +353,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
     displaySystemMenu?: Variable<boolean>,
     displaySettingsPanel?: Variable<boolean>,
     displayBooruImagesToggle?: Variable<boolean | undefined>,
+    displayCalendar?: Variable<boolean>,
 }) {
     const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
     const {
@@ -358,6 +361,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
         displaySystemMenu,
         displaySettingsPanel,
         displayBooruImagesToggle,
+        displayCalendar,
     } = variables ?? {}
 
     return <window
@@ -386,7 +390,7 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                             {/* <AudioSlider /> */}
                             <Wifi />
                             <BatteryLevel />
-                            <Time />
+                            <Time displayCalendar={displayCalendar} />
                             <BooruImagesToggle displayBooruImagesToggle={displayBooruImagesToggle} />
                             <SettingsButton displaySettingsPanel={displaySettingsPanel} />
                             <SystemMenuButton displaySystemMenu={displaySystemMenu} />

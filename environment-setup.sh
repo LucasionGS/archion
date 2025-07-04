@@ -218,6 +218,12 @@ rm -rf /tmp/rofi-custom
 # Set Type 3 launcher to use Style 2
 sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh"
 
+# Intall archion-settings i built
+git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings
+cd /tmp/archion-settings
+chmod +x build.sh
+bash build.sh
+
 # Finished
 echo "--------------------- Installation complete! ---------------------"
 echo "Installation complete! Please reboot your system to apply changes."
