@@ -224,9 +224,15 @@ else
   echo "Script directory not found. Skipping file copy."
 fi
 
-# ---- finish ----
-echo "Installation complete! Unmounting ..."
-umount -R /mnt
+# If UMOUNT=false is set, do not unmount at the end
+if [[ -n "${UMOUNT:-}" && $UMOUNT == false ]]; then
+  echo "Skipping unmounting. You can manually unmount later."
+else
+  # ---- finish ----
+  echo "Installation complete! Unmounting ..."
+  umount -R /mnt
+  echo "Unmounted successfully."
+fi
 
 if [[ $DUAL_BOOT == true ]]; then
   echo "Dual boot setup complete!"

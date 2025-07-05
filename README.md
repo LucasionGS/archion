@@ -50,7 +50,7 @@ Archion is a set of scripts and configuration files for setting up a modern Arch
 
 ## Quick start
 ```bash
-curl -fsSL https://raw.githubusercontent.com/LucasionGS/archion/refs/heads/main/remote.sh | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/LucasionGS/archion/refs/heads/main/remote.sh)
 ```
 
 ## Step-by-step Installation
