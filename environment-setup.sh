@@ -84,7 +84,7 @@ yay -S --noconfirm \
   clipse
 
 # Enable snapd service
-sudo systemctl enable --now snapd.socket
+sudo systemctl enable snapd.socket
 
 # Apply partial config to neofetch
 CONFIG_DIR="$HOME/.config"
