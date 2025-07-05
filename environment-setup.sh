@@ -164,7 +164,7 @@ if [[ $ARCHION_DEV == "true" ]]; then
   ln -sf $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
 else
   if [[ ! -d $APP_DIR/fssh ]]; then
-    mkdir -p $APP_DIR/fssh
+    cp -r $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
   fi
 fi
 
