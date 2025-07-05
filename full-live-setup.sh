@@ -3,7 +3,11 @@
 
 loadkeys dk
 sudo bash live-setup.sh && \
-USERNAME=$(cat /tmp/initial_archion_username) && \
-arch-chroot /mnt bash /home/$USERNAME/archion/global-setup.sh && \
-arch-chroot /mnt bash /home/$USERNAME/archion/graphics-driver-setup.sh && \
+USERNAME=$(cat /tmp/initial_archion_username)
+
+# Run on arch-chroot
+arch-chroot /mnt bash /home/$USERNAME/archion/global-setup.sh
+arch-chroot /mnt bash /home/$USERNAME/archion/graphics-driver-setup.sh
+
+# Run environment-setup.sh for the initial user
 arch-chroot /mnt bash -c "sudo -u $USERNAME bash /home/$USERNAME/archion/environment-setup.sh"
