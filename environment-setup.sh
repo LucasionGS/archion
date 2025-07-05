@@ -162,14 +162,14 @@ fi
 # fish $APP_DIR/fish/install.fish
 
 # Install beekeeper
-if [[ command -v beekeeper-studio &> /dev/null ]]; then
+if command -v beekeeper-studio &> /dev/null; then
   echo "Beekeeper Studio is already installed."
 else
   echo "Installing Beekeeper Studio..."
   sudo snap install beekeeper-studio
 fi
 
-if [[ command -v google-chrome-stable &> /dev/null ]]; then
+if command -v google-chrome-stable &> /dev/null; then
   echo "Google Chrome is already installed."
 else
   echo "Installing Google Chrome..."
@@ -177,7 +177,7 @@ else
 fi
 
 # snap-store
-if [[ command -v snap-store &> /dev/null ]]; then
+if command -v snap-store &> /dev/null; then
   echo "Snap Store is already installed."
 else
   echo "Installing Snap Store..."
