@@ -177,7 +177,7 @@ if [[ $SNAP_STARTED == "true" ]]; then
     echo "Beekeeper Studio is already installed."
   else
     echo "Installing Beekeeper Studio..."
-    sudo snap install beekeeper-studio
+    sudo snap install beekeeper-studio || echo "Failed to install Beekeeper Studio, continuing..."
   fi
 
   # snap-store
@@ -185,7 +185,7 @@ if [[ $SNAP_STARTED == "true" ]]; then
     echo "Snap Store is already installed."
   else
     echo "Installing Snap Store..."
-    sudo snap install snap-store
+    sudo snap install snap-store || echo "Failed to install Snap Store, continuing..."
   fi
 else
   echo "Snapd service is not running. Skipping snap package installations."
