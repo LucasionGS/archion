@@ -94,8 +94,10 @@ prompt "Hostname for the new system: " HOSTNAME
 prompt "Username for primary user: " USERNAME
 prompt_password "Password for ${USERNAME}: " USERPASS;
 prompt_password "Password for root: " ROOTPASS;
-prompt "Timezone (e.g. Europe/Copenhagen): " TIMEZONE
-prompt "Locale (e.g. en_US.UTF-8): " LOCALE
+prompt "Timezone (e.g. Europe/Copenhagen) [Default: Europe/Copenhagen]: " TIMEZONE
+TIMEZONE="${TIMEZONE:-Europe/Copenhagen}"
+prompt "Locale (e.g. en_US.UTF-8) [Default: en_US.UTF-8]: " LOCALE
+LOCALE="${LOCALE:-en_US.UTF-8}"
 
 # Export USERNAME so it is available outside the script
 echo "$USERNAME" > /tmp/initial_archion_username
