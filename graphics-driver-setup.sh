@@ -3,6 +3,9 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR" || { echo "Failed to change directory to $SCRIPT_DIR"; exit 1; }
+
 # --–– utility helpers -----
 source ./utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
 

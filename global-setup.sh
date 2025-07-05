@@ -4,6 +4,10 @@ if [[ $EUID != 0 ]]; then
   exit 1
 fi
 
+# CD into the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR" || { echo "Failed to change directory to $SCRIPT_DIR"; exit 1; }
+
 pacman --noconfirm -Syu
 
 pacman --noconfirm -Syu \
