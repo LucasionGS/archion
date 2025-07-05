@@ -48,6 +48,11 @@ Archion is a set of scripts and configuration files for setting up a modern Arch
 
 ---
 
+## Quick start
+```bash
+curl -fsSL https://raw.githubusercontent.com/LucasionGS/archion/refs/heads/main/remote.sh | bash
+```
+
 ## Step-by-step Installation
 
 ### 1. Boot Arch ISO and Clone This Repo
