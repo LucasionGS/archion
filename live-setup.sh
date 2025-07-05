@@ -97,6 +97,9 @@ prompt_password "Password for root: " ROOTPASS;
 prompt "Timezone (e.g. Europe/Copenhagen): " TIMEZONE
 prompt "Locale (e.g. en_US.UTF-8): " LOCALE
 
+# Export USERNAME so it is available outside the script
+echo "$USERNAME" > /tmp/initial_archion_username
+
 # ---- partitioning ----
 if [[ $DUAL_BOOT == false ]]; then
   echo "Partitioning $DISK ..."
