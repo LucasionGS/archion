@@ -1,5 +1,5 @@
 import { App } from "astal/gtk3"
-import { Variable, GLib, bind, execAsync } from "astal"
+import { Variable, GLib, bind, execAsync, readFile } from "astal"
 import { Astal, Gtk, Gdk } from "astal/gtk3"
 import Hyprland from "gi://AstalHyprland"
 import Mpris from "gi://AstalMpris"
@@ -20,66 +20,120 @@ const networkUpload = Variable(0)
 // Store previous network values for calculating rates
 let prevNetworkStats = { rx: 0, tx: 0, timestamp: Date.now() }
 
-// Function to get CPU usage
+// Store previous CPU values for delta calculation
+let prevCpuStats = { idle: 0, total: 0 }
+
+// Function to get CPU usage (optimized - no bash processes)
 function getCpuUsage() {
-    execAsync(["bash", "-c", "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$3+$4+$5)} END {print usage}'"])
-        .then(output => {
-            const usage = parseFloat(output.trim())
-            cpuUsage.set(isNaN(usage) ? 0 : Math.min(100, usage))
-        })
-        .catch(() => cpuUsage.set(0))
+    try {
+        const cpuInfo = readFile("/proc/stat")
+        const cpuLine = cpuInfo.split('\n')[0] // First line contains overall CPU stats
+        const values = cpuLine.split(/\s+/).slice(1).map(Number) // Remove "cpu" and convert to numbers
+        
+        // CPU stats: user, nice, system, idle, iowait, irq, softirq, steal
+        const idle = values[3] + values[4] // idle + iowait
+        const total = values.reduce((sum, val) => sum + val, 0)
+        
+        if (prevCpuStats.total > 0) {
+            const idleDiff = idle - prevCpuStats.idle
+            const totalDiff = total - prevCpuStats.total
+            const usage = totalDiff > 0 ? ((totalDiff - idleDiff) / totalDiff) * 100 : 0
+            cpuUsage.set(Math.max(0, Math.min(100, usage)))
+        }
+        
+        prevCpuStats = { idle, total }
+    } catch (error) {
+        console.warn("Failed to read CPU stats:", error)
+        cpuUsage.set(0)
+    }
 }
 
-// Function to get RAM usage
+// Function to get RAM usage (optimized - no bash processes)
 function getRamUsage() {
-    execAsync(["bash", "-c", "free | grep '^Mem:' | awk '{printf \"%.1f\", ($3/$2) * 100.0}'"])
-        .then(output => {
-            const usage = parseFloat(output.trim())
-            ramUsage.set(isNaN(usage) ? 0 : Math.min(100, usage))
-        })
-        .catch(() => ramUsage.set(0))
+    try {
+        const memInfo = readFile("/proc/meminfo")
+        const lines = memInfo.split('\n')
+        
+        const getMemValue = (key: string) => {
+            const line = lines.find(l => l.startsWith(key))
+            return line ? parseInt(line.split(/\s+/)[1]) : 0
+        }
+        
+        const memTotal = getMemValue("MemTotal:")
+        const memFree = getMemValue("MemFree:")
+        const memBuffers = getMemValue("Buffers:")
+        const memCached = getMemValue("Cached:")
+        const sReclaimable = getMemValue("SReclaimable:")
+        
+        if (memTotal > 0) {
+            const memUsed = memTotal - memFree - memBuffers - memCached - sReclaimable
+            const usage = (memUsed / memTotal) * 100
+            ramUsage.set(Math.max(0, Math.min(100, usage)))
+        }
+    } catch (error) {
+        console.warn("Failed to read memory stats:", error)
+        ramUsage.set(0)
+    }
 }
 
-// Function to get network usage
+// Function to get network usage (optimized - no bash processes)
 function getNetworkUsage() {
-    execAsync(["bash", "-c", "cat /proc/net/dev | grep -E '(wlan|eth|enp|wlp4s)' | head -1 | awk '{print $2, $10}'"])
-        .then(output => {
-            const parts = output.trim().split(/\s+/)
-            if (parts.length >= 2) {
-                const rx = parseInt(parts[0]) || 0
-                const tx = parseInt(parts[1]) || 0
-                const now = Date.now()
-                
-                if (prevNetworkStats.rx > 0 && prevNetworkStats.tx > 0) {
-                    const timeDiff = (now - prevNetworkStats.timestamp) / 1000 // seconds
+    try {
+        const netDev = readFile("/proc/net/dev")
+        const lines = netDev.split('\n').slice(2) // Skip header lines
+        
+        // Find first active network interface (wlan, eth, enp, wlp)
+        const activeLine = lines.find(line => 
+            /\s*(wlan|eth|enp|wlp)/.test(line) && 
+            !line.includes(':    0        0') // Skip inactive interfaces
+        )
+        
+        if (activeLine) {
+            const parts = activeLine.trim().split(/\s+/)
+            const rx = parseInt(parts[1]) || 0  // Received bytes
+            const tx = parseInt(parts[9]) || 0  // Transmitted bytes
+            const now = Date.now()
+            
+            if (prevNetworkStats.rx > 0 && prevNetworkStats.tx > 0) {
+                const timeDiff = (now - prevNetworkStats.timestamp) / 1000 // seconds
+                if (timeDiff > 0) {
                     const rxRate = Math.max(0, (rx - prevNetworkStats.rx) / timeDiff / 1024) // KB/s
                     const txRate = Math.max(0, (tx - prevNetworkStats.tx) / timeDiff / 1024) // KB/s
                     
                     networkDownload.set(rxRate)
                     networkUpload.set(txRate)
                 }
-                
-                prevNetworkStats = { rx, tx, timestamp: now }
             }
-        })
-        .catch(() => {
+            
+            prevNetworkStats = { rx, tx, timestamp: now }
+        } else {
             networkDownload.set(0)
             networkUpload.set(0)
-        })
+        }
+    } catch (error) {
+        console.warn("Failed to read network stats:", error)
+        networkDownload.set(0)
+        networkUpload.set(0)
+    }
 }
 
-// Poll system stats every 2 seconds
-GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+// Performance toggle - set to false to disable system monitoring for maximum performance
+const ENABLE_SYSTEM_MONITORING = true
+
+// Poll system stats every 5 seconds (reduced from 2s for better performance)
+if (ENABLE_SYSTEM_MONITORING) {
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 5000, () => {
+        getCpuUsage()
+        getRamUsage()
+        getNetworkUsage()
+        return true
+    })
+
+    // Initialize with first reading
     getCpuUsage()
     getRamUsage()
     getNetworkUsage()
-    return true
-})
-
-// Initialize with first reading
-getCpuUsage()
-getRamUsage()
-getNetworkUsage()
+}
 
 function CpuUsage() {
     return <box className="CpuUsage" css="min-width: 60px"
@@ -285,7 +339,8 @@ function FocusedClient() {
 }
 
 function Time({ format = "%H:%M - %A %e.", displayCalendar }: { format?: string, displayCalendar?: Variable<boolean> }) {
-    const time = Variable<string>("").poll(1000, () =>
+    // Reduced polling from 1s to 5s for better performance (time doesn't need to update every second)
+    const time = Variable<string>("").poll(5000, () =>
         GLib.DateTime.new_now_local().format(format)!)
 
     return <button
@@ -384,9 +439,9 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                         </box>
                         <box hexpand halign={Gtk.Align.END} >
                             <SysTray />
-                            <CpuUsage />
-                            <RamUsage />
-                            <NetworkUsage />
+                            {ENABLE_SYSTEM_MONITORING && <CpuUsage />}
+                            {ENABLE_SYSTEM_MONITORING && <RamUsage />}
+                            {ENABLE_SYSTEM_MONITORING && <NetworkUsage />}
                             {/* <AudioSlider /> */}
                             <Wifi />
                             <BatteryLevel />

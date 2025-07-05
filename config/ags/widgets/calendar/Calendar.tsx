@@ -9,6 +9,12 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
     const currentDate = Variable(new Date())
     const selectedDate = Variable(new Date())
 
+    // Cache today's date values to avoid repeated calculations
+    const today = new Date()
+    const todayMonth = today.getMonth()
+    const todayYear = today.getFullYear()
+    const todayDate = today.getDate()
+
     // Month names for display
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -61,7 +67,12 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
         const current = currentDate.get()
         const month = current.getMonth()
         const year = current.getFullYear()
-        const today = new Date()
+        
+        // Cache selected date values to avoid repeated calls
+        const selected = selectedDate.get()
+        const selectedMonth = selected.getMonth()
+        const selectedYear = selected.getFullYear()
+        const selectedDay = selected.getDate()
         
         const daysInMonth = getDaysInMonth(month, year)
         const firstDay = getFirstDayOfMonth(month, year)
@@ -87,15 +98,16 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
         return weeks.map((week, weekIndex) => 
             <box className="calendar-week">
                 {week.map((day, dayIndex) => {
+                    // Optimized comparisons using cached values
                     const isToday = day !== null && 
-                        month === today.getMonth() && 
-                        year === today.getFullYear() && 
-                        day === today.getDate()
+                        month === todayMonth && 
+                        year === todayYear && 
+                        day === todayDate
                     
                     const isSelected = day !== null && 
-                        month === selectedDate.get().getMonth() && 
-                        year === selectedDate.get().getFullYear() && 
-                        day === selectedDate.get().getDate()
+                        month === selectedMonth && 
+                        year === selectedYear && 
+                        day === selectedDay
                     
                     return (
                         <button
@@ -113,14 +125,20 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
         )
     }
 
+    // Combined reactive variable to reduce regenerations
+    const calendarState = Variable.derive([currentDate, selectedDate], () => ({
+        current: currentDate.get(),
+        selected: selectedDate.get()
+    }))
+
     return (
         <window
             name="calendar"
             className="Calendar"
             visible={bind(displayCalendar)}
-            anchor={Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.RIGHT}
+            anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}
             exclusivity={Astal.Exclusivity.NORMAL}
-            // keymode={Astal.Keymode.EXCLUSIVE}
+            keymode={Astal.Keymode.ON_DEMAND}
             onKeyPressEvent={(self, event) => {
                 if (event.get_keyval()[1] === Gdk.KEY_Escape) {
                     displayCalendar.set(false)
@@ -182,7 +200,7 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
 
                     {/* Calendar grid */}
                     <box className="calendar-grid" vertical>
-                        {bind(currentDate).as(() => generateCalendarGrid())}
+                        {bind(calendarState).as(() => generateCalendarGrid())}
                     </box>
 
                     {/* Footer with selected date info */}
