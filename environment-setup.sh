@@ -233,6 +233,9 @@ rm -rf /tmp/rofi-custom
 # Set Type 3 launcher to use Style 2
 sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh"
 
+# Prerequisites for the rust app
+yay -S --noconfirm webkit2gtk-4.1
+
 # Intall archion-settings i built
 git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings
 cd /tmp/archion-settings
