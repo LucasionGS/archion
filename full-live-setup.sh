@@ -13,5 +13,5 @@ arch-chroot /mnt bash /archion/graphics-driver-setup.sh
 # restart live boot into system
 echo "Setup complete. Rebooting..."
 sleep 2
-umount -R /mnt || { echo ""; exit
+umount -R /mnt || { echo "Failed to unmount /mnt"; }
 reboot
