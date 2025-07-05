@@ -24,7 +24,7 @@ pacman --noconfirm -Syu \
   flatpak
 
 # Enable services
-systemctl enable --now cronie.service
+systemctl enable cronie.service
 
 # Upload custom configs
 mkdir -p /etc/greetd
@@ -40,7 +40,7 @@ cp -r ./etc/gtkgreet/images/* /etc/gtkgreet/images/ 2>/dev/null || true
 
 
 # Finalize greetd
-systemctl enable --now polkit.service || true
+systemctl enable polkit.service || true
 systemctl enable greetd.service
 systemctl set-default graphical.target
 

@@ -73,9 +73,9 @@ install_vm() {
       2) header "VirtioGPU / VirGL";
          pacman -S --needed --noconfirm mesa virglrenderer qemu-guest-agent spice-vdagent; break;;
       3) header "VMware open-vm-tools";
-         pacman -S --needed --noconfirm open-vm-tools xf86-video-vmware; systemctl enable --now vmtoolsd; break;;
+         pacman -S --needed --noconfirm open-vm-tools xf86-video-vmware; systemctl enable vmtoolsd; break;;
       4) header "VirtualBox guest additions";
-         pacman -S --needed --noconfirm virtualbox-guest-utils; systemctl enable --now vboxservice; break;;
+         pacman -S --needed --noconfirm virtualbox-guest-utils; systemctl enable vboxservice; break;;
       5) return;;
       *) echo "Invalid";;
     esac
