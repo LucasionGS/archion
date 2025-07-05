@@ -207,18 +207,18 @@ chmod 600 /mnt/swapfile
 mkswap /mnt/swapfile
 echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
 
-# Copy over the repository to the default user's home directory
-echo "Copying repository files to ${USERNAME}'s home directory ..."
-mkdir -p /mnt/home/${USERNAME}/archion
+# Copy over the repository to the root directory
+echo "Copying repository files to root directory ..."
 
 # Get dir of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -d "$SCRIPT_DIR" ]]; then
-  echo "Copying files from $SCRIPT_DIR to /mnt/home/${USERNAME}/archion"
-  cp -r "$SCRIPT_DIR"/* /mnt/home/${USERNAME}/archion
+  echo "Copying files from $SCRIPT_DIR to /mnt/archion"
+  cp -r "$SCRIPT_DIR" /mnt/archion
   arch-chroot /mnt /bin/bash <<EOF
-  chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/archion
-  chmod -R 755 /home/${USERNAME}/archion
+  chown -R root:root /archion
+  chmod -R 755 /archion
+  ln -s /archion /home/${USERNAME}/archion
 EOF
 else
   echo "Script directory not found. Skipping file copy."
