@@ -86,6 +86,16 @@ yay -S --noconfirm \
 # Enable snapd service
 sudo systemctl enable snapd.socket
 
+SNAP_STARTED=false
+# Attempt start snapd service, but its fine if it fails
+if ! sudo systemctl start snapd.socket; then
+  echo "Failed to start snapd service. This is not critical, but you may need to start it manually."
+  SNAP_STARTED=false
+else
+  echo "Snapd service started successfully."
+  SNAP_STARTED=true
+fi
+
 # Apply partial config to neofetch
 CONFIG_DIR="$HOME/.config"
 if [[ ! -d $CONFIG_DIR/neof1h ]]; then
@@ -162,11 +172,23 @@ fi
 # fish $APP_DIR/fish/install.fish
 
 # Install beekeeper
-if command -v beekeeper-studio &> /dev/null; then
-  echo "Beekeeper Studio is already installed."
+if [[ $SNAP_STARTED == "true" ]]; then
+  if command -v beekeeper-studio &> /dev/null; then
+    echo "Beekeeper Studio is already installed."
+  else
+    echo "Installing Beekeeper Studio..."
+    sudo snap install beekeeper-studio
+  fi
+
+  # snap-store
+  if command -v snap-store &> /dev/null; then
+    echo "Snap Store is already installed."
+  else
+    echo "Installing Snap Store..."
+    sudo snap install snap-store
+  fi
 else
-  echo "Installing Beekeeper Studio..."
-  sudo snap install beekeeper-studio
+  echo "Snapd service is not running. Skipping snap package installations."
 fi
 
 if command -v google-chrome-stable &> /dev/null; then
@@ -174,14 +196,6 @@ if command -v google-chrome-stable &> /dev/null; then
 else
   echo "Installing Google Chrome..."
   yay -S --noconfirm google-chrome
-fi
-
-# snap-store
-if command -v snap-store &> /dev/null; then
-  echo "Snap Store is already installed."
-else
-  echo "Installing Snap Store..."
-  sudo snap install snap-store
 fi
 
 
