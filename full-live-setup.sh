@@ -3,7 +3,7 @@
 
 loadkeys dk
 sudo bash live-setup.sh && \
-USERNAME=$(cat /tmp/initial_archion_username)
+USERNAME="$(cat /tmp/initial_archion_username)"
 
 # Run on arch-chroot
 arch-chroot /mnt bash /home/$USERNAME/archion/global-setup.sh
