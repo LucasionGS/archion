@@ -224,8 +224,17 @@ else
   echo "Script directory not found. Skipping file copy."
 fi
 
+# Set UMOUNT variable to false if --no-umount is passed
+if [[ "${1:-}" == "--no-umount" ]]; then
+  echo "Skipping unmounting at the end."
+  UMOUNT=false
+else
+  echo "Unmounting will be performed at the end of the script."
+  UMOUNT=true
+fi
+
 # If UMOUNT=false is set, do not unmount at the end
-if [[ -n "${UMOUNT:-}" && $UMOUNT == false ]]; then
+if [[ $UMOUNT == false ]]; then
   echo "Skipping unmounting. You can manually unmount later."
 else
   # ---- finish ----
