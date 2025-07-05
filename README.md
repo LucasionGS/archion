@@ -53,7 +53,8 @@ Archion is a set of scripts and configuration files for setting up a modern Arch
 ### 1. Boot Arch ISO and Clone This Repo
 
 ```bash
-git clone https://github.com/yourusername/archion.git
+pacman -S git
+git clone https://github.com/LucasionGS/archion.git
 cd archion
 ```
 
