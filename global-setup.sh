@@ -42,6 +42,9 @@ cp -r ./etc/gtkgreet/* /etc/gtkgreet/ 2>/dev/null || true
 mkdir -p /etc/gtkgreet/images
 cp -r ./etc/gtkgreet/images/* /etc/gtkgreet/images/ 2>/dev/null || true
 
+# Polkit rules
+mkdir -p /etc/polkit-1/rules.d
+cp -r ./etc/polkit-1/rules.d/* /etc/polkit-1/rules.d/ 2>/dev/null || true
 
 # Finalize greetd
 systemctl enable polkit.service || true
