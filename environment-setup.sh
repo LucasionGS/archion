@@ -236,7 +236,7 @@ sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3
 # Prerequisites for the rust app
 yay -S --noconfirm webkit2gtk-4.1
 
-# Intall archion-settings i built
+# Install archion-settings i built
 git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings
 cd /tmp/archion-settings
 chmod +x build.sh
