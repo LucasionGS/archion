@@ -20,8 +20,10 @@ USER=$(whoami)
 info "Setting up environment for user: $USER"
 
 # Development mode check
+# To enable development mode, set: export ARCHION_DEV=true
 if [[ "${ARCHION_DEV:-false}" == "true" ]]; then
   warning "Running in development mode - configurations will be symlinked instead of copied"
+  info "Development mode: Changes to config files will be reflected immediately"
 fi
 
 echo
