@@ -85,9 +85,9 @@ if [[ ! -d /tmp/yay ]]; then
   step "Installing yay AUR helper..."
   info "This will allow us to install packages from the Arch User Repository"
   
-  if git clone https://aur.archlinux.org/yay.git /tmp/yay >/dev/null 2>&1; then
+  if git clone https://aur.archlinux.org/yay.git /tmp/yay; then
     cd /tmp/yay
-    if makepkg -si --noconfirm >/dev/null 2>&1; then
+    if makepkg -si --noconfirm; then
       success "Yay AUR helper installed successfully"
     else
       error "Failed to build and install yay"
@@ -107,7 +107,7 @@ execute_with_progress "yay -Syu --noconfirm" "System update"
 
 section "Development Environment"
 step "Setting up Rust toolchain..."
-if rustup default stable >/dev/null 2>&1; then
+if rustup default stable; then
   success "Rust toolchain configured"
 else
   warning "Failed to configure Rust toolchain"
@@ -130,7 +130,7 @@ declare -a aur_packages=(
 step "Installing AUR packages..."
 for package in "${aur_packages[@]}"; do
   info "Installing: $package"
-  if yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+  if yay -S --needed --noconfirm "$package"; then
     success "Installed: $package"
   else
     warning "Failed to install: $package"
@@ -139,7 +139,7 @@ done
 
 section "Service Configuration"
 step "Enabling snapd service..."
-if sudo systemctl enable snapd.socket >/dev/null 2>&1; then
+if sudo systemctl enable snapd.socket; then
   success "Snapd service enabled"
 else
   warning "Failed to enable snapd service"
@@ -147,7 +147,7 @@ fi
 
 SNAP_STARTED=false
 step "Starting snapd service..."
-if sudo systemctl start snapd.socket >/dev/null 2>&1; then
+if sudo systemctl start snapd.socket; then
   success "Snapd service started successfully"
   SNAP_STARTED=true
 else
@@ -160,7 +160,7 @@ step "Setting up neofetch..."
 mkdir -p "$CONFIG_DIR/neofetch"
 
 # Run neofetch once to generate initial config
-if neofetch >/dev/null 2>&1; then
+if neofetch; then
   success "Neofetch initial configuration created"
 else
   warning "Failed to run neofetch initially"
@@ -187,7 +187,7 @@ step "Installing Oh My Fish framework..."
 OMG_INSTALL_FILE="/tmp/omf-$(whoami)-install"
 if wget -q https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install -O "$OMG_INSTALL_FILE"; then
   chmod +x "$OMG_INSTALL_FILE"
-  if fish -c "$OMG_INSTALL_FILE --noninteractive --yes" >/dev/null 2>&1; then
+  if fish -c "$OMG_INSTALL_FILE --noninteractive --yes"; then
     success "Oh My Fish installed successfully"
   else
     warning "Failed to install Oh My Fish"
@@ -198,27 +198,27 @@ else
 fi
 
 step "Installing Fish theme and plugins..."
-if fish -c "omf install bobthefish" >/dev/null 2>&1; then
+if fish -c "omf install bobthefish"; then
   success "Bobthefish theme installed"
 else
   warning "Failed to install bobthefish theme"
 fi
 
-if fish -c "omf theme bobthefish" >/dev/null 2>&1; then
+if fish -c "omf theme bobthefish"; then
   success "Bobthefish theme activated"
 else
   warning "Failed to activate bobthefish theme"
 fi
 
 step "Installing Node.js version manager for Fish..."
-if fish -c "fisher install jorgebucaran/nvm.fish" >/dev/null 2>&1; then
+if fish -c "fisher install jorgebucaran/nvm.fish"; then
   success "NVM for Fish installed"
 else
   warning "Failed to install NVM for Fish"
 fi
 
 step "Installing zoxide (smart directory navigation)..."
-if curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh >/dev/null 2>&1; then
+if curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh; then
   success "Zoxide installed successfully"
 else
   warning "Failed to install zoxide"
@@ -227,7 +227,7 @@ fi
 section "Neovim Configuration"
 step "Setting up Neovim with NvChad..."
 if [[ ! -d "$CONFIG_DIR/nvim" ]]; then
-  if git clone https://github.com/LucasionGS/nvim-nvchad "$CONFIG_DIR/nvim" >/dev/null 2>&1; then
+  if git clone https://github.com/LucasionGS/nvim-nvchad "$CONFIG_DIR/nvim"; then
     success "Neovim configuration cloned successfully"
     info "Neovim will be configured when first launched"
   else
@@ -240,7 +240,7 @@ fi
 section "Development Tools"
 step "Installing Visual Studio Code..."
 info "Installing Microsoft's official version (visual-studio-code-bin)"
-if yay -S --needed --noconfirm visual-studio-code-bin >/dev/null 2>&1; then
+if yay -S --needed --noconfirm visual-studio-code-bin; then
   success "Visual Studio Code installed"
 else
   warning "Failed to install Visual Studio Code"
@@ -258,7 +258,7 @@ declare -a desktop_packages=(
 
 for package in "${desktop_packages[@]}"; do
   step "Installing: $package"
-  if yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+  if yay -S --needed --noconfirm "$package"; then
     success "Installed: $package"
   else
     warning "Failed to install: $package"
@@ -289,7 +289,7 @@ if [[ $SNAP_STARTED == "true" ]]; then
   if command -v beekeeper-studio &> /dev/null; then
     info "Beekeeper Studio is already installed"
   else
-    if sudo snap install beekeeper-studio >/dev/null 2>&1; then
+    if sudo snap install beekeeper-studio; then
       success "Beekeeper Studio installed"
     else
       warning "Failed to install Beekeeper Studio"
@@ -300,7 +300,7 @@ if [[ $SNAP_STARTED == "true" ]]; then
   if command -v snap-store &> /dev/null; then
     info "Snap Store is already installed"
   else
-    if sudo snap install snap-store >/dev/null 2>&1; then
+    if sudo snap install snap-store; then
       success "Snap Store installed"
     else
       warning "Failed to install Snap Store"
@@ -316,7 +316,7 @@ step "Installing Google Chrome..."
 if command -v google-chrome-stable &> /dev/null; then
   info "Google Chrome is already installed"
 else
-  if yay -S --needed --noconfirm google-chrome >/dev/null 2>&1; then
+  if yay -S --needed --noconfirm google-chrome; then
     success "Google Chrome installed"
   else
     warning "Failed to install Google Chrome"
@@ -325,14 +325,14 @@ fi
 
 section "Additional Desktop Tools"
 step "Installing Better Control (enhanced settings panel)..."
-if yay -S --needed --noconfirm better-control-git >/dev/null 2>&1; then
+if yay -S --needed --noconfirm better-control-git; then
   success "Better Control installed"
 else
   warning "Failed to install Better Control"
 fi
 
 step "Installing Hyprshot (screenshot tool)..."
-if yay -S --needed --noconfirm hyprshot-git >/dev/null 2>&1; then
+if yay -S --needed --noconfirm hyprshot-git; then
   success "Hyprshot installed"
 else
   warning "Failed to install Hyprshot"
@@ -341,7 +341,7 @@ fi
 section "Runtime Installation"
 step "Installing Deno runtime..."
 if wget -q https://deno.land/install.sh -O /tmp/deno-install.sh; then
-  if sh /tmp/deno-install.sh -y >/dev/null 2>&1; then
+  if sh /tmp/deno-install.sh -y; then
     success "Deno runtime installed"
   else
     warning "Failed to install Deno runtime"
@@ -353,15 +353,15 @@ fi
 
 section "Hyprland Plugin Management"
 step "Setting up HyprPM and plugins..."
-if hyprpm update >/dev/null 2>&1; then
+if hyprpm update; then
   success "HyprPM updated"
 else
   warning "Failed to update HyprPM"
 fi
 
 step "Installing Hyprspace plugin..."
-if hyprpm add https://github.com/KZDKM/Hyprspace >/dev/null 2>&1; then
-  if hyprpm enable Hyprspace >/dev/null 2>&1; then
+if hyprpm add https://github.com/KZDKM/Hyprspace; then
+  if hyprpm enable Hyprspace; then
     success "Hyprspace plugin installed and enabled"
   else
     warning "Hyprspace plugin installed but failed to enable"
@@ -371,7 +371,7 @@ else
 fi
 
 step "Installing official Hyprland plugins..."
-if hyprpm add https://github.com/hyprwm/hyprland-plugins >/dev/null 2>&1; then
+if hyprpm add https://github.com/hyprwm/hyprland-plugins; then
   success "Official Hyprland plugins installed"
 else
   warning "Failed to install official Hyprland plugins"
@@ -380,9 +380,9 @@ fi
 section "Rofi Customization"
 step "Installing custom Rofi themes..."
 info "Downloading and installing Rofi theme collection from adi1090x..."
-if git clone --depth=1 https://github.com/adi1090x/rofi.git /tmp/rofi-custom >/dev/null 2>&1; then
+if git clone --depth=1 https://github.com/adi1090x/rofi.git /tmp/rofi-custom; then
   cd /tmp/rofi-custom
-  if chmod +x setup.sh && bash setup.sh >/dev/null 2>&1; then
+  if chmod +x setup.sh && bash setup.sh; then
     success "Custom Rofi themes installed"
     
     # Set Type 3 launcher to use Style 2
@@ -401,16 +401,16 @@ fi
 
 section "Final Application Setup"
 step "Installing WebKit prerequisites..."
-if yay -S --needed --noconfirm webkit2gtk-4.1 >/dev/null 2>&1; then
+if yay -S --needed --noconfirm webkit2gtk-4.1; then
   success "WebKit prerequisites installed"
 else
   warning "Failed to install WebKit prerequisites"
 fi
 step "Installing Archion Settings application..."
 info "Building custom Hyprland settings application..."
-if git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings >/dev/null 2>&1; then
+if git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings; then
   cd /tmp/archion-settings
-  if chmod +x build.sh && bash build.sh >/dev/null 2>&1; then
+  if chmod +x build.sh && bash build.sh; then
     success "Archion Settings application built and installed"
   else
     warning "Failed to build Archion Settings application"
