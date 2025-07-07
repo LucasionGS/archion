@@ -20,7 +20,7 @@ USER=$(whoami)
 info "Setting up environment for user: $USER"
 
 # Development mode check
-if [[ $ARCHION_DEV == "true" ]]; then
+if [[ "${ARCHION_DEV:-false}" == "true" ]]; then
   warning "Running in development mode - configurations will be symlinked instead of copied"
 fi
 
@@ -44,7 +44,7 @@ mkdir -p "$CONFIG_DIR" "$APP_DIR"
 success "Configuration directories created"
 
 section "Configuration Files Setup"
-if [[ $ARCHION_DEV == "true" ]]; then
+if [[ "${ARCHION_DEV:-false}" == "true" ]]; then
   info "Development mode: Creating symbolic links to configuration files..."
   
   step "Linking configuration directories..."
@@ -265,7 +265,7 @@ done
 
 section "Local Applications Setup"
 step "Installing FSSH (Fish SSH Connection Manager)..."
-if [[ $ARCHION_DEV == "true" ]]; then
+if [[ "${ARCHION_DEV:-false}" == "true" ]]; then
   info "Development mode: Linking FSSH application directory..."
   ln -sf "$SCRIPT_DIR/apps/fssh" "$APP_DIR/fssh"
   success "FSSH linked (development mode)"
