@@ -1,6 +1,8 @@
 #!/bin/bash
 ARCHION_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/archion"
 
+SWWW_ARGS="--transition-type=wave --transition-duration=2 --transition-fps=60 --transition-step=255"
+
 clean_cache() {
   # Remove old wallpapers from the active directory
   rm -f $ARCHION_DIR/.wallpapers_active/*
@@ -35,5 +37,5 @@ fi
 
 if [ -n "$FILE_PATH" ]; then
   # Set the wallpaper using swww
-  swww img "$FILE_PATH"
+  swww img $SWWW_ARGS "$FILE_PATH"
 fi
