@@ -2,6 +2,9 @@
 # Archion Utility Functions
 # Enhanced bash utilities for better user experience
 
+# Enable strict mode for better error detection
+set -euo pipefail
+
 # ========== Color Definitions ==========
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
@@ -126,7 +129,7 @@ confirm() {
 prompt() {
   local message="$1"
   local var_name="$2"
-  local default="$3"
+  local default="${3:-}"
   
   if [[ -n "$default" ]]; then
     echo -e "${CYAN}${INFO}${NC} ${message}"
@@ -149,7 +152,7 @@ prompt() {
 # Enhanced password prompt
 prompt_password() {
   local message="$1"
-  local var_name="$2"
+  local var_name="${2:-}"
   local password
   local confirm_password
   
@@ -204,13 +207,13 @@ show_progress() {
 
 # Spinner for long-running operations
 spinner() {
-  local pid=$1
-  local message="$2"
+  local pid="$1"
+  local message="${2:-Processing}"
   local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
   local i=0
   
   echo -ne "${CYAN}${message}${NC} "
-  while kill -0 $pid 2>/dev/null; do
+  while kill -0 "$pid" 2>/dev/null; do
     i=$(( (i+1) %10 ))
     printf "\r${CYAN}${message}${NC} ${spin:$i:1}"
     sleep .1
@@ -221,8 +224,8 @@ spinner() {
 # Execute command with progress indication
 execute_with_progress() {
   local cmd="$1"
-  local description="$2"
-  local log_file="/tmp/archion_install.log"
+  local description="${2:-Running command}"
+  local log_file="${3:-/tmp/archion_install.log}"
   
   step "$description"
   
