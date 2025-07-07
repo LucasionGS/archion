@@ -260,12 +260,6 @@ function Media(props: {
 }) {
     const { displayMediaPlayer } = props
     const mpris = Mpris.get_default()
-    const cava = Cava.get_default()!
-    const cavaValues = bind(cava, "values");
-
-    // cava.connect("notify::values", () => {
-    //     print(cava.values)
-    // })
 
     return <box className="Media">
         {bind(mpris, "players").as(ps => [ps[0] ? (
@@ -283,20 +277,6 @@ function Media(props: {
                         `${ps[0].title} - ${ps[0].artist}`
                     )}
                 />
-                {/* Visualizer? */}
-                <box className="Visualizer">
-                    {/* @ts-ignore */}
-                    {bind(cava, "bars").as(bars => (
-                        <box className="Cava">
-                            {new Array(bars).map((_, i) => (
-                                <box
-                                    className="Cava-Bar"
-                                    css={cavaValues.as(values => `min-height: ${+(values[i].toFixed(2)) * 100}%; min-width: 3px;`)}
-                                />
-                            ))}
-                        </box>
-                    ))}
-                </box>
             </box>
         ) : (
             <label label="Archion" />
@@ -442,7 +422,6 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
                             {ENABLE_SYSTEM_MONITORING && <CpuUsage />}
                             {ENABLE_SYSTEM_MONITORING && <RamUsage />}
                             {ENABLE_SYSTEM_MONITORING && <NetworkUsage />}
-                            {/* <AudioSlider /> */}
                             <Wifi />
                             <BatteryLevel />
                             <Time displayCalendar={displayCalendar} />
