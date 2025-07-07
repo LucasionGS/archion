@@ -70,20 +70,22 @@ header() {
   local title="$1"
   local width=60
   local padding=$(( (width - ${#title} - 4) / 2 ))
+  local border=$(printf '=%.0s' $(seq 1 $width))
   
   echo
-  echo -e "${BLUE}${'='*$width}${NC}"
+  echo -e "${BLUE}${border}${NC}"
   printf "${BLUE}|${NC}%*s${BOLD}%s${NC}%*s${BLUE}|${NC}\n" $padding "" "$title" $padding ""
-  echo -e "${BLUE}${'='*$width}${NC}"
+  echo -e "${BLUE}${border}${NC}"
   echo
 }
 
 # Section header (smaller than main header)
 section() {
   local title="$1"
+  local line=$(printf '─%.0s' $(seq 1 $((${#title} + 3))))
   echo
   echo -e "${PURPLE}${BOLD}▶ $title${NC}"
-  echo -e "${PURPLE}${'─'*$((${#title} + 3))}${NC}"
+  echo -e "${PURPLE}${line}${NC}"
 }
 
 # Check if command exists
