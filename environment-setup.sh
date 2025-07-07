@@ -1,248 +1,453 @@
 #!/bin/bash
 set -e
-if [[ $EUID == 0 ]]; then
-  echo "This script cannot be run as root. Please run without sudo, but as a normal user who has sudo privileges."
-  exit 1
-fi
 
-USER=$(whoami)
+# Get script directory and source utilities
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR" || { echo "Failed to change directory to $SCRIPT_DIR"; exit 1; }
 
-# --–– utility helpers -----
-source $SCRIPT_DIR/utils.sh || { echo "utils.sh not found. Run from the script directory."; exit 1; }
+# Source utility functions
+source "$SCRIPT_DIR/utils.sh" || { echo "utils.sh not found. Run from the script directory."; exit 1; }
 
-# Inform the user that it is possible they have to type in their password if they don't use passwordless sudo
-echo "You may be prompted for your password during the installation process if you do not have passwordless sudo configured."
-pause
+# Show banner
+show_banner "User Environment Setup" "2.0"
 
+# User check with better formatting
+if [[ $EUID == 0 ]]; then
+  error "This script cannot be run as root. Please run as a normal user with sudo privileges."
+fi
+
+USER=$(whoami)
+info "Setting up environment for user: $USER"
+
+# Development mode check
+if [[ $ARCHION_DEV == "true" ]]; then
+  warning "Running in development mode - configurations will be symlinked instead of copied"
+fi
+
+echo
+info "This script will install AUR packages, configure your desktop environment,"
+info "and set up development tools. You may be prompted for your password"
+info "during the installation process if you don't have passwordless sudo configured."
+echo
+
+if ! confirm "Do you want to proceed with the environment setup?"; then
+  warning "Setup cancelled by user."
+  exit 0
+fi
+
+section "Directory Setup"
 CONFIG_DIR="$HOME/.config"
 APP_DIR="$HOME/.apps"
 
-if [[ ! -d $CONFIG_DIR ]]; then mkdir -p $CONFIG_DIR; fi
-if [[ ! -d $APP_DIR ]]; then mkdir -p $APP_DIR; fi
+step "Creating configuration directories..."
+mkdir -p "$CONFIG_DIR" "$APP_DIR"
+success "Configuration directories created"
 
+section "Configuration Files Setup"
 if [[ $ARCHION_DEV == "true" ]]; then
-  echo "Running in development mode. Linking configuration files instead of copying them..."
-  sleep 2
-  # Link configuration files for development mode
-  ln -sf $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
-  # ln -sf $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
-  ln -sf $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
+  info "Development mode: Creating symbolic links to configuration files..."
+  
+  step "Linking configuration directories..."
+  ln -sf "$SCRIPT_DIR/config/archion"    "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/hypr"       "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/ags"        "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/kitty"      "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/waybar"     "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/anyrun"     "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/wleave"     "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/fish"       "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/config/gtk-3.0"    "$CONFIG_DIR/."
+  success "Configuration files linked (development mode)"
 else
-  # Copy configuration files
-  cp -r $SCRIPT_DIR/config/archion    $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/hypr       $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/ags        $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/kitty      $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/waybar     $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/anyrun     $CONFIG_DIR/.
-  # cp -r $SCRIPT_DIR/config/rofi       $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/wleave     $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/fish       $CONFIG_DIR/.
-  cp -r $SCRIPT_DIR/config/gtk-3.0    $CONFIG_DIR/.
+  info "Production mode: Copying configuration files..."
+  
+  step "Copying configuration directories..."
+  cp -r "$SCRIPT_DIR/config/archion"    "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/hypr"       "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/ags"        "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/kitty"      "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/waybar"     "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/anyrun"     "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/wleave"     "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/fish"       "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/config/gtk-3.0"    "$CONFIG_DIR/."
+  success "Configuration files copied"
 fi
 
-# Create autogen files
-mkdir -p        "$CONFIG_DIR/hypr/configs/autogen"
-create_autogen  "$CONFIG_DIR/hypr/configs/autogen/monitors.conf"
+step "Creating autogen configuration files..."
+mkdir -p "$CONFIG_DIR/hypr/configs/autogen"
+create_autogen "$CONFIG_DIR/hypr/configs/autogen/monitors.conf"
 
+section "AUR Helper Installation"
 if [[ ! -d /tmp/yay ]]; then
-  # Install yay
-  git clone https://aur.archlinux.org/yay.git /tmp/yay
-  cd /tmp/yay
-  makepkg -si --noconfirm
+  step "Installing yay AUR helper..."
+  info "This will allow us to install packages from the Arch User Repository"
   
-  cd /
-  
-  # Clean up yay directory
-  rm -rf /tmp/yay
+  if git clone https://aur.archlinux.org/yay.git /tmp/yay >/dev/null 2>&1; then
+    cd /tmp/yay
+    if makepkg -si --noconfirm >/dev/null 2>&1; then
+      success "Yay AUR helper installed successfully"
+    else
+      error "Failed to build and install yay"
+    fi
+    cd "$SCRIPT_DIR"
+    rm -rf /tmp/yay
+  else
+    error "Failed to clone yay repository"
+  fi
+else
+  info "Yay installation directory already exists, skipping..."
 fi
 
-# Update the system packages
-yay -Syu --noconfirm
+section "System Update"
+step "Updating system packages with yay..."
+execute_with_progress "yay -Syu --noconfirm" "System update"
 
-# Install Rust toolchain for compiling
-rustup default stable
+section "Development Environment"
+step "Setting up Rust toolchain..."
+if rustup default stable >/dev/null 2>&1; then
+  success "Rust toolchain configured"
+else
+  warning "Failed to configure Rust toolchain"
+fi
 
-# Install anyrun (https://github.com/anyrun-org/anyrun), swww, snap, neofetch, rofi, cava, and clipse
-yay -S --noconfirm \
-  anyrun-git \
-  swww \
-  snap \
-  snapd \
-  neofetch \
-  rofi \
-  libcava \
-  clipse
+section "AUR Package Installation"
+info "Installing essential AUR packages for desktop experience..."
 
-# Enable snapd service
-sudo systemctl enable snapd.socket
+declare -a aur_packages=(
+  "anyrun-git"
+  "swww"
+  "snap"
+  "snapd"
+  "neofetch"
+  "rofi"
+  "libcava"
+  "clipse"
+)
+
+step "Installing AUR packages..."
+for package in "${aur_packages[@]}"; do
+  info "Installing: $package"
+  if yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+    success "Installed: $package"
+  else
+    warning "Failed to install: $package"
+  fi
+done
+
+section "Service Configuration"
+step "Enabling snapd service..."
+if sudo systemctl enable snapd.socket >/dev/null 2>&1; then
+  success "Snapd service enabled"
+else
+  warning "Failed to enable snapd service"
+fi
 
 SNAP_STARTED=false
-# Attempt start snapd service, but its fine if it fails
-if ! sudo systemctl start snapd.socket; then
-  echo "Failed to start snapd service. This is not critical, but you may need to start it manually."
-  SNAP_STARTED=false
-else
-  echo "Snapd service started successfully."
+step "Starting snapd service..."
+if sudo systemctl start snapd.socket >/dev/null 2>&1; then
+  success "Snapd service started successfully"
   SNAP_STARTED=true
-fi
-
-# Apply partial config to neofetch
-CONFIG_DIR="$HOME/.config"
-if [[ ! -d $CONFIG_DIR/neof1h ]]; then
-  mkdir -p $CONFIG_DIR/neofetch
-fi
-
-# Run once
-neofetch
-
-## If the config already contains ### ARCHION CONFIG ###, we will not overwrite it
-if grep -q "### ARCHION CONFIG ###" "$CONFIG_DIR/neofetch/config.conf"; then
-  echo "Neofetch configuration already contains Archion settings. Skipping update."
 else
-  echo "" >> $CONFIG_DIR/neofetch/config.conf # Ensure there's a newline at the end of the file
-  cat $SCRIPT_DIR/config/neofetch/partial-config.conf >> $CONFIG_DIR/neofetch/config.conf
-  echo "Neofetch configuration updated with Archion settings."
+  warning "Failed to start snapd service (not critical - can be started manually later)"
+  SNAP_STARTED=false
 fi
 
-# Refresh the hyprland packages
-# hyprpm update
+section "Neofetch Configuration"
+step "Setting up neofetch..."
+mkdir -p "$CONFIG_DIR/neofetch"
 
-
-# Install oh-my-fish
-OMG_INSTALL_FILE="/tmp/omf-`whoami`-install"
-wget https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install -O $OMG_INSTALL_FILE
-chmod +x $OMG_INSTALL_FILE
-fish -c "$OMG_INSTALL_FILE --noninteractive --yes"
-# Clean
-rm -f $OMG_INSTALL_FILE
-
-# Install fish theme
-fish -c "omf install bobthefish"
-fish -c "omf theme bobthefish"
-
-# Install nvm for managing Node.js versions for fish shell
-fish -c "fisher install jorgebucaran/nvm.fish"
-# Use the real zoxide as its compatible with fish
-curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-
-# Neovim setup (Will be set up when launched later)
-if [[ ! -d $CONFIG_DIR/nvim ]]; then
-  # Install Neovim
-  git clone https://github.com/LucasionGS/nvim-nvchad $CONFIG_DIR/nvim || true # If it already exists, it will not clone again
+# Run neofetch once to generate initial config
+if neofetch >/dev/null 2>&1; then
+  success "Neofetch initial configuration created"
 else
-  echo "Neovim configuration already exists in $CONFIG_DIR/nvim. Skipping clone."
+  warning "Failed to run neofetch initially"
 fi
 
+# Apply custom Archion configuration
+if grep -q "### ARCHION CONFIG ###" "$CONFIG_DIR/neofetch/config.conf" 2>/dev/null; then
+  info "Neofetch already has Archion configuration"
+else
+  step "Applying Archion neofetch configuration..."
+  if [[ -f "$SCRIPT_DIR/config/neofetch/partial-config.conf" ]]; then
+    echo "" >> "$CONFIG_DIR/neofetch/config.conf"
+    cat "$SCRIPT_DIR/config/neofetch/partial-config.conf" >> "$CONFIG_DIR/neofetch/config.conf"
+    success "Neofetch configuration updated with Archion settings"
+  else
+    warning "Archion neofetch configuration file not found"
+  fi
+fi
 
-# Visual studio code (Microsoft's version)
-# Note: This is the official version from Microsoft, not the open-source version. I like this one best
-yay -S --noconfirm visual-studio-code-bin
-# If unhappy with the official version, you can use the open-source version:
-# sudo pacman -S --noconfirm code
+section "Fish Shell Setup"
+info "Installing and configuring Fish shell with Oh My Fish..."
 
+step "Installing Oh My Fish framework..."
+OMG_INSTALL_FILE="/tmp/omf-$(whoami)-install"
+if wget -q https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install -O "$OMG_INSTALL_FILE"; then
+  chmod +x "$OMG_INSTALL_FILE"
+  if fish -c "$OMG_INSTALL_FILE --noninteractive --yes" >/dev/null 2>&1; then
+    success "Oh My Fish installed successfully"
+  else
+    warning "Failed to install Oh My Fish"
+  fi
+  rm -f "$OMG_INSTALL_FILE"
+else
+  warning "Failed to download Oh My Fish installer"
+fi
 
-# Install Pyprland, wleave, Astal / AGS for widgets
-yay -S --noconfirm \
-  pyprland \
-  wleave-git \
-  libastal-meta \
-  aylurs-gtk-shell
+step "Installing Fish theme and plugins..."
+if fish -c "omf install bobthefish" >/dev/null 2>&1; then
+  success "Bobthefish theme installed"
+else
+  warning "Failed to install bobthefish theme"
+fi
 
-# Install FSSH (Fish SSH Connection Manager) from local
+if fish -c "omf theme bobthefish" >/dev/null 2>&1; then
+  success "Bobthefish theme activated"
+else
+  warning "Failed to activate bobthefish theme"
+fi
+
+step "Installing Node.js version manager for Fish..."
+if fish -c "fisher install jorgebucaran/nvm.fish" >/dev/null 2>&1; then
+  success "NVM for Fish installed"
+else
+  warning "Failed to install NVM for Fish"
+fi
+
+step "Installing zoxide (smart directory navigation)..."
+if curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh >/dev/null 2>&1; then
+  success "Zoxide installed successfully"
+else
+  warning "Failed to install zoxide"
+fi
+
+section "Neovim Configuration"
+step "Setting up Neovim with NvChad..."
+if [[ ! -d "$CONFIG_DIR/nvim" ]]; then
+  if git clone https://github.com/LucasionGS/nvim-nvchad "$CONFIG_DIR/nvim" >/dev/null 2>&1; then
+    success "Neovim configuration cloned successfully"
+    info "Neovim will be configured when first launched"
+  else
+    warning "Failed to clone Neovim configuration"
+  fi
+else
+  info "Neovim configuration already exists, skipping clone"
+fi
+
+section "Development Tools"
+step "Installing Visual Studio Code..."
+info "Installing Microsoft's official version (visual-studio-code-bin)"
+if yay -S --needed --noconfirm visual-studio-code-bin >/dev/null 2>&1; then
+  success "Visual Studio Code installed"
+else
+  warning "Failed to install Visual Studio Code"
+fi
+
+section "Desktop Environment Extensions"
+info "Installing additional desktop environment tools..."
+
+declare -a desktop_packages=(
+  "pyprland"
+  "wleave-git"
+  "libastal-meta"
+  "aylurs-gtk-shell"
+)
+
+for package in "${desktop_packages[@]}"; do
+  step "Installing: $package"
+  if yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+    success "Installed: $package"
+  else
+    warning "Failed to install: $package"
+  fi
+done
+
+section "Local Applications Setup"
+step "Installing FSSH (Fish SSH Connection Manager)..."
 if [[ $ARCHION_DEV == "true" ]]; then
-  echo "Running in development mode. Linking FSSH application directory..."
-  ln -sf $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
+  info "Development mode: Linking FSSH application directory..."
+  ln -sf "$SCRIPT_DIR/apps/fssh" "$APP_DIR/fssh"
+  success "FSSH linked (development mode)"
 else
-  if [[ ! -d $APP_DIR/fssh ]]; then
-    cp -r $SCRIPT_DIR/apps/fssh $APP_DIR/fssh
+  info "Production mode: Copying FSSH application..."
+  if [[ ! -d "$APP_DIR/fssh" ]]; then
+    cp -r "$SCRIPT_DIR/apps/fssh" "$APP_DIR/fssh"
+    success "FSSH installed"
+  else
+    info "FSSH already installed"
   fi
 fi
 
-# Install FSSH
-# fish $APP_DIR/fish/install.fish
-
-# Install beekeeper
+section "Snap Package Installation"
 if [[ $SNAP_STARTED == "true" ]]; then
+  info "Installing snap packages..."
+  
+  step "Installing Beekeeper Studio..."
   if command -v beekeeper-studio &> /dev/null; then
-    echo "Beekeeper Studio is already installed."
+    info "Beekeeper Studio is already installed"
   else
-    echo "Installing Beekeeper Studio..."
-    sudo snap install beekeeper-studio || echo "Failed to install Beekeeper Studio, continuing..."
+    if sudo snap install beekeeper-studio >/dev/null 2>&1; then
+      success "Beekeeper Studio installed"
+    else
+      warning "Failed to install Beekeeper Studio"
+    fi
   fi
 
-  # snap-store
+  step "Installing Snap Store..."
   if command -v snap-store &> /dev/null; then
-    echo "Snap Store is already installed."
+    info "Snap Store is already installed"
   else
-    echo "Installing Snap Store..."
-    sudo snap install snap-store || echo "Failed to install Snap Store, continuing..."
+    if sudo snap install snap-store >/dev/null 2>&1; then
+      success "Snap Store installed"
+    else
+      warning "Failed to install Snap Store"
+    fi
   fi
 else
-  echo "Snapd service is not running. Skipping snap package installations."
+  warning "Snapd service is not running - skipping snap package installations"
+  info "You can start snapd later with: sudo systemctl start snapd.socket"
 fi
 
+section "Web Browser Installation"
+step "Installing Google Chrome..."
 if command -v google-chrome-stable &> /dev/null; then
-  echo "Google Chrome is already installed."
+  info "Google Chrome is already installed"
 else
-  echo "Installing Google Chrome..."
-  yay -S --noconfirm google-chrome
+  if yay -S --needed --noconfirm google-chrome >/dev/null 2>&1; then
+    success "Google Chrome installed"
+  else
+    warning "Failed to install Google Chrome"
+  fi
 fi
 
+section "Additional Desktop Tools"
+step "Installing Better Control (enhanced settings panel)..."
+if yay -S --needed --noconfirm better-control-git >/dev/null 2>&1; then
+  success "Better Control installed"
+else
+  warning "Failed to install Better Control"
+fi
 
-# For a sexy settings panel (should customize it???)
-yay -S --noconfirm better-control-git
+step "Installing Hyprshot (screenshot tool)..."
+if yay -S --needed --noconfirm hyprshot-git >/dev/null 2>&1; then
+  success "Hyprshot installed"
+else
+  warning "Failed to install Hyprshot"
+fi
 
-# Install Hyprshot for screenshots
-yay -S --noconfirm hyprshot-git
+section "Runtime Installation"
+step "Installing Deno runtime..."
+if wget -q https://deno.land/install.sh -O /tmp/deno-install.sh; then
+  if sh /tmp/deno-install.sh -y >/dev/null 2>&1; then
+    success "Deno runtime installed"
+  else
+    warning "Failed to install Deno runtime"
+  fi
+  rm -f /tmp/deno-install.sh
+else
+  warning "Failed to download Deno installer"
+fi
 
-# Install deno
-wget https://deno.land/install.sh -O /tmp/deno-install.sh
-sh /tmp/deno-install.sh -y
-# Clean up the deno install script
-rm -f /tmp/deno-install.sh
+section "Hyprland Plugin Management"
+step "Setting up HyprPM and plugins..."
+if hyprpm update >/dev/null 2>&1; then
+  success "HyprPM updated"
+else
+  warning "Failed to update HyprPM"
+fi
 
+step "Installing Hyprspace plugin..."
+if hyprpm add https://github.com/KZDKM/Hyprspace >/dev/null 2>&1; then
+  if hyprpm enable Hyprspace >/dev/null 2>&1; then
+    success "Hyprspace plugin installed and enabled"
+  else
+    warning "Hyprspace plugin installed but failed to enable"
+  fi
+else
+  warning "Failed to install Hyprspace plugin"
+fi
 
-# Setup HyprPM and Hyprspace
-hyprpm update
-# Install Hyprspace
-hyprpm add https://github.com/KZDKM/Hyprspace
-hyprpm enable Hyprspace
+step "Installing official Hyprland plugins..."
+if hyprpm add https://github.com/hyprwm/hyprland-plugins >/dev/null 2>&1; then
+  success "Official Hyprland plugins installed"
+else
+  warning "Failed to install official Hyprland plugins"
+fi
 
-# Install official plugins
-hyprpm add https://github.com/hyprwm/hyprland-plugins
+section "Rofi Customization"
+step "Installing custom Rofi themes..."
+info "Downloading and installing Rofi theme collection from adi1090x..."
+if git clone --depth=1 https://github.com/adi1090x/rofi.git /tmp/rofi-custom >/dev/null 2>&1; then
+  cd /tmp/rofi-custom
+  if chmod +x setup.sh && bash setup.sh >/dev/null 2>&1; then
+    success "Custom Rofi themes installed"
+    
+    # Set Type 3 launcher to use Style 2
+    if [[ -f "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh" ]]; then
+      sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh"
+      success "Rofi launcher style configured"
+    fi
+  else
+    warning "Failed to install Rofi themes"
+  fi
+  cd "$SCRIPT_DIR"
+  rm -rf /tmp/rofi-custom
+else
+  warning "Failed to download Rofi theme collection"
+fi
 
-# Customize rofi # https://github.com/adi1090x/rofi?tab=readme-ov-file
-git clone --depth=1 https://github.com/adi1090x/rofi.git /tmp/rofi-custom
-cd /tmp/rofi-custom
-chmod +x setup.sh
-bash setup.sh
-cd ..
-# Clean up the rofi custom directory
-rm -rf /tmp/rofi-custom
+section "Final Application Setup"
+step "Installing WebKit prerequisites..."
+if yay -S --needed --noconfirm webkit2gtk-4.1 >/dev/null 2>&1; then
+  success "WebKit prerequisites installed"
+else
+  warning "Failed to install WebKit prerequisites"
+fi
+step "Installing Archion Settings application..."
+info "Building custom Hyprland settings application..."
+if git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings >/dev/null 2>&1; then
+  cd /tmp/archion-settings
+  if chmod +x build.sh && bash build.sh >/dev/null 2>&1; then
+    success "Archion Settings application built and installed"
+  else
+    warning "Failed to build Archion Settings application"
+  fi
+  cd "$SCRIPT_DIR"
+  rm -rf /tmp/archion-settings
+else
+  warning "Failed to download Archion Settings source"
+fi
 
-# Set Type 3 launcher to use Style 2
-sed -i "s/theme=\'style-10'/theme='style-2'/" "$CONFIG_DIR/rofi/launchers/type-3/launcher.sh"
+header "Environment Setup Complete!"
+success "🎉 All packages have been installed successfully!"
+success "🔧 Desktop environment has been configured!"
+success "🚀 Development tools are ready to use!"
 
-# Prerequisites for the rust app
-yay -S --noconfirm webkit2gtk-4.1
+echo
+info "Installation Summary:"
+echo "  ✓ AUR packages installed"
+echo "  ✓ Desktop environment configured"
+echo "  ✓ Fish shell with Oh My Fish setup"
+echo "  ✓ Neovim with NvChad configuration"
+echo "  ✓ Visual Studio Code installed"
+echo "  ✓ Hyprland plugins configured"
+echo "  ✓ Custom applications installed"
 
-# Install archion-settings i built
-git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings
-cd /tmp/archion-settings
-chmod +x build.sh
-bash build.sh
+echo
+info "Next steps:"
+echo "  1. Log out and log back in to apply shell changes"
+echo "  2. Launch Hyprland to test the desktop environment"
+echo "  3. Open Neovim to complete its initial setup"
+echo "  4. Configure your monitors and displays as needed"
 
-# Finished
-echo "--------------------- Installation complete! ---------------------"
-echo "Installation complete! Please reboot your system to apply changes."
-echo "--------------------- Installation complete! ---------------------"
+echo
+if confirm "Would you like to view the installation log?" "N"; then
+  if [[ -f /tmp/archion_install.log ]]; then
+    less /tmp/archion_install.log
+  else
+    info "No installation log found"
+  fi
+fi
+
+success "🏛️ Welcome to Archion! Your Arch Linux environment is ready! 🏛️"
