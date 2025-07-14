@@ -253,12 +253,12 @@ install_packages() {
     
     case "$package_manager" in
       "pacman")
-        if ! pacman -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+        if ! pacman -S --needed --noconfirm "$package"; then
           warning "Failed to install: $package"
         fi
         ;;
       "yay")
-        if ! yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
+        if ! yay -S --needed --noconfirm "$package"; then
           warning "Failed to install: $package"
         fi
         ;;
@@ -295,14 +295,14 @@ manage_service() {
   
   case "$action" in
     "enable")
-      if systemctl enable "$service" >/dev/null 2>&1; then
+      if systemctl enable "$service"; then
         success "Enabled service: $service"
       else
         warning "Failed to enable service: $service"
       fi
       ;;
     "start")
-      if systemctl start "$service" >/dev/null 2>&1; then
+      if systemctl start "$service"; then
         success "Started service: $service"
       else
         warning "Failed to start service: $service"
