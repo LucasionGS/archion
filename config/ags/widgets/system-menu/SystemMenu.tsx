@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { bind, Variable, execAsync } from "astal"
 import Battery from "gi://AstalBattery"
 import Network from "gi://AstalNetwork"
@@ -13,10 +13,10 @@ interface SystemMenuAction {
 
 function SystemMenuButton({ icon, label, action, className = "" }: SystemMenuAction) {
     return (
-        <button className={`system-menu-button ${className}`} onClicked={action}
+        <button cssName={`system-menu-button ${className}`} onClicked={action}
             child={
                 <box vertical>
-                    <icon icon={icon} iconSize={32} />
+                    <image iconName={icon} />
                     <label label={label} />
                 </box>
             }
@@ -127,9 +127,9 @@ function SystemMenuGrid(props: { systemVisible: Variable<boolean> }) {
     ]
 
     return (
-        <box className="system-menu-grid" vertical>
+        <box cssName="system-menu-grid" vertical>
             {systemActions.map((row, rowIndex) => (
-                <box className="system-menu-row" homogeneous>
+                <box cssName="system-menu-row" homogeneous>
                     {row.map((action, buttonIndex) => (
                         <SystemMenuButton
                             icon={action.icon}
@@ -154,26 +154,25 @@ function SystemStatus() {
     const speaker = Wp.get_default()?.audio.defaultSpeaker
 
     return (
-        <box className="system-status" vertical>
-            <label className="status-header" label="System Status" />
-            <box className="status-items" vertical>
+        <box cssName="system-status" vertical>
+            <label cssName="status-header" label="System Status" />
+            <box cssName="status-items" vertical>
                 {battery.isPresent ? (
-                    <box className="status-item">
-                        <icon icon={bind(battery, "batteryIconName")} />
+                    <box cssName="status-item">
+                        <image iconName={bind(battery, "batteryIconName")} />
                         <label label={bind(battery, "percentage").as(p => 
                             `Battery: ${Math.floor(p * 100)}%`
                         )} />
                     </box> 
                 ) : (
-                    <box className="status-item">
-                        <icon icon="battery-empty-symbolic" />
+                    <box cssName="status-item">
+                        <image iconName="battery-empty-symbolic" />
                         <label label="Battery: Not Present" />
                     </box>
                 )}
                 
-                <box className="status-item">
-                    {/* <icon icon={network.wifi?.enabled ? "network-wireless-symbolic" : "network-wired-symbolic"} /> */}
-                    <icon icon={bind(network.wired, "iconName")} />
+                <box cssName="status-item">
+                    <image iconName={bind(network.wired, "iconName")} />
                     <label label={
                         network.wifi?.ssid ? `WiFi: ${network.wifi.ssid}` : 
                         network.wired.state === Network.DeviceState.ACTIVATED ? "Wired Connected" : "Disconnected"
@@ -181,15 +180,15 @@ function SystemStatus() {
                 </box>
 
                 {speaker ? (
-                    <box className="status-item">
-                        <icon icon={bind(speaker, "volumeIcon")} />
+                    <box cssName="status-item">
+                        <image iconName={bind(speaker, "volumeIcon")} />
                         <label label={bind(speaker, "volume").as(v => 
                             `Volume: ${Math.floor(v * 100)}%`
                         )} />
                     </box>
                 ) : (
-                    <box className="status-item">
-                        <icon icon="audio-volume-muted-symbolic" />
+                    <box cssName="status-item">
+                        <image iconName="audio-volume-muted-symbolic" />
                         <label label="Audio: Not Available" />
                     </box>
                 )}
@@ -200,7 +199,7 @@ function SystemStatus() {
 
 export default function SystemMenu(show: Variable<boolean>) {
     return (
-        <box visible={show()} className="SystemMenu" vertical>
+        <box visible={show()} cssName="SystemMenu" vertical>
             <SystemStatus />
             <SystemMenuGrid systemVisible={show} />
         </box>

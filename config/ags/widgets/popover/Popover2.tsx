@@ -1,4 +1,4 @@
-import { Astal, Gdk, Widget } from "astal/gtk3"
+import { Astal, Gdk, Widget } from "astal/gtk4"
 import Variable from "astal/variable"
 
 type Popover2Props = Pick<

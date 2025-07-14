@@ -5,7 +5,7 @@
 |**** Perhaps I will make a public version of the private software in the future.        ****|
 \********************************************************************************************/
 
-import { App, Astal, Gtk, Gdk } from "astal/gtk3"
+import { App, Astal, Gtk, Gdk } from "astal/gtk4"
 import { execAsync, timeout, Variable, bind, AstalIO } from "astal"
 import { GLib } from "astal"
 
@@ -170,11 +170,11 @@ function createBackgroundImage(image: ICollectionItem): Gtk.Widget {
   `
   
   const provider = Gtk.CssProvider.new()
-  provider.load_from_data(css)
+  provider.load_from_data(css, css.length)
   
-  const screen = Gdk.Screen.get_default()
+  const screen = Gdk.Display.get_default()
   if (screen) {
-    Gtk.StyleContext.add_provider_for_screen(
+    Gtk.StyleContext.add_provider_for_display(
       screen,
       provider,
       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION

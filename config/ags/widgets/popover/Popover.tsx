@@ -1,4 +1,4 @@
-import { Astal, Gdk, Gtk, Widget } from "astal/gtk3"
+import { Astal, Gdk, Gtk, Widget } from "astal/gtk4"
 
 const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor
 
@@ -6,7 +6,7 @@ type PopoverProps = Pick<
     Widget.WindowProps,
     | "name"
     | "namespace"
-    | "className"
+    | "cssName"
     | "visible"
     | "child"
     | "marginBottom"
@@ -16,7 +16,7 @@ type PopoverProps = Pick<
     | "halign"
     | "valign"
 > & {
-    onClose?(self: Widget.Window): void
+    onClose?(self: Astal.Window): void
 }
 
 /**
@@ -42,7 +42,7 @@ export default function Popover({
     return (
         <window
             {...props}
-            css="background-color: transparent"
+            cssName="popover-window"
             keymode={Astal.Keymode.EXCLUSIVE}
             anchor={TOP | BOTTOM | LEFT | RIGHT}
             exclusivity={Astal.Exclusivity.IGNORE}
@@ -65,26 +65,27 @@ export default function Popover({
                 }
             }}
             // close when hitting Escape
-            onKeyPressEvent={(self, event: Gdk.Event) => {
-                if (event.get_keyval()[1] === Gdk.KEY_Escape) {
+            onKeyPressEvent={(self, keyval, keycode, state) => {
+                if (keyval === Gdk.KEY_Escape) {
                     self.visible = false
                 }
             }}
-        >
-            <box
-                // make sure click event does not bubble up
-                onButtonPressEvent={() => true}
-                // child can be positioned with `halign` `valign` and margins
-                expand
-                halign={halign}
-                valign={valign}
-                marginBottom={marginBottom}
-                marginTop={marginTop}
-                marginStart={marginLeft}
-                marginEnd={marginRight}
-            >
-                {child}
-            </box>
-        </window>
+            child={
+                <box
+                    // make sure click event does not bubble up
+                    onButtonPressEvent={() => true}
+                    // child can be positioned with `halign` `valign` and margins
+                    hexpand
+                    vexpand
+                    halign={halign}
+                    valign={valign}
+                    marginBottom={marginBottom}
+                    marginTop={marginTop}
+                    marginStart={marginLeft}
+                    marginEnd={marginRight}
+                    child={child}
+                />
+            }
+        />
     )
 }

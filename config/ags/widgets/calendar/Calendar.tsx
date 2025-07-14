@@ -1,4 +1,4 @@
-import { Astal, Gtk, Gdk } from "astal/gtk3"
+import { Astal, Gtk, Gdk } from "astal/gtk4"
 import { bind, Variable, GLib } from "astal"
 
 interface CalendarProps {
@@ -96,7 +96,7 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
         }
         
         return weeks.map((week, weekIndex) => 
-            <box className="calendar-week">
+            <box cssName="calendar-week">
                 {week.map((day, dayIndex) => {
                     // Optimized comparisons using cached values
                     const isToday = day !== null && 
@@ -111,7 +111,12 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
                     
                     return (
                         <button
-                            className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${day === null ? 'empty' : ''}`}
+                            cssName="calendar-day"
+                            cssClasses={[
+                                ...(isToday ? ['today'] : []),
+                                ...(isSelected ? ['selected'] : []),
+                                ...(day === null ? ['empty'] : [])
+                            ]}
                             onClicked={() => {
                                 if (day !== null) {
                                     selectedDate.set(new Date(year, month, day))
@@ -134,7 +139,7 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
     return (
         <window
             name="calendar"
-            className="Calendar"
+            cssName="Calendar"
             visible={bind(displayCalendar)}
             anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}
             exclusivity={Astal.Exclusivity.NORMAL}
@@ -145,78 +150,80 @@ export default function Calendar({ displayCalendar }: CalendarProps) {
                 }
             }}
             child={
-                <box className="calendar-container" vertical>
+                <box cssName="calendar-container" vertical>
                     {/* Header with navigation */}
-                    <box className="calendar-header">
-                        <box className="calendar-nav">
+                    <box cssName="calendar-header">
+                        <box cssName="calendar-nav">
                             <button 
-                                className="nav-button"
+                                cssName="nav-button"
                                 onClicked={() => navigateYear('prev')}
                                 tooltipText="Previous Year"
-                                child={<icon icon="go-first-symbolic" />}
+                                child={<image iconName="go-first-symbolic" />}
                             />
                             <button 
-                                className="nav-button"
+                                cssName="nav-button"
                                 onClicked={() => navigateMonth('prev')}
                                 tooltipText="Previous Month"
-                                child={<icon icon="go-previous-symbolic" />}
+                                child={<image iconName="go-previous-symbolic" />}
                             />
                         </box>
                         
-                        <box className="calendar-title" hexpand>
-                            {[<label 
-                                className="month-year-label"
-                                label={bind(currentDate).as(date => 
-                                    `${monthNames[date.getMonth()]} ${date.getFullYear()}`
-                                )}
-                            />]}
-                        </box>
+                        <box cssName="calendar-title" hexpand
+                             child={
+                                <label 
+                                    cssName="month-year-label"
+                                    label={bind(currentDate).as(date => 
+                                        `${monthNames[date.getMonth()]} ${date.getFullYear()}`
+                                    )}
+                                />
+                             } />
                         
-                        <box className="calendar-nav">
+                        <box cssName="calendar-nav">
                             <button 
-                                className="nav-button"
+                                cssName="nav-button"
                                 onClicked={() => navigateMonth('next')}
                                 tooltipText="Next Month"
-                                child={<icon icon="go-next-symbolic" />}
+                                child={<image iconName="go-next-symbolic" />}
                             />
                             <button 
-                                className="nav-button"
+                                cssName="nav-button"
                                 onClicked={() => navigateYear('next')}
                                 tooltipText="Next Year"
-                                child={<icon icon="go-last-symbolic" />}
+                                child={<image iconName="go-last-symbolic" />}
                             />
                         </box>
                     </box>
 
                     {/* Day names header */}
-                    <box className="calendar-day-names">
+                    <box cssName="calendar-day-names">
                         {dayNames.map(dayName => 
                             <label 
-                                className="day-name"
+                                cssName="day-name"
                                 label={dayName}
                             />
                         )}
                     </box>
 
                     {/* Calendar grid */}
-                    <box className="calendar-grid" vertical>
+                    <box cssName="calendar-grid" vertical>
                         {bind(calendarState).as(() => generateCalendarGrid())}
                     </box>
 
                     {/* Footer with selected date info */}
-                    <box className="calendar-footer">
-                        {[<label 
-                            className="selected-date-label"
-                            label={bind(selectedDate).as(date => 
-                                `Selected: ${date.toLocaleDateString('en-US', { 
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}`
-                            )}
-                        />]}
-                    </box>
+                    <box cssName="calendar-footer"
+                         child={
+                            <label 
+                                cssName="selected-date-label"
+                                label={bind(selectedDate).as(date => 
+                                    `Selected: ${date.toLocaleDateString('en-US', { 
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}`
+                                )}
+                            />
+                         } />
                 </box>
             }
         />

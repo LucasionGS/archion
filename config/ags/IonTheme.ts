@@ -1,5 +1,5 @@
 import { Variable, exec, execAsync } from "astal";
-import { App } from "astal/gtk3";
+import { App } from "astal/gtk4";
 
 export namespace IonTheme {
     function jpv(json: string) {

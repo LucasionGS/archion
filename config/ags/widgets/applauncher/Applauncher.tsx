@@ -1,5 +1,5 @@
 import Apps from "gi://AstalApps"
-import { App, Astal, Gdk, Gtk } from "astal/gtk3"
+import { App, Astal, Gdk, Gtk } from "astal/gtk4"
 import { Variable } from "astal"
 
 const MAX_ITEMS = 8
@@ -10,26 +10,27 @@ function hide() {
 
 function AppButton({ app }: { app: Apps.Application }) {
     return <button
-        className="AppButton"
-        onClicked={() => { hide(); app.launch() }}>
-        <box>
-            <icon icon={app.iconName} />
-            <box valign={Gtk.Align.CENTER} vertical>
-                <label
-                    className="name"
-                    truncate
-                    xalign={0}
-                    label={app.name}
-                />
-                {app.description && <label
-                    className="description"
-                    wrap
-                    xalign={0}
-                    label={app.description}
-                />}
+        cssName="AppButton"
+        onClicked={() => { hide(); app.launch() }}
+        child={
+            <box>
+                <image iconName={app.iconName} />
+                <box valign={Gtk.Align.CENTER} vertical>
+                    <label
+                        cssName="name"
+                        xalign={0}
+                        label={app.name}
+                    />
+                    {app.description ? <label
+                        cssName="description"
+                        wrap
+                        xalign={0}
+                        label={app.description}
+                    /> : <label label="" />}
+                </box>
             </box>
-        </box>
-    </button>
+        }
+    />
 }
 
 export default function Applauncher() {
@@ -52,40 +53,43 @@ export default function Applauncher() {
         application={App}
         onShow={(self) => {
             text.set("")
-            width.set(self.get_current_monitor().workarea.width)
+            // width.set(self.get_current_monitor().workarea.width)
+            width.set(1000) // fallback width
         }}
-        onKeyPressEvent={function (self, event: Gdk.Event) {
-            if (event.get_keyval()[1] === Gdk.KEY_Escape)
+        onKeyPressed={(self, keyval, keycode, state) => {
+            if (keyval === Gdk.KEY_Escape)
                 self.hide()
-        }}>
-        <box>
-            <eventbox widthRequest={width(w => w / 2)} expand onClick={hide} />
-            <box hexpand={false} vertical>
-                <eventbox heightRequest={100} onClick={hide} />
-                <box widthRequest={500} className="Applauncher" vertical>
-                    <entry
-                        placeholderText="Search"
-                        text={text()}
-                        onChanged={self => text.set(self.text)}
-                        onActivate={onEnter}
-                    />
-                    <box spacing={6} vertical>
-                        {list.as(list => list.map(app => (
-                            <AppButton app={app} />
-                        )))}
+        }}
+        child={
+            <box>
+                <button widthRequest={width(w => w / 2)} hexpand onClicked={hide} />
+                <box hexpand={false} vertical>
+                    <button heightRequest={100} onClicked={hide} />
+                    <box widthRequest={500} cssName="Applauncher" vertical>
+                        <entry
+                            placeholderText="Search"
+                            text={text()}
+                            onChanged={self => text.set(self.text)}
+                            onActivate={onEnter}
+                        />
+                        <box spacing={6} vertical>
+                            {list.as(list => list.map(app => (
+                                <AppButton app={app} />
+                            )))}
+                        </box>
+                        <box
+                            halign={CENTER}
+                            cssName="not-found"
+                            vertical
+                            visible={list.as(l => l.length === 0)}>
+                            <image iconName="system-search-symbolic" />
+                            <label label="No match found" />
+                        </box>
                     </box>
-                    <box
-                        halign={CENTER}
-                        className="not-found"
-                        vertical
-                        visible={list.as(l => l.length === 0)}>
-                        <icon icon="system-search-symbolic" />
-                        <label label="No match found" />
-                    </box>
+                    <button hexpand onClicked={hide} />
                 </box>
-                <eventbox expand onClick={hide} />
+                <button widthRequest={width(w => w / 2)} hexpand onClicked={hide} />
             </box>
-            <eventbox widthRequest={width(w => w / 2)} expand onClick={hide} />
-        </box>
-    </window>
+        }
+    />
 }

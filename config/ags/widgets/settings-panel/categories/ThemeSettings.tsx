@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { bind, execAsync } from "astal"
 import { IonTheme } from "../../../IonTheme";
 

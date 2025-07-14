@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { bind, Variable } from "astal"
 import Network from "gi://AstalNetwork"
 

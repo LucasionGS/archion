@@ -1,6 +1,6 @@
-import { App } from "astal/gtk3"
+import { App } from "astal/gtk4"
 import { Variable, GLib, bind, execAsync, readFile } from "astal"
-import { Astal, Gtk, Gdk } from "astal/gtk3"
+import { Astal, Gtk, Gdk } from "astal/gtk4"
 import Hyprland from "gi://AstalHyprland"
 import Mpris from "gi://AstalMpris"
 import Battery from "gi://AstalBattery"
@@ -136,28 +136,26 @@ if (ENABLE_SYSTEM_MONITORING) {
 }
 
 function CpuUsage() {
-    return <box className="CpuUsage" css="min-width: 60px"
+    return <box cssName="CpuUsage"
         tooltipText={bind(cpuUsage).as(usage => `CPU Usage: ${usage.toFixed(1)}%`)}>
-        <icon icon="power-profile-performance-symbolic" />
+        <image iconName="power-profile-performance-symbolic" />
         <box vertical>
             <label label={bind(cpuUsage).as(usage => `${usage.toFixed(0)}%`)} />
             <levelbar
                 value={bind(cpuUsage).as(usage => usage / 100)}
-                css="min-width: 40px; min-height: 4px;"
             />
         </box>
     </box>
 }
 
 function RamUsage() {
-    return <box className="RamUsage" css="min-width: 60px"
+    return <box cssName="RamUsage"
         tooltipText={bind(ramUsage).as(usage => `Memory Usage: ${usage.toFixed(1)}%`)}>
-        <icon icon="application-x-firmware" />
+        <image iconName="application-x-firmware" />
         <box vertical>
             <label label={bind(ramUsage).as(usage => `${usage.toFixed(0)}%`)} />
             <levelbar
                 value={bind(ramUsage).as(usage => usage / 100)}
-                css="min-width: 40px; min-height: 4px;"
             />
         </box>
     </box>
@@ -174,9 +172,9 @@ function NetworkUsage() {
         }
     }
 
-    return <box className="NetworkUsage" css="min-width: 80px"
+    return <box cssName="NetworkUsage"
         tooltipText="Network Usage">
-        <icon icon="network-wired" />
+        <image iconName="network-wired" />
         <box vertical>
             <label label={bind(networkDownload).as(down => `↓${formatSpeed(down)}`)} />
             <label label={bind(networkUpload).as(up => `↑${formatSpeed(up)}`)} />
@@ -187,14 +185,12 @@ function NetworkUsage() {
 function SysTray() {
     const tray = Tray.get_default()
 
-    return <box className="SysTray">
+    return <box cssName="SysTray">
         {bind(tray, "items").as(items => items.map(item => (
             <menubutton
                 tooltipMarkup={bind(item, "tooltipMarkup")}
-                usePopover={false}
-                actionGroup={bind(item, "actionGroup").as(ag => ["dbusmenu", ag])}
                 menuModel={bind(item, "menuModel")}
-                child={<icon gicon={bind(item, "gicon")} />}
+                child={<image gicon={bind(item, "gicon")} />}
             />
         )))}
     </box>
@@ -207,22 +203,22 @@ function Wifi() {
     const ethernetState = bind(network.wired, "state");
 
     return (
-        <box className="Wifi">
+        <box cssName="Wifi">
             <box visible={wifi.as(Boolean)}>
                 {wifi.as(wifi => wifi && ([
-                    <icon
+                    <image
                         tooltipText={bind(wifi, "ssid").as(String)}
-                        className="Wifi"
-                        icon={bind(wifi, "iconName")}
+                        cssName="Wifi"
+                        iconName={bind(wifi, "iconName")}
                     />
                 ]))}
             </box>
             <box visible={ethernetState.as(a => a === Network.DeviceState.ACTIVATED)}>
                 {ethernet.as(eth => eth && ([
-                    <icon
+                    <image
                         tooltipText={bind(eth, "iconName").as(String)}
-                        className="Ethernet"
-                        icon={bind(eth, "iconName").as(String)}
+                        cssName="Ethernet"
+                        iconName={bind(eth, "iconName").as(String)}
                     />
                 ]))}
             </box>
@@ -233,8 +229,8 @@ function Wifi() {
 function AudioSlider() {
     const speaker = Wp.get_default()?.audio.defaultSpeaker!
 
-    return <box className="AudioSlider" css="min-width: 140px">
-        <icon icon={bind(speaker, "volumeIcon")} />
+    return <box cssName="AudioSlider">
+        <image iconName={bind(speaker, "volumeIcon")} />
         <slider
             hexpand
             onDragged={({ value }) => speaker.volume = value}
@@ -246,9 +242,9 @@ function AudioSlider() {
 function BatteryLevel() {
     const bat = Battery.get_default()
 
-    return <box className="Battery"
+    return <box cssName="Battery"
         visible={bind(bat, "isPresent")}>
-        <icon icon={bind(bat, "batteryIconName")} />
+        <image iconName={bind(bat, "batteryIconName")} />
         <label label={bind(bat, "percentage").as(p =>
             `${Math.floor(p * 100)}%`
         )} />
@@ -261,15 +257,12 @@ function Media(props: {
     const { displayMediaPlayer } = props
     const mpris = Mpris.get_default()
 
-    return <box className="Media">
+    return <box cssName="Media">
         {bind(mpris, "players").as(ps => [ps[0] ? (
             <box>
                 <box
-                    className="Cover"
+                    cssName="Cover"
                     valign={Gtk.Align.CENTER}
-                    css={bind(ps[0], "coverArt").as(cover =>
-                        `background-image: url('${cover}');`
-                    )}
                 />
                 <button
                     onClick={() => displayMediaPlayer?.set(!displayMediaPlayer()?.get())}
@@ -287,14 +280,14 @@ function Media(props: {
 function Workspaces() {
     const hypr = Hyprland.get_default()
 
-    return <box className="Workspaces">
+    return <box cssName="Workspaces">
         {bind(hypr, "workspaces").as(wss => wss
             .filter(ws => !(ws.id >= -99 && ws.id <= -2)) // filter out special workspaces
             .sort((a, b) => a.id - b.id)
             .map(ws => (
                 <button
-                    className={bind(hypr, "focusedWorkspace").as(fw =>
-                        ws === fw ? "focused" : "")}
+                    cssClasses={bind(hypr, "focusedWorkspace").as(fw =>
+                        ws === fw ? ["focused"] : [])}
                     onClicked={() => ws.focus()}
                     label={ws.id.toString()}
                 >
@@ -309,7 +302,7 @@ function FocusedClient() {
     const focused = bind(hypr, "focusedClient")
 
     return <box
-        className="Focused"
+        cssName="Focused"
         visible={focused.as(Boolean)}>
         {focused.as(client => (
             client && [<label label={bind(client, "title").as(String)} />]
@@ -324,7 +317,7 @@ function Time({ format = "%H:%M - %A %e.", displayCalendar }: { format?: string,
         GLib.DateTime.new_now_local().format(format)!)
 
     return <button
-        className="Time"
+        cssName="Time"
         onDestroy={() => time.drop()}
         onClicked={() => displayCalendar?.set(!displayCalendar?.get())}
         tooltipText="Click to open calendar"
@@ -338,11 +331,11 @@ function SystemMenuButton(props: {
     const { displaySystemMenu } = props
     // const leaver = "wleave";
 
-    return <box className="SystemMenuButton">
+    return <box cssName="SystemMenuButton">
         {[<button
             onClicked={() => displaySystemMenu?.set(!displaySystemMenu?.get())}
             tooltipText="System"
-            child={<icon icon="system-log-out" />}
+            child={<image iconName="system-log-out" />}
         />]}
     </box>
 }
@@ -352,7 +345,7 @@ function BooruImagesToggle(props: {
 }) {
     const { displayBooruImagesToggle } = props
 
-    return <box className="BarButton" visible={displayBooruImagesToggle?.().as(a => a !== undefined) ?? false}>
+    return <box cssName="BarButton" visible={displayBooruImagesToggle?.().as(a => a !== undefined) ?? false}>
         {[<button
             onClicked={() => displayBooruImagesToggle?.set(!displayBooruImagesToggle?.get())}
             tooltipText="Booru Images Toggle"
@@ -360,11 +353,11 @@ function BooruImagesToggle(props: {
                 // 
                 displayBooruImagesToggle?.().as(a => 
                     a !== false
-                        ? <icon icon="help-browser-symbolic" css="color: green" />
-                        : <icon icon="help-browser-symbolic" css="color: red" />
+                        ? <image iconName="help-browser-symbolic" />
+                        : <image iconName="help-browser-symbolic" />
                 ) ?? undefined
             }
-            // child={<icon icon="system-log-out" />}
+            // child={<image iconName="system-log-out" />}
         />]}
     </box>
 }
@@ -374,11 +367,11 @@ function SettingsButton(props: {
 }) {
     const { displaySettingsPanel } = props
 
-    return <box className="SettingsButton">
+    return <box cssName="SettingsButton">
         {[<button
             onClicked={() => displaySettingsPanel?.set(!displaySettingsPanel.get())}
             tooltipText="Settings"
-            child={<icon icon="preferences-system-symbolic" />}
+            child={<image iconName="preferences-system-symbolic" />}
         />]}
     </box>
 }
@@ -400,38 +393,40 @@ export default function Bar(monitor: Gdk.Monitor, variables?: {
     } = variables ?? {}
 
     return <window
-        className="Bar"
+        cssName="Bar"
         gdkmonitor={monitor}
         margin={8}
         exclusivity={Astal.Exclusivity.EXCLUSIVE}
         anchor={TOP | LEFT | RIGHT}
-        child={(
-            <centerbox
+        child={
+            <centerbox 
                 heightRequest={32}
-                child={(
-                    <>
-                        <box hexpand halign={Gtk.Align.START}>
-                            <Workspaces />
-                            <FocusedClient />
-                        </box>
-                        <box>
-                            {[<Media displayMediaPlayer={displayMediaPlayer} />]}
-                        </box>
-                        <box hexpand halign={Gtk.Align.END} >
-                            <SysTray />
-                            {ENABLE_SYSTEM_MONITORING && <CpuUsage />}
-                            {ENABLE_SYSTEM_MONITORING && <RamUsage />}
-                            {ENABLE_SYSTEM_MONITORING && <NetworkUsage />}
-                            <Wifi />
-                            <BatteryLevel />
-                            <Time displayCalendar={displayCalendar} />
-                            <BooruImagesToggle displayBooruImagesToggle={displayBooruImagesToggle} />
-                            <SettingsButton displaySettingsPanel={displaySettingsPanel} />
-                            <SystemMenuButton displaySystemMenu={displaySystemMenu} />
-                        </box>
-                    </>
-                )}
+                startWidget={
+                    <box hexpand halign={Gtk.Align.START}>
+                        <Workspaces />
+                        <FocusedClient />
+                    </box>
+                }
+                centerWidget={
+                    <box>
+                        {[<Media displayMediaPlayer={displayMediaPlayer} />]}
+                    </box>
+                }
+                endWidget={
+                    <box hexpand halign={Gtk.Align.END}>
+                        <SysTray />
+                        {ENABLE_SYSTEM_MONITORING && <CpuUsage />}
+                        {ENABLE_SYSTEM_MONITORING && <RamUsage />}
+                        {ENABLE_SYSTEM_MONITORING && <NetworkUsage />}
+                        <Wifi />
+                        <BatteryLevel />
+                        <Time displayCalendar={displayCalendar} />
+                        <BooruImagesToggle displayBooruImagesToggle={displayBooruImagesToggle} />
+                        <SettingsButton displaySettingsPanel={displaySettingsPanel} />
+                        <SystemMenuButton displaySystemMenu={displaySystemMenu} />
+                    </box>
+                }
             />
-        )}
+        }
     />
 }

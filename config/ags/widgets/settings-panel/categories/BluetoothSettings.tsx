@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { bind, Variable, execAsync } from "astal"
 import Bluetooth from "gi://AstalBluetooth"
 

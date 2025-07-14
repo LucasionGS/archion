@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { bind, Variable, execAsync, exec, Binding, writeFile, Process } from "astal"
 import AstalHyprland from "gi://AstalHyprland?version=0.1"
 const hypr = AstalHyprland.get_default()!;

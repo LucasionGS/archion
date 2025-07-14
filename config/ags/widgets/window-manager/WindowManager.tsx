@@ -1,7 +1,6 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk, Gdk } from "astal/gtk4"
 import { bind, Binding, Variable } from "astal"
 import Hyprland from "gi://AstalHyprland"
-import { Icon } from "astal/gtk3/widget"
 
 export class WindowManagerController {
     public static navigateNext: () => void
@@ -25,22 +24,23 @@ const scrollAdjustment = Gtk.Adjustment.new(0, 0, 100, 1, 10, 0);
 function WorkspaceClient({ client, isActive, onSelect }: WorkspaceClientProps) {
     return (
         <button
-            className={isActive.as(isActive => `window-manager-client ${isActive ? "active" : ""}`)}
+            cssName="window-manager-client"
+            cssClasses={isActive.as(isActive => isActive ? ["active"] : [])}
             onClicked={onSelect}
             child={
                 <box vertical spacing={8}>
-                    <icon
-                        icon={bind(client, "class").as((cls) => getIconForClass(cls || ""))}
-                        css="icon { font-size: 64px; }"
+                    <image
+                        iconName={bind(client, "class").as((cls) => getIconForClass(cls || ""))}
+                        iconSize={64}
                     />
                     <label
-                        className="client-title"
+                        cssName="client-title"
                         label={bind(client, "title").as((title) =>
                             title.length > 18 ? title.substring(0, 18) + "..." : title
                         )}
                     />
                     <label
-                        className="client-class"
+                        cssName="client-class"
                         label={bind(client, "class").as((cls) => cls || "Unknown")}
                     />
                 </box>
@@ -76,8 +76,8 @@ function getIconForClass(className: string): string {
         "signal": "signal-desktop",
     }
 
-    const existing = Astal.Icon.lookup_icon(className)?.get_filename();
-    return existing || iconMap[className.toLowerCase()] || "application-x-executable"
+    // Try to find icon theme icon or use mapping
+    return iconMap[className.toLowerCase()] || "application-x-executable"
 }
 
 interface WorkspaceContainerProps {
@@ -100,25 +100,21 @@ function WorkspaceContainer({
     const clients = bind(workspace, "clients")
 
     return (
-        <box className="window-manager-workspace" vertical spacing={12} onDraw={(box) => {
+        <box cssName="window-manager-workspace" vertical spacing={12} onDraw={(box) => {
             workspaceContainerWidth[workspaceIndex] = box.get_allocated_width();
         }}>
-            <box className="workspace-header">
-                <icon
-                    icon="applications-system"
+            <box cssName="workspace-header">
+                <image
+                    iconName="applications-system"
                     iconSize={20}
-                    className="workspace-icon"
+                    cssName="workspace-icon"
                 />
                 <label
-                    className="workspace-name"
+                    cssName="workspace-name"
                     label={`Workspace - ${workspace.name || workspace.id}`}
                 />
-                {/* <label
-                    className="client-count"
-                    label={clients.as(c => `${c.length} window${c.length !== 1 ? 's' : ''}`)}
-                /> */}
             </box>
-            <box className="workspace-clients" spacing={16}>
+            <box cssName="workspace-clients" spacing={16}>
                 {clients.as(clientList =>
                     clientList.map((client, index) => {
                         const isActive = bind(selectedWorkspaceAndClientIndex).as(([wsIndex, cIndex]) => {
@@ -270,19 +266,13 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
     WindowManagerController.selectCurrent = selectCurrent
 
     return (
-        <box className="window-manager-container" vertical spacing={20}>
-            <box className="window-manager-header">
-                {[<icon icon="preferences-system-windows" iconSize={24} />]}
-            </box>
+        <box cssName="window-manager-container" vertical spacing={20}>
+            <box cssName="window-manager-header" 
+                 child={<image iconName="preferences-system-windows" iconSize={24} />} />
             
-            <scrollable
-                hadjustment={scrollAdjustment}
-                className="window-manager-scroll"
-                hscroll={Gtk.PolicyType.ALWAYS}
-                vscroll={Gtk.PolicyType.NEVER}
-                vexpand
-                child={
-                    <box className="window-manager-workspaces" spacing={24}>
+            <box cssName="window-manager-scroll" vexpand
+                 child={
+                    <box cssName="window-manager-workspaces" spacing={24}>
                         {bind(workspacesWithClients).as(workspaces =>
                             workspaces.map((workspace, workspaceIndex) => (
                                 <WorkspaceContainer
@@ -300,36 +290,35 @@ function WindowManagerContent({ visible }: { visible: Variable<boolean> }) {
                             ))
                         )}
                     </box>
-                }
-            />
+                 } />
 
-            <box className="window-manager-controls" spacing={12}>
+            <box cssName="window-manager-controls" spacing={12}>
                 <button
-                    className="window-manager-control-button"
+                    cssName="window-manager-control-button"
                     onClicked={navigatePrev}
                     child={
                         <box spacing={4}>
-                            <icon icon="go-previous" iconSize={16} />
+                            <image iconName="go-previous" iconSize={16} />
                             <label label="Prev" />
                         </box>
                     }
                 />
                 <button
-                    className="window-manager-control-button primary"
+                    cssName="window-manager-control-button primary"
                     onClicked={selectCurrent}
                     child={
                         <box spacing={4}>
-                            <icon icon="checkbox-checked-symbolic" iconSize={16} />
+                            <image iconName="checkbox-checked-symbolic" iconSize={16} />
                             <label label="Select" />
                         </box>
                     }
                 />
                 <button
-                    className="window-manager-control-button"
+                    cssName="window-manager-control-button"
                     onClicked={navigateNext}
                     child={
                         <box spacing={4}>
-                            <icon icon="go-next" iconSize={16} />
+                            <image iconName="go-next" iconSize={16} />
                             <label label="Next" />
                         </box>
                     }
@@ -343,7 +332,7 @@ export default function WindowManager(show: Variable<boolean>) {
     return (
         <box
             visible={bind(show)}
-            className="WindowManager"
+            cssName="WindowManager"
             child={<WindowManagerContent visible={show} />}
         />
     )

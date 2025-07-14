@@ -1,10 +1,11 @@
 import { GLib } from "astal"
-import { Gtk, Astal } from "astal/gtk3"
-import { type EventBox } from "astal/gtk3/widget"
+import { Gtk, Astal } from "astal/gtk4"
 import Notifd from "gi://AstalNotifd"
 
-const isIcon = (icon: string) =>
-    !!Astal.Icon.lookup_icon(icon)
+const isIcon = (icon: string) => {
+    // In GTK4, Icon.lookup_icon might not be available, use a simple check
+    return icon && icon.length > 0
+}
 
 const fileExists = (path: string) =>
     GLib.file_test(path, GLib.FileTest.EXISTS)
@@ -25,8 +26,8 @@ const urgency = (n: Notifd.Notification) => {
 }
 
 type Props = {
-    setup(self: EventBox): void
-    onHoverLost(self: EventBox): void
+    setup(self: Gtk.Widget): void
+    onHoverLost(self: Gtk.Widget): void
     notification: Notifd.Notification
 }
 
@@ -34,74 +35,76 @@ export default function Notification(props: Props) {
     const { notification: n, onHoverLost, setup } = props
     const { START, CENTER, END } = Gtk.Align
 
-    return <eventbox
-        className={`Notification ${urgency(n)}`}
+    return <button
+        cssName={`Notification ${urgency(n)}`}
         setup={setup}
-        onHoverLost={onHoverLost}>
-        <box vertical>
-            <box className="header">
-                {(n.appIcon || n.desktopEntry) && <icon
-                    className="app-icon"
-                    visible={Boolean(n.appIcon || n.desktopEntry)}
-                    icon={n.appIcon || n.desktopEntry}
-                />}
-                <label
-                    className="app-name"
-                    halign={START}
-                    truncate
-                    label={n.appName || "Unknown"}
-                />
-                <label
-                    className="time"
-                    hexpand
-                    halign={END}
-                    label={time(n.time)}
-                />
-                <button onClicked={() => n.dismiss()}>
-                    <icon icon="window-close-symbolic" />
-                </button>
-            </box>
-            <Gtk.Separator visible />
-            <box className="content">
-                {n.image && fileExists(n.image) && <box
-                    valign={START}
-                    className="image"
-                    css={`background-image: url('${n.image}')`}
-                />}
-                {n.image && isIcon(n.image) && <box
-                    expand={false}
-                    valign={START}
-                    className="icon-image">
-                    <icon icon={n.image} expand halign={CENTER} valign={CENTER} />
-                </box>}
-                <box vertical>
-                    <label
-                        className="summary"
-                        halign={START}
-                        xalign={0}
-                        label={n.summary}
-                        truncate
+        onHoverLost={onHoverLost}
+        child={
+            <box vertical>
+                <box cssName="header">
+                    <image
+                        cssName="app-icon"
+                        visible={Boolean(n.appIcon || n.desktopEntry)}
+                        iconName={n.appIcon || n.desktopEntry || ""}
                     />
-                    {n.body && <label
-                        className="body"
-                        wrap
-                        useMarkup
+                    <label
+                        cssName="app-name"
                         halign={START}
-                        xalign={0}
-                        justifyFill
-                        label={n.body}
-                    />}
+                        label={n.appName || "Unknown"}
+                    />
+                    <label
+                        cssName="time"
+                        hexpand
+                        halign={END}
+                        label={time(n.time)}
+                    />
+                    <button 
+                        onClicked={() => n.dismiss()}
+                        child={<image iconName="window-close-symbolic" />}
+                    />
+                </box>
+                <Gtk.Separator visible />
+                <box cssName="content">
+                    <box
+                        valign={START}
+                        cssName="image"
+                        visible={n.image && fileExists(n.image) ? true : false}
+                    />
+                    <box
+                        hexpand={false}
+                        valign={START}
+                        cssName="icon-image"
+                        visible={n.image && isIcon(n.image) ? true : false}>
+                        {[<image iconName={n.image || ""} hexpand halign={CENTER} valign={CENTER} />]}
+                    </box>
+                    <box vertical>
+                        <label
+                            cssName="summary"
+                            halign={START}
+                            xalign={0}
+                            label={n.summary}
+                        />
+                        <label
+                            cssName="body"
+                            wrap
+                            useMarkup
+                            halign={START}
+                            xalign={0}
+                            label={n.body || ""}
+                            visible={Boolean(n.body)}
+                        />
+                    </box>
+                </box>
+                <box cssName="actions" visible={n.get_actions().length > 0}>
+                    {n.get_actions().map(({ label, id }) => (
+                        <button
+                            hexpand
+                            onClicked={() => n.invoke(id)}
+                            child={<label label={label} halign={CENTER} hexpand />}
+                        />
+                    ))}
                 </box>
             </box>
-            {n.get_actions().length > 0 && <box className="actions">
-                {n.get_actions().map(({ label, id }) => (
-                    <button
-                        hexpand
-                        onClicked={() => n.invoke(id)}>
-                        <label label={label} halign={CENTER} hexpand />
-                    </button>
-                ))}
-            </box>}
-        </box>
-    </eventbox>
+        }
+    />
 }

@@ -1,4 +1,4 @@
-import { Astal, Gtk, App } from "astal/gtk3"
+import { Astal, Gtk, App } from "astal/gtk4"
 import { bind, Binding, Variable } from "astal"
 import DisplaySettings from "./categories/DisplaySettings"
 import AudioSettings from "./categories/AudioSettings"
@@ -71,10 +71,10 @@ function SettingsSidebar({ activeCategory, onCategoryChange }: {
     onCategoryChange: (categoryId: string) => void
 }) {
     return (
-        <box className="settings-sidebar" vertical>
-            <label className="sidebar-title" label="Settings" />
+        <box cssName="settings-sidebar" vertical>
+            <label cssName="sidebar-title" label="Settings" />
             
-            <box className="sidebar-categories" vertical>
+            <box cssName="sidebar-categories" vertical>
                 {settingsCategories.map(category => (
                     <button
                         visible={
@@ -84,13 +84,14 @@ function SettingsSidebar({ activeCategory, onCategoryChange }: {
                                     : category.condition // Binding
                             ) : true
                         }
-                        className={bind(activeCategory).as(active => 
-                            `sidebar-category ${active === category.id ? 'active' : ''}`
+                        cssName="sidebar-category"
+                        cssClasses={bind(activeCategory).as(active => 
+                            active === category.id ? ['active'] : []
                         )}
                         onClicked={() => onCategoryChange(category.id)}
                         child={
                             <box>
-                                <icon icon={category.icon} />
+                                <image iconName={category.icon} />
                                 <label label={category.name} />
                             </box>
                         }
@@ -103,32 +104,30 @@ function SettingsSidebar({ activeCategory, onCategoryChange }: {
 
 function SettingsContent({ activeCategory }: { activeCategory: Variable<string> }) {
     return (
-        <box className="settings-content" vertical>
-            <box className="content-header">
-                {[
+        <box cssName="settings-content" vertical>
+            <box cssName="content-header"
+                 child={
                     <label 
-                        className="content-title" 
+                        cssName="content-title" 
                         label={bind(activeCategory).as(categoryId => {
                             const category = settingsCategories.find(cat => cat.id === categoryId)
                             return category ? category.name : "Settings"
                         })}
                     />
-                ]}
-            </box>
+                 } />
             
-            {/* @ts-ignore */}
-            <scrollable className="content-scrollable" vexpand>
-                <box className="content-body" vertical>
-                    {settingsCategories.map(category => (
-                        <box
-                            className="settings-category-container"
-                            visible={bind(activeCategory).as(active => active === category.id)}
-                        >
-                            {[category.component()]}
-                        </box>
-                    ))}
-                </box>
-            </scrollable>
+            <box cssName="content-scrollable" vexpand
+                 child={
+                    <box cssName="content-body" vertical>
+                        {settingsCategories.map(category => (
+                            <box
+                                cssName="settings-category-container"
+                                visible={bind(activeCategory).as(active => active === category.id)}
+                                child={category.component()}
+                            />
+                        ))}
+                    </box>
+                 } />
         </box>
     )
 }
@@ -146,7 +145,7 @@ export default function SettingsPanel(show: Variable<boolean>) {
 
     return (
         <window
-            className="SettingsPanel"
+            cssName="SettingsPanel"
             visible={show()}
             application={App}
             // gdkmonitor={App.monitors[0]}
@@ -155,39 +154,34 @@ export default function SettingsPanel(show: Variable<boolean>) {
             anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}
             keymode={Astal.Keymode.ON_DEMAND}
             child={
-                <eventbox>
-                    <box 
-                        className="settings-panel-backdrop"
-                        child={
-                            <eventbox>
-                                <box className="settings-panel-container" vertical>
-                                    {/* Header with close button */}
-                                    <box className="settings-header">
-                                        <label className="settings-title" label="System Settings" />
-                                        <box hexpand halign={Gtk.Align.END}>
-                                            {[
-                                                <button
-                                                    className="close-button"
-                                                    onClicked={handleClose}
-                                                    child={<icon icon="window-close-symbolic" />}
-                                                />
-                                            ]}
-                                        </box>
-                                    </box>
-                                    
-                                    {/* Main content area */}
-                                    <box className="settings-main" hexpand vexpand>
-                                        <SettingsSidebar 
-                                            activeCategory={activeCategory}
-                                            onCategoryChange={handleCategoryChange}
+                <box 
+                    cssName="settings-panel-backdrop"
+                    child={
+                        <box cssName="settings-panel-container" vertical>
+                            {/* Header with close button */}
+                            <box cssName="settings-header">
+                                <label cssName="settings-title" label="System Settings" />
+                                <box hexpand halign={Gtk.Align.END}
+                                     child={
+                                        <button
+                                            cssName="close-button"
+                                            onClicked={handleClose}
+                                            child={<image iconName="window-close-symbolic" />}
                                         />
-                                        <SettingsContent activeCategory={activeCategory} />
-                                    </box>
-                                </box>
-                            </eventbox>
-                        }
-                    />
-                </eventbox>
+                                     } />
+                            </box>
+                            
+                            {/* Main content area */}
+                            <box cssName="settings-main" hexpand vexpand>
+                                <SettingsSidebar 
+                                    activeCategory={activeCategory}
+                                    onCategoryChange={handleCategoryChange}
+                                />
+                                <SettingsContent activeCategory={activeCategory} />
+                            </box>
+                        </box>
+                    }
+                />
             }
         />
     )

@@ -1,4 +1,4 @@
-import { App, Astal, Gdk, Gtk } from "astal/gtk3"
+import { App, Astal, Gdk, Gtk } from "astal/gtk4"
 import { timeout } from "astal/time"
 import Variable from "astal/variable"
 import Brightness from "./brightness"
@@ -23,28 +23,29 @@ function OnScreenProgress({ visible }: { visible: Variable<boolean> }) {
         })
     }
 
+    // Set up signal connections
+    brightness.connect("notify::screen", () =>
+        show(brightness.screen, "display-brightness-symbolic"),
+    )
+
+    if (speaker) {
+        speaker.connect("notify::volume", () =>
+            show(speaker.volume, speaker.volumeIcon),
+        )
+    }
+
     return (
         <revealer
-            setup={(self) => {
-                self.hook(brightness, "notify::screen", () =>
-                    show(brightness.screen, "display-brightness-symbolic"),
-                )
-
-                if (speaker) {
-                    self.hook(speaker, "notify::volume", () =>
-                        show(speaker.volume, speaker.volumeIcon),
-                    )
-                }
-            }}
             revealChild={visible()}
             transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
-        >
-            <box className="OSD">
-                <icon icon={iconName()} />
-                <levelbar valign={Gtk.Align.CENTER} widthRequest={100} value={value()} />
-                <label label={value(v => `${Math.floor(v * 100)}%`)} />
-            </box>
-        </revealer>
+            child={
+                <box cssName="OSD">
+                    <image iconName={iconName()} />
+                    <levelbar valign={Gtk.Align.CENTER} widthRequest={100} value={value()} />
+                    <label label={value(v => `${Math.floor(v * 100)}%`)} />
+                </box>
+            }
+        />
     )
 }
 
@@ -54,16 +55,17 @@ export default function OSD(monitor: Gdk.Monitor) {
     return (
         <window
             gdkmonitor={monitor}
-            className="OSD"
+            cssName="OSD"
             namespace="osd"
             application={App}
             layer={Astal.Layer.OVERLAY}
             keymode={Astal.Keymode.ON_DEMAND}
             anchor={Astal.WindowAnchor.BOTTOM}
-        >
-            <eventbox onClick={() => visible.set(false)}>
-                <OnScreenProgress visible={visible} />
-            </eventbox>
-        </window>
+            child={
+                <button onClicked={() => visible.set(false)} child={
+                    <OnScreenProgress visible={visible} />
+                } />
+            }
+        />
     )
 }

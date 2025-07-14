@@ -1,4 +1,4 @@
-import { Astal, Gtk, Gdk } from "astal/gtk3"
+import { Astal, Gtk, Gdk } from "astal/gtk4"
 import Notifd from "gi://AstalNotifd"
 import Notification from "./Notification"
 import { type Subscribable } from "astal/binding"
@@ -67,13 +67,13 @@ class NotifiationMap implements Subscribable {
 
     private set(key: number, value: Gtk.Widget) {
         // in case of replacecment destroy previous widget
-        this.map.get(key)?.destroy()
+        this.map.get(key)?.run_dispose()
         this.map.set(key, value)
         this.notifiy()
     }
 
     private delete(key: number) {
-        this.map.get(key)?.destroy()
+        this.map.get(key)?.run_dispose()
         this.map.delete(key)
         this.notifiy()
     }
@@ -94,12 +94,14 @@ export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
     const notifs = new NotifiationMap()
 
     return <window
-        className="NotificationPopups"
+        cssName="NotificationPopups"
         gdkmonitor={gdkmonitor}
         exclusivity={Astal.Exclusivity.EXCLUSIVE}
-        anchor={TOP | RIGHT}>
-        <box vertical noImplicitDestroy>
-            {bind(notifs)}
-        </box>
-    </window>
+        anchor={TOP | RIGHT}
+        child={
+            <box vertical noImplicitDestroy>
+                {bind(notifs)}
+            </box>
+        }
+    />
 }

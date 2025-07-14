@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import Mpris from "gi://AstalMpris"
 import { bind, Variable } from "astal"
 
@@ -35,12 +35,12 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
             : "media-playback-start-symbolic"
     )
 
-    return <box className="MediaPlayer">
-        <box className="cover-art" css={coverArt} />
+    return <box cssName="MediaPlayer">
+        <box cssName="cover-art" />
         <box vertical>
-            <box className="title">
-                <label truncate hexpand halign={START} label={title} />
-                <icon icon={playerIcon} />
+            <box cssName="title">
+                <label hexpand halign={START} label={title} />
+                <image iconName={playerIcon} />
             </box>
             <label halign={START} valign={START} vexpand wrap label={artist} />
             <slider
@@ -48,39 +48,46 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
                 onDragged={({ value }) => player.position = value * player.length}
                 value={position}
             />
-            <centerbox className="actions">
-                <label
-                    hexpand
-                    className="position"
-                    halign={START}
-                    visible={bind(player, "length").as(l => l > 0)}
-                    label={bind(player, "position").as(lengthStr)}
-                />
-                <box>
-                    <button
-                        onClicked={() => player.previous()}
-                        visible={bind(player, "canGoPrevious")}>
-                        <icon icon="media-skip-backward-symbolic" />
-                    </button>
-                    <button
-                        onClicked={() => player.play_pause()}
-                        visible={bind(player, "canControl")}>
-                        <icon icon={playIcon} />
-                    </button>
-                    <button
-                        onClicked={() => player.next()}
-                        visible={bind(player, "canGoNext")}>
-                        <icon icon="media-skip-forward-symbolic" />
-                    </button>
-                </box>
-                <label
-                    className="length"
-                    hexpand
-                    halign={END}
-                    visible={bind(player, "length").as(l => l > 0)}
-                    label={bind(player, "length").as(l => l > 0 ? lengthStr(l) : "0:00")}
-                />
-            </centerbox>
+            <centerbox 
+                cssName="actions"
+                startWidget={
+                    <label
+                        hexpand
+                        cssName="position"
+                        halign={START}
+                        visible={bind(player, "length").as(l => l > 0)}
+                        label={bind(player, "position").as(lengthStr)}
+                    />
+                }
+                centerWidget={
+                    <box>
+                        <button
+                            onClicked={() => player.previous()}
+                            visible={bind(player, "canGoPrevious")}
+                            child={<image iconName="media-skip-backward-symbolic" />}
+                        />
+                        <button
+                            onClicked={() => player.play_pause()}
+                            visible={bind(player, "canControl")}
+                            child={<image iconName={playIcon} />}
+                        />
+                        <button
+                            onClicked={() => player.next()}
+                            visible={bind(player, "canGoNext")}
+                            child={<image iconName="media-skip-forward-symbolic" />}
+                        />
+                    </box>
+                }
+                endWidget={
+                    <label
+                        cssName="length"
+                        hexpand
+                        halign={END}
+                        visible={bind(player, "length").as(l => l > 0)}
+                        label={bind(player, "length").as(l => l > 0 ? lengthStr(l) : "0:00")}
+                    />
+                }
+            />
         </box>
     </box>
 }
