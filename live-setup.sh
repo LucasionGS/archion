@@ -159,7 +159,34 @@ if [[ $DUAL_BOOT == true ]]; then
   prompt "Enter partition for Arch root (e.g. ${DISK}3) or leave empty to use free space:" ROOT_PART
   
   step "GRUB bootloader configuration..."
-  prompt "Enter GRUB bootloader ID (default: ArchLinux):" GRUB_BOOTLOADER_ID "ArchLinux"
+  
+  # Check for existing GRUB installations
+  info "Checking for existing GRUB bootloader entries..."
+  if command -v efibootmgr >/dev/null 2>&1; then
+    echo "Current EFI boot entries:"
+    efibootmgr | grep -E "(Boot|BootOrder)" | head -10
+    echo
+    
+    # Check if the proposed bootloader ID already exists
+    existing_entries=$(efibootmgr | grep -i "Archion\|GRUB" || true)
+    if [[ -n "$existing_entries" ]]; then
+      warning "Found existing GRUB/Archion entries:"
+      echo "$existing_entries"
+      echo
+    fi
+  fi
+  
+  prompt "Enter GRUB bootloader ID (default: Archion):" GRUB_BOOTLOADER_ID "Archion"
+  
+  # Suggest a unique ID if conflicts detected
+  if command -v efibootmgr >/dev/null 2>&1 && efibootmgr | grep -q "$GRUB_BOOTLOADER_ID"; then
+    warning "Bootloader ID '$GRUB_BOOTLOADER_ID' already exists!"
+    suggested_id="${GRUB_BOOTLOADER_ID}_$(date +%s)"
+    if confirm "Use suggested unique ID '$suggested_id'?"; then
+      GRUB_BOOTLOADER_ID="$suggested_id"
+    fi
+  fi
+  
   success "GRUB bootloader ID: $GRUB_BOOTLOADER_ID"
   
   # Validate EFI partition if provided
@@ -530,6 +557,22 @@ echo "${HOSTNAME}" > /etc/hostname
 echo "127.0.0.1 localhost" >> /etc/hosts
 echo "127.0.1.1 ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
+# Customize os-release for Archion
+cp /etc/os-release /etc/os-release.backup
+cat > /etc/os-release << 'OS_RELEASE_EOF'
+NAME="Archion"
+PRETTY_NAME="Archion Linux"
+ID=archion
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://github.com/LucasionGS/archion"
+DOCUMENTATION_URL="https://github.com/LucasionGS/archion"
+SUPPORT_URL="https://github.com/LucasionGS/archion"
+BUG_REPORT_URL="https://github.com/LucasionGS/archion/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+OS_RELEASE_EOF
+
 # User configuration
 echo "root:${ROOTPASS}" | chpasswd
 groupadd sudo
@@ -543,11 +586,33 @@ systemctl enable NetworkManager
 # Configure GRUB for dual boot if needed
 if [[ $DUAL_BOOT == true ]]; then
   echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+  echo "GRUB_OS_PROBER_SKIP_LIST=\"\"" >> /etc/default/grub
+  # Ensure os-prober can find other installations
+  echo "GRUB_DISABLE_SUBMENU=y" >> /etc/default/grub
+  
+  # Mount other partitions temporarily to help os-prober detect them
+  mkdir -p /mnt/detect_os
+  # Try to mount and unmount other partitions to ensure they're detectable
+  for part in \$(lsblk -ln -o NAME,FSTYPE \${DISK%/*}/\${DISK##*/}* | grep -E "ext[234]|ntfs|fat32" | awk '{print "/dev/" \$1}' | grep -v ${ROOT_PART}); do
+    if [[ -b "\$part" && "\$part" != "${EFI_PART}" ]]; then
+      mount "\$part" /mnt/detect_os 2>/dev/null && umount /mnt/detect_os 2>/dev/null || true
+    fi
+  done
+  rmdir /mnt/detect_os 2>/dev/null || true
 fi
 
 # Install and configure GRUB bootloader
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=${GRUB_BOOTLOADER_ID:-GRUB}
-grub-mkconfig -o /boot/grub/grub.cfg
+
+# Update grub configuration to detect other operating systems
+if [[ $DUAL_BOOT == true ]]; then
+  # Run os-prober to detect other operating systems
+  os-prober
+  # Generate GRUB configuration with OS detection
+  grub-mkconfig -o /boot/grub/grub.cfg
+else
+  grub-mkconfig -o /boot/grub/grub.cfg
+fi
 EOF
 
 if [[ $? -eq 0 ]]; then
@@ -630,7 +695,14 @@ if [[ $DUAL_BOOT == true ]]; then
   success "Dual boot configuration completed!"
   info "GRUB should automatically detect other operating systems."
   info "If other OS entries don't appear in the boot menu:"
+  echo "  sudo os-prober"
   echo "  sudo grub-mkconfig -o /boot/grub/grub.cfg"
+  echo
+  warning "Troubleshooting dual boot issues:"
+  echo "  • Ensure other OS partitions are properly mounted"
+  echo "  • Check that /etc/default/grub has GRUB_DISABLE_OS_PROBER=false"
+  echo "  • Run 'sudo update-grub' (if available) or 'sudo grub-mkconfig -o /boot/grub/grub.cfg'"
+  echo "  • Verify bootloader IDs are unique: efibootmgr -v"
 fi
 
 echo
@@ -640,6 +712,15 @@ echo "  2. Reboot into your new Arch Linux system"
 echo "  3. Log in as '$USERNAME'"
 echo "  4. Run the global setup: sudo ~/archion/global-setup.sh"
 echo "  5. Run the environment setup: ~/archion/environment-setup.sh"
+
+if [[ $DUAL_BOOT == true ]]; then
+  echo
+  info "After first boot, if other OS entries are missing from GRUB:"
+  echo "  6. Check boot entries: efibootmgr -v"
+  echo "  7. Scan for other OS: sudo os-prober"
+  echo "  8. Update GRUB: sudo grub-mkconfig -o /boot/grub/grub.cfg"
+  echo "  9. If still missing, check that other OS partitions are mountable"
+fi
 
 echo
 if confirm "Would you like to reboot now?" "N"; then
