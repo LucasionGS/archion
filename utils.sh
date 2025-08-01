@@ -245,27 +245,59 @@ install_packages() {
   local packages=("$@")
   local total=${#packages[@]}
   
-  section "Installing ${total} packages"
+  if [[ $total -eq 0 ]]; then
+    warning "No packages specified for installation"
+    return 1
+  fi
+  
+  section "Installing ${total} package$([ $total -ne 1 ] && echo "s") using $package_manager"
+  
+  local failed_packages=()
   
   for i in "${!packages[@]}"; do
     local package="${packages[$i]}"
-    show_progress $((i+1)) $total "Installing: $package"
+    local current=$((i+1))
+    
+    # Show overall progress
+    show_progress $current $total "[$current/$total] Preparing: $package"
     
     case "$package_manager" in
       "pacman")
-        if ! sudo pacman -S --needed --noconfirm "$package"; then
-          warning "Failed to install: $package"
+        if execute_with_progress "sudo pacman -S --needed --noconfirm '$package'" "Installing $package" "/tmp/archion_install_${USER}.log"; then
+          # Success is already shown by execute_with_progress
+          :
+        else
+          failed_packages+=("$package")
         fi
         ;;
       "yay")
-        if ! yay -S --needed --noconfirm "$package"; then
-          warning "Failed to install: $package"
+        if execute_with_progress "yay -S --needed --noconfirm '$package'" "Installing $package" "/tmp/archion_install_${USER}.log"; then
+          # Success is already shown by execute_with_progress
+          :
+        else
+          failed_packages+=("$package")
         fi
+        ;;
+      *)
+        warning "Unknown package manager: $package_manager"
+        return 1
         ;;
     esac
   done
   
-  success "Package installation completed"
+  # Final progress bar completion
+  show_progress $total $total "Installation process completed"
+  
+  # Summary
+  local successful=$((total - ${#failed_packages[@]}))
+  echo
+  
+  if [[ ${#failed_packages[@]} -eq 0 ]]; then
+    success "All $total packages installed successfully!"
+  else
+    success "$successful of $total packages installed successfully"
+    warning "Failed to install ${#failed_packages[@]} package(s): ${failed_packages[*]}"
+  fi
 }
 
 # Create autogen file with better formatting
