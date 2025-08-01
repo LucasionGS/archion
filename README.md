@@ -23,7 +23,7 @@ Archion is a set of scripts and configuration files for setting up a modern Arch
 - Automated graphics driver installation (NVIDIA, AMD, Intel, VM)
 - Hyprland Wayland compositor with custom configs
 - AGS (Aylur's Gtk Shell) widgets and bar
-- Kitty, Nautilus, VS Code, Neovim, and more
+- Kitty, Nemo, VS Code, Neovim, and more
 - Themed Astal components, AnyRun, and other desktop tools
 - Easy reload and update scripts
 

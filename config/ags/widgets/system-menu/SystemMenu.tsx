@@ -79,7 +79,7 @@ function SystemMenuGrid(props: { systemVisible: Variable<boolean> }) {
             {
                 icon: "folder-symbolic",
                 label: "Files",
-                action: () => execAsync("nautilus"),
+                action: () => execAsync("nemo"),
                 className: "app-button"
             },
             {

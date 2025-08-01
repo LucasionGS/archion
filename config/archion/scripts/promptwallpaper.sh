@@ -11,7 +11,7 @@ clean_cache() {
 mkdir -p "$HOME/Pictures/Wallpapers"
 mkdir -p "$ARCHION_DIR/.wallpapers_active"
 
-# Ask for file path from Nautilus
+# Ask for file path
 FILE_PATHS=$(zenity --file-selection --multiple --title="Select a Wallpaper Image(s)" --file-filter="*.jpg *.jpeg *.png *.gif" --separator="|" --filename="$HOME/Pictures/Wallpapers/" --width=800 --height=600)
 
 # Check if the user selected any files
