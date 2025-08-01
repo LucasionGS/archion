@@ -129,7 +129,7 @@ if [[ $DUAL_BOOT == true ]]; then
   step "Analyzing available free space..."
   info "Free space analysis for $DISK:"
   if command -v parted >/dev/null 2>&1; then
-    parted "$DISK" print free | grep -E "(Free Space|Disk)" || echo "Unable to analyze free space with parted"
+    parted --script "$DISK" print free | grep -E "(Free Space|Disk)" || echo "Unable to analyze free space with parted"
   fi
   
   # Show sgdisk free space info
