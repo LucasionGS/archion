@@ -351,31 +351,6 @@ else
   warning "Failed to download Deno installer"
 fi
 
-section "Hyprland Plugin Management"
-step "Setting up HyprPM and plugins..."
-if hyprpm update; then
-  success "HyprPM updated"
-else
-  warning "Failed to update HyprPM"
-fi
-
-step "Installing Hyprspace plugin..."
-if hyprpm add https://github.com/KZDKM/Hyprspace; then
-  if hyprpm enable Hyprspace; then
-    success "Hyprspace plugin installed and enabled"
-  else
-    warning "Hyprspace plugin installed but failed to enable"
-  fi
-else
-  warning "Failed to install Hyprspace plugin"
-fi
-
-step "Installing official Hyprland plugins..."
-if hyprpm add https://github.com/hyprwm/hyprland-plugins; then
-  success "Official Hyprland plugins installed"
-else
-  warning "Failed to install official Hyprland plugins"
-fi
 
 section "Rofi Customization"
 step "Installing custom Rofi themes..."

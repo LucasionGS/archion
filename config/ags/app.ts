@@ -121,7 +121,7 @@ App.start({
             Calendar({ displayCalendar });
             
             // Settings Panel - centered overlay
-            SettingsPanel(displaySettingsPanel);
+            // SettingsPanel(displaySettingsPanel);
             try {
                 OSD(monitor);
             } catch (error) {

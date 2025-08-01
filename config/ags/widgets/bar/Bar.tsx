@@ -376,7 +376,10 @@ function SettingsButton(props: {
 
     return <box className="SettingsButton">
         {[<button
-            onClicked={() => displaySettingsPanel?.set(!displaySettingsPanel.get())}
+            // onClicked={() => displaySettingsPanel?.set(!displaySettingsPanel.get())}
+            onClicked={async () => {
+                execAsync("archion-settings")
+            }}
             tooltipText="Settings"
             child={<icon icon="preferences-system-symbolic" />}
         />]}
