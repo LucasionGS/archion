@@ -46,7 +46,7 @@ step "Installing desktop portals..."
 execute_with_progress "pacman --noconfirm -S xdg-desktop-portal-hyprland xdg-desktop-portal-wlr xdg-desktop-portal-gnome xdg-desktop-portal-gtk" "Desktop portals"
 
 step "Installing file management and utilities..."
-execute_with_progress "pacman --noconfirm -S wget less yazi jq fd 7zip fzf nautilus nautilus-image-converter nautilus-share zenity thunar" "File utilities"
+execute_with_progress "pacman --noconfirm -S wget less yazi jq fd 7zip fzf nautilus nautilus-image-converter nautilus-share zenity thunar nemo nemo-fileroller nemo-share nemo-terminal" "File utilities"
 
 step "Installing system monitoring tools..."
 execute_with_progress "pacman --noconfirm -S htop btop" "System monitors"
