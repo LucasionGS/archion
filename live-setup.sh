@@ -202,14 +202,14 @@ if [[ $DUAL_BOOT == false ]]; then
   execute_with_progress "sgdisk -Z '$DISK'" "Zeroing partition table"
   
   step "Creating EFI System Partition (550 MiB)..."
-  if sgdisk -n1:0:+550MiB -t1:ef00 -c1:"EFI System Partition" "$DISK" >/dev/null 2>&1; then
+  if sgdisk -n1:0:+550MiB -t1:ef00 -c1:"EFI System Partition" "$DISK"; then
     success "EFI partition created"
   else
     error "Failed to create EFI partition"
   fi
   
   step "Creating root partition (remaining space)..."
-  if sgdisk -n2:0:0 -t2:8300 -c2:"Arch Linux root" "$DISK" >/dev/null 2>&1; then
+  if sgdisk -n2:0:0 -t2:8300 -c2:"Arch Linux root" "$DISK"; then
     success "Root partition created"
   else
     error "Failed to create root partition"
