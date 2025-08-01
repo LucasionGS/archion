@@ -253,7 +253,7 @@ install_packages() {
     
     case "$package_manager" in
       "pacman")
-        if ! pacman -S --needed --noconfirm "$package"; then
+        if ! sudo pacman -S --needed --noconfirm "$package"; then
           warning "Failed to install: $package"
         fi
         ;;

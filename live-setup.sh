@@ -158,6 +158,10 @@ if [[ $DUAL_BOOT == true ]]; then
   step "Root partition configuration..."
   prompt "Enter partition for Arch root (e.g. ${DISK}3) or leave empty to use free space:" ROOT_PART
   
+  step "GRUB bootloader configuration..."
+  prompt "Enter GRUB bootloader ID (default: ArchLinux):" GRUB_BOOTLOADER_ID "ArchLinux"
+  success "GRUB bootloader ID: $GRUB_BOOTLOADER_ID"
+  
   # Validate EFI partition if provided
   if [[ -n "$EFI_PART" ]]; then
     if [[ ! -b "$EFI_PART" ]]; then
@@ -237,6 +241,11 @@ prompt_password "Password for root" ROOTPASS
 
 prompt "Timezone (e.g. Europe/Copenhagen)" TIMEZONE "Europe/Copenhagen"
 prompt "Locale (e.g. en_US.UTF-8)" LOCALE "en_US.UTF-8"
+
+# Set default GRUB bootloader ID for full disk installation
+if [[ $DUAL_BOOT == false ]]; then
+  GRUB_BOOTLOADER_ID="ArchLinux"
+fi
 
 # Export USERNAME for use by other scripts
 echo "$USERNAME" > /tmp/initial_archion_username
@@ -465,10 +474,11 @@ else
   error "Failed to mount root filesystem"
 fi
 
-if mkdir -p /mnt/boot && mount "$EFI_PART" /mnt/boot; then
-  success "EFI filesystem mounted at /mnt/boot"
+# Mount EFI partition at /boot/efi for both installation modes
+if mkdir -p /mnt/boot/efi && mount "$EFI_PART" /mnt/boot/efi; then
+  success "EFI filesystem mounted at /mnt/boot/efi"
 else
-  error "Failed to mount EFI filesystem"
+  error "Failed to mount EFI filesystem at /mnt/boot/efi"
 fi
 
 section "Base System Installation"
@@ -536,7 +546,7 @@ if [[ $DUAL_BOOT == true ]]; then
 fi
 
 # Install and configure GRUB bootloader
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=${GRUB_BOOTLOADER_ID:-GRUB}
 grub-mkconfig -o /boot/grub/grub.cfg
 EOF
 
