@@ -228,7 +228,7 @@ else
     PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
     PART_NUM=$((PART_NUM + 1))
     
-    if sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:"EFI System Partition" "$DISK" >/dev/null 2>&1; then
+    if sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:"EFI System Partition" "$DISK"; then
       EFI_PART=$(get_partition "$DISK" "$PART_NUM")
       success "EFI partition created: $EFI_PART"
     else
@@ -241,7 +241,7 @@ else
     PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
     PART_NUM=$((PART_NUM + 1))
     
-    if sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:"Arch Linux root" "$DISK" >/dev/null 2>&1; then
+    if sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:"Arch Linux root" "$DISK"; then
       ROOT_PART=$(get_partition "$DISK" "$PART_NUM")
       success "Root partition created: $ROOT_PART"
     else
