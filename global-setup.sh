@@ -50,7 +50,7 @@ step "Installing file management and utilities..."
 install_packages "pacman" wget less yazi jq fd 7zip fzf zenity nemo nemo-fileroller nemo-share nemo-terminal
 
 step "Installing system monitoring tools..."
-install_packages "pacman" htop btop
+install_packages "pacman" btop
 
 step "Installing text editors..."
 install_packages "pacman" neovim
