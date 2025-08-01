@@ -197,7 +197,9 @@ show_progress() {
   
   printf "\r${BLUE}[${NC}"
   printf "%${completed}s" | tr ' ' '█'
-  printf "%${remaining}s" | tr ' ' '░'
+  # printf "%${remaining}s" | tr ' ' '░'
+  # Use spaces instead of dots for remaining as terminal likely doesn't support it.
+  printf "%${remaining}s" | tr ' ' ' '
   printf "${BLUE}]${NC} ${percentage}%% - ${description}"
   
   if [[ $current -eq $total ]]; then
@@ -259,23 +261,35 @@ install_packages() {
     local current=$((i+1))
     
     # Show overall progress
-    show_progress $current $total "[$current/$total] Preparing: $package"
+    show_progress $current $total "[$current/$total] Installing: $package"
     
     case "$package_manager" in
       "pacman")
-        if execute_with_progress "sudo pacman -S --needed --noconfirm '$package'" "Installing $package" "/tmp/archion_install_${USER}.log"; then
-          # Success is already shown by execute_with_progress
-          :
-        else
+        # Run installation in background and use spinner
+        sudo pacman -S --needed --noconfirm "$package" >> "/tmp/archion_install_${USER}.log" 2>&1 &
+        local install_pid=$!
+        spinner $install_pid "Installing $package"
+        
+        # Check if installation was successful
+        if ! wait $install_pid; then
           failed_packages+=("$package")
+          warning "Failed to install: $package"
+        else
+          success "Installed: $package"
         fi
         ;;
       "yay")
-        if execute_with_progress "yay -S --needed --noconfirm '$package'" "Installing $package" "/tmp/archion_install_${USER}.log"; then
-          # Success is already shown by execute_with_progress
-          :
-        else
+        # Run installation in background and use spinner
+        yay -S --needed --noconfirm "$package" >> "/tmp/archion_install_${USER}.log" 2>&1 &
+        local install_pid=$!
+        spinner $install_pid "Installing $package"
+        
+        # Check if installation was successful
+        if ! wait $install_pid; then
           failed_packages+=("$package")
+          warning "Failed to install: $package"
+        else
+          success "Installed: $package"
         fi
         ;;
       *)

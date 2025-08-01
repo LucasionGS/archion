@@ -143,9 +143,9 @@ success "System is ready for user environment setup!"
 
 echo
 info "Next steps:"
-echo "  1. Reboot your system to apply all changes"
-echo "  2. Run the environment setup script as a regular user"
-echo "  3. Configure your display settings and graphics drivers if needed"
+echo "  1. Run the environment setup script as a regular user"
+echo "  2. Install your graphics drivers if needed, with \"sudo archion-graphics\""
+echo "  3. Reboot your system to apply all changes and start using your new setup!"
 echo
 
 if confirm "Would you like to reboot now to apply all changes?" "N"; then
