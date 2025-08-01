@@ -225,7 +225,7 @@ spinner() {
 execute_with_progress() {
   local cmd="$1"
   local description="${2:-Running command}"
-  local log_file="${3:-/tmp/archion_install.log}"
+  local log_file="${3:-/tmp/archion_install_${USER}.log}"
   
   step "$description"
   
