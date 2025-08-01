@@ -145,9 +145,9 @@ if [[ $DUAL_BOOT == true ]]; then
   echo
   info "sgdisk analysis:"
   echo "  First available free sector: $(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "unknown")"
-  local sgdisk_sectors=$(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "0")
+  sgdisk_sectors=$(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "0")
   if [[ "$sgdisk_sectors" != "0" && -n "$sgdisk_sectors" ]]; then
-    local sgdisk_mb=$((sgdisk_sectors * 512 / 1024 / 1024))
+    sgdisk_mb=$((sgdisk_sectors * 512 / 1024 / 1024))
     echo "  Largest free space: ${sgdisk_mb}MB (${sgdisk_sectors} sectors)"
   fi
   echo
