@@ -38,6 +38,11 @@ need pacstrap
 need genfstab  
 need lsblk
 need partprobe
+need sgdisk
+# parted is optional but helpful for free space analysis
+if ! command -v parted >/dev/null 2>&1; then
+  warning "parted not found - free space analysis will be limited"
+fi
 success "All required tools are available"
 
 # Network connectivity check
@@ -120,11 +125,41 @@ if [[ $DUAL_BOOT == true ]]; then
   echo "  • Backup of important data"
   echo
   
+  # Show free space analysis
+  step "Analyzing available free space..."
+  info "Free space analysis for $DISK:"
+  if command -v parted >/dev/null 2>&1; then
+    parted "$DISK" print free 2>/dev/null | grep -E "(Free Space|Disk)" || echo "Unable to analyze free space with parted"
+  fi
+  
+  # Show sgdisk free space info
+  echo
+  info "First available free sector: $(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "unknown")"
+  echo
+  
   step "EFI partition configuration..."
   prompt "Enter existing EFI partition (e.g. ${DISK}1) or leave empty to create new:" EFI_PART
   
   step "Root partition configuration..."
   prompt "Enter partition for Arch root (e.g. ${DISK}3) or leave empty to use free space:" ROOT_PART
+  
+  # Validate EFI partition if provided
+  if [[ -n "$EFI_PART" ]]; then
+    if [[ ! -b "$EFI_PART" ]]; then
+      error "EFI partition $EFI_PART not found."
+    fi
+    # Check if it's actually an EFI partition
+    EFI_TYPE=$(lsblk -no FSTYPE "$EFI_PART" 2>/dev/null || echo "unknown")
+    if [[ "$EFI_TYPE" != "vfat" ]]; then
+      warning "Partition $EFI_PART doesn't appear to be FAT32. Current filesystem: $EFI_TYPE"
+      if ! confirm "Continue anyway? (This may require reformatting)" "N"; then
+        error "Installation aborted by user."
+      fi
+    fi
+    success "Using existing EFI partition: $EFI_PART"
+  else
+    info "Will create new EFI partition (550MB)"
+  fi
   
   if [[ -z "$ROOT_PART" ]]; then
     info "Will create new root partition in available free space"
@@ -222,31 +257,107 @@ if [[ $DUAL_BOOT == false ]]; then
 else
   step "Setting up dual boot partitions..."
   
+  # Show detailed disk information before proceeding
+  step "Analyzing current disk layout..."
+  info "Current partition table:"
+  sgdisk -p "$DISK" 2>/dev/null || warning "Could not read partition table"
+  echo
+  info "Available free space regions:"
+  sgdisk -f "$DISK" 2>/dev/null | while read -r start_sector; do
+    if [[ -n "$start_sector" && "$start_sector" != "0" ]]; then
+      # Get sector size (usually 512 bytes)
+      sector_size=$(sgdisk -p "$DISK" 2>/dev/null | grep "Logical sector size" | awk '{print $4}' || echo "512")
+      size_mb=$((start_sector * sector_size / 1024 / 1024))
+      echo "  Starting at sector $start_sector (approximately ${size_mb}MB available)"
+    fi
+  done
+  echo
+  
+  # Function to find next available partition number
+  get_next_partition_num() {
+    local disk="$1"
+    local max_part=0
+    while read -r line; do
+      if [[ $line =~ ^[[:space:]]*([0-9]+) ]]; then
+        local part_num=${BASH_REMATCH[1]}
+        if (( part_num > max_part )); then
+          max_part=$part_num
+        fi
+      fi
+    done < <(sgdisk -p "$disk" 2>/dev/null | tail -n +8)
+    echo $((max_part + 1))
+  }
+  
+  # Function to check if there's enough free space
+  check_free_space() {
+    local disk="$1"
+    local required_mb="$2"
+    local free_space_sectors
+    
+    # Get the largest free space available
+    free_space_sectors=$(sgdisk -f "$disk" 2>/dev/null | head -1)
+    
+    if [[ -n "$free_space_sectors" && "$free_space_sectors" != "0" ]]; then
+      # Convert sectors to MB (assuming 512 byte sectors)
+      local free_space_mb=$((free_space_sectors * 512 / 1024 / 1024))
+      info "Available free space: ${free_space_mb}MB (${free_space_sectors} sectors)"
+      
+      if (( free_space_mb >= required_mb )); then
+        return 0
+      else
+        warning "Insufficient space: ${free_space_mb}MB available, ${required_mb}MB required"
+        return 1
+      fi
+    else
+      warning "No free space detected or unable to determine free space"
+      return 1
+    fi
+  }
+  
   if [[ -z "$EFI_PART" ]]; then
     step "Creating new EFI partition..."
-    # Find next available partition number
-    PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
-    PART_NUM=$((PART_NUM + 1))
     
-    if sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:"EFI System Partition" "$DISK"; then
+    # Check if we have enough free space for EFI partition (550MB)
+    if ! check_free_space "$DISK" 550; then
+      error "Insufficient free space for EFI partition. Need at least 550MB free space."
+    fi
+    
+    PART_NUM=$(get_next_partition_num "$DISK")
+    info "Creating EFI partition as partition $PART_NUM"
+    
+    # Use sgdisk to find the largest free space and create partition there
+    info "Running: sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:\"EFI System Partition\" \"$DISK\""
+    if sgdisk -n${PART_NUM}:0:+550MiB -t${PART_NUM}:ef00 -c${PART_NUM}:"EFI System Partition" "$DISK" 2>&1; then
       EFI_PART=$(get_partition "$DISK" "$PART_NUM")
       success "EFI partition created: $EFI_PART"
     else
-      error "Failed to create EFI partition"
+      error "Failed to create EFI partition. sgdisk command failed. Check disk layout and ensure there's adequate free space in the right location."
     fi
+  else
+    info "Using existing EFI partition: $EFI_PART"
   fi
   
   if [[ $CREATE_ROOT == true ]]; then
-    step "Creating new root partition in free space..."
-    PART_NUM=$(sgdisk -p "$DISK" | tail -n +8 | wc -l)
-    PART_NUM=$((PART_NUM + 1))
+    step "Creating new root partition in remaining free space..."
     
-    if sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:"Arch Linux root" "$DISK"; then
+    # Check if we have enough free space for root partition (at least 20GB)
+    if ! check_free_space "$DISK" 20480; then
+      error "Insufficient free space for root partition. Need at least 20GB free space."
+    fi
+    
+    PART_NUM=$(get_next_partition_num "$DISK")
+    info "Creating root partition as partition $PART_NUM"
+    
+    # Use all remaining free space for root partition
+    info "Running: sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:\"Arch Linux root\" \"$DISK\""
+    if sgdisk -n${PART_NUM}:0:0 -t${PART_NUM}:8300 -c${PART_NUM}:"Arch Linux root" "$DISK" 2>&1; then
       ROOT_PART=$(get_partition "$DISK" "$PART_NUM")
       success "Root partition created: $ROOT_PART"
     else
-      error "Failed to create root partition"
+      error "Failed to create root partition. sgdisk command failed. Check disk layout and ensure there's adequate free space."
     fi
+  else
+    info "Using existing root partition: $ROOT_PART"
   fi
   
   execute_with_progress "partprobe '$DISK'" "Updating partition table"
