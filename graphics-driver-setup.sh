@@ -87,11 +87,11 @@ install_nvidia() {
   info "Installing NVIDIA proprietary driver stack..."
   
   step "Installing core NVIDIA packages..."
-  execute_with_progress "pacman -S --needed --noconfirm nvidia nvidia-utils nvidia-settings" "NVIDIA drivers"
+  install_packages "pacman" nvidia nvidia-utils nvidia-settings
   
   if confirm "Does your system also use the linux-lts kernel?" "N"; then
     step "Installing NVIDIA LTS kernel support..."
-    execute_with_progress "pacman -S --needed --noconfirm nvidia-lts" "NVIDIA LTS drivers"
+    install_packages "pacman" nvidia-lts
   fi
   
   if confirm "Enable DRM modeset for tear-free consoles?" "Y"; then
@@ -117,7 +117,7 @@ install_amd() {
   info "Installing AMD open-source driver stack (AMDGPU)..."
   
   step "Installing AMD graphics drivers..."
-  execute_with_progress "pacman -S --needed --noconfirm mesa lib32-mesa libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau vulkan-radeon lib32-vulkan-radeon xf86-video-amdgpu" "AMD drivers"
+  install_packages "pacman" mesa lib32-mesa libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau vulkan-radeon lib32-vulkan-radeon xf86-video-amdgpu
   
   success "AMD drivers installed successfully!"
 }
@@ -127,11 +127,11 @@ install_intel() {
   info "Installing Intel open-source driver stack..."
   
   step "Installing Intel graphics drivers..."
-  execute_with_progress "pacman -S --needed --noconfirm mesa lib32-mesa vulkan-intel lib32-vulkan-intel intel-media-driver intel-gpu-tools mesa-vdpau lib32-mesa-vdpau" "Intel drivers"
+  install_packages "pacman" mesa lib32-mesa vulkan-intel lib32-vulkan-intel intel-media-driver intel-gpu-tools mesa-vdpau lib32-mesa-vdpau
   
   if confirm "Install legacy xf86-video-intel DDX driver for Xorg?" "N"; then
     step "Installing legacy Intel DDX driver..."
-    execute_with_progress "pacman -S --needed --noconfirm xf86-video-intel" "Intel DDX driver"
+    install_packages "pacman" xf86-video-intel
     warning "Legacy DDX driver may cause issues on newer systems."
   fi
   
@@ -154,23 +154,23 @@ install_vm() {
     case $VMREPLY in
       1) 
         step "Installing QEMU Spice/QXL drivers..."
-        execute_with_progress "pacman -S --needed --noconfirm xf86-video-qxl qemu-guest-agent spice-vdagent" "QEMU Spice/QXL"
+        install_packages "pacman" xf86-video-qxl qemu-guest-agent spice-vdagent
         success "QEMU Spice/QXL drivers installed!"
         break;;
       2) 
         step "Installing VirtIO-GPU/VirGL drivers..."
-        execute_with_progress "pacman -S --needed --noconfirm mesa virglrenderer qemu-guest-agent spice-vdagent" "VirtIO-GPU/VirGL"
+        install_packages "pacman" mesa virglrenderer qemu-guest-agent spice-vdagent
         success "VirtIO-GPU/VirGL drivers installed!"
         break;;
       3) 
         step "Installing VMware tools..."
-        execute_with_progress "pacman -S --needed --noconfirm open-vm-tools xf86-video-vmware" "VMware tools"
+        install_packages "pacman" open-vm-tools xf86-video-vmware
         manage_service "enable" "vmtoolsd"
         success "VMware tools installed and enabled!"
         break;;
       4) 
         step "Installing VirtualBox guest additions..."
-        execute_with_progress "pacman -S --needed --noconfirm virtualbox-guest-utils" "VirtualBox guest additions"
+        install_packages "pacman" virtualbox-guest-utils
         manage_service "enable" "vboxservice"
         success "VirtualBox guest additions installed and enabled!"
         break;;

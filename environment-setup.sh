@@ -128,14 +128,7 @@ declare -a aur_packages=(
 )
 
 step "Installing AUR packages..."
-for package in "${aur_packages[@]}"; do
-  info "Installing: $package"
-  if yay -S --needed --noconfirm "$package"; then
-    success "Installed: $package"
-  else
-    warning "Failed to install: $package"
-  fi
-done
+install_packages "yay" "${aur_packages[@]}"
 
 section "Service Configuration"
 step "Enabling snapd service..."
@@ -240,11 +233,7 @@ fi
 section "Development Tools"
 step "Installing Visual Studio Code..."
 info "Installing Microsoft's official version (visual-studio-code-bin)"
-if yay -S --needed --noconfirm visual-studio-code-bin; then
-  success "Visual Studio Code installed"
-else
-  warning "Failed to install Visual Studio Code"
-fi
+install_packages "yay" visual-studio-code-bin
 
 section "Desktop Environment Extensions"
 info "Installing additional desktop environment tools..."
@@ -256,14 +245,8 @@ declare -a desktop_packages=(
   "aylurs-gtk-shell"
 )
 
-for package in "${desktop_packages[@]}"; do
-  step "Installing: $package"
-  if yay -S --needed --noconfirm "$package"; then
-    success "Installed: $package"
-  else
-    warning "Failed to install: $package"
-  fi
-done
+step "Installing desktop environment extensions..."
+install_packages "yay" "${desktop_packages[@]}"
 
 section "Local Applications Setup"
 step "Installing FSSH (Fish SSH Connection Manager)..."
@@ -316,27 +299,16 @@ step "Installing Google Chrome..."
 if command -v google-chrome-stable &> /dev/null; then
   info "Google Chrome is already installed"
 else
-  if yay -S --needed --noconfirm google-chrome; then
-    success "Google Chrome installed"
-  else
-    warning "Failed to install Google Chrome"
-  fi
+  install_packages "yay" google-chrome
 fi
 
 section "Additional Desktop Tools"
-step "Installing Better Control (enhanced settings panel)..."
-if yay -S --needed --noconfirm better-control-git; then
-  success "Better Control installed"
-else
-  warning "Failed to install Better Control"
-fi
-
-step "Installing Hyprshot (screenshot tool)..."
-if yay -S --needed --noconfirm hyprshot-git; then
-  success "Hyprshot installed"
-else
-  warning "Failed to install Hyprshot"
-fi
+step "Installing additional desktop applications..."
+additional_packages=(
+  "better-control-git"
+  "hyprshot-git"
+)
+install_packages "yay" "${additional_packages[@]}"
 
 section "Runtime Installation"
 step "Installing Deno runtime..."
@@ -376,11 +348,8 @@ fi
 
 section "Final Application Setup"
 step "Installing WebKit prerequisites..."
-if yay -S --needed --noconfirm webkit2gtk-4.1; then
-  success "WebKit prerequisites installed"
-else
-  warning "Failed to install WebKit prerequisites"
-fi
+install_packages "yay" webkit2gtk-4.1
+
 step "Installing Archion Settings application..."
 info "Building custom Hyprland settings application..."
 if git clone https://github.com/LucasionGS/hypr-settings.git /tmp/archion-settings; then

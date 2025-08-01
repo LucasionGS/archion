@@ -34,37 +34,38 @@ info "Installing core desktop environment and development tools..."
 
 # Core packages grouped by category
 step "Installing Hyprland and window manager components..."
-execute_with_progress "pacman --noconfirm -S sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi kitty xdotool" "Hyprland ecosystem"
+install_packages "pacman" sudo uwsm hyprland xorg-xwayland hyprpaper hyprpicker waybar hypridle hyprlock hyprutils hyprlang hyprgraphics wofi kitty xdotool
 
 step "Installing development tools..."
-execute_with_progress "pacman --noconfirm -S base-devel rustup openssh inetutils cmake meson cpio pkg-config gcc" "Development tools"
+install_packages "pacman" base-devel rustup openssh inetutils cmake meson cpio pkg-config gcc
 
 step "Installing audio system..."
-execute_with_progress "pacman --noconfirm -S pipewire wireplumber" "Audio framework"
+install_packages "pacman" pipewire wireplumber
 
 step "Installing desktop portals..."
-execute_with_progress "pacman --noconfirm -S xdg-desktop-portal-hyprland xdg-desktop-portal-wlr xdg-desktop-portal-gnome xdg-desktop-portal-gtk" "Desktop portals"
+install_packages "pacman" xdg-desktop-portal-hyprland xdg-desktop-portal-wlr xdg-desktop-portal-gnome xdg-desktop-portal-gtk
 
 step "Installing file management and utilities..."
-execute_with_progress "pacman --noconfirm -S wget less yazi jq fd 7zip fzf nautilus nautilus-image-converter nautilus-share zenity thunar nemo nemo-fileroller nemo-share nemo-terminal" "File utilities"
+# install_packages "pacman" wget less yazi jq fd 7zip fzf nautilus nautilus-image-converter nautilus-share zenity thunar nemo nemo-fileroller nemo-share nemo-terminal
+install_packages "pacman" wget less yazi jq fd 7zip fzf zenity nemo nemo-fileroller nemo-share nemo-terminal
 
 step "Installing system monitoring tools..."
-execute_with_progress "pacman --noconfirm -S htop btop" "System monitors"
+install_packages "pacman" htop btop
 
 step "Installing text editors..."
-execute_with_progress "pacman --noconfirm -S neovim" "Text editors"
+install_packages "pacman" neovim
 
 step "Installing shell and development environment..."
-execute_with_progress "pacman --noconfirm -S fish fisher" "Shell environment"
+install_packages "pacman" fish fisher
 
 step "Installing language support and libraries..."
-execute_with_progress "pacman --noconfirm -S gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs vala valadoc wireplumber brightnessctl gobject-introspection" "Language support"
+install_packages "pacman" gjs go typescript esbuild gtk3 gtk-layer-shell json-glib gvfs vala valadoc wireplumber brightnessctl gobject-introspection
 
 step "Installing authentication and desktop services..."
-execute_with_progress "pacman --noconfirm -S greetd greetd-gtkgreet polkit hyprpolkitagent" "Authentication services"
+install_packages "pacman" greetd greetd-gtkgreet polkit hyprpolkitagent
 
 step "Installing applications..."
-execute_with_progress "pacman --noconfirm -S thunderbird gparted cava man-db cronie blueman flatpak" "Applications"
+install_packages "pacman" thunderbird gparted cava man-db cronie blueman flatpak
 
 section "Service Configuration"
 info "Enabling and configuring system services..."
@@ -128,12 +129,12 @@ fi
 section "Font Installation"
 info "Installing essential fonts for better desktop experience..."
 step "Installing programming and system fonts..."
-execute_with_progress "pacman --noconfirm -S ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono" "Font packages"
+install_packages "pacman" ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
 
 section "Audio System Enhancement"
 info "Installing additional audio drivers and compatibility layers..."
 step "Installing audio firmware and utilities..."
-execute_with_progress "pacman --noconfirm -S sof-firmware alsa-firmware alsa-utils pipewire-pulse" "Audio drivers"
+install_packages "pacman" sof-firmware alsa-firmware alsa-utils pipewire-pulse
 
 header "Global Setup Complete!"
 success "All packages have been installed successfully!"
