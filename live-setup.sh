@@ -39,9 +39,12 @@ need genfstab
 need lsblk
 need partprobe
 need sgdisk
-# parted is optional but helpful for free space analysis
+# parted and bc are optional but helpful for free space analysis
 if ! command -v parted >/dev/null 2>&1; then
   warning "parted not found - free space analysis will be limited"
+fi
+if ! command -v bc >/dev/null 2>&1; then
+  warning "bc not found - floating point calculations will use bash arithmetic"
 fi
 success "All required tools are available"
 
@@ -129,12 +132,24 @@ if [[ $DUAL_BOOT == true ]]; then
   step "Analyzing available free space..."
   info "Free space analysis for $DISK:"
   if command -v parted >/dev/null 2>&1; then
-    parted --script "$DISK" print free | grep -E "(Free Space|Disk)" || echo "Unable to analyze free space with parted"
+    echo "Partition table and unallocated space:"
+    parted --script "$DISK" print free 2>/dev/null | grep -E "(Free Space|Disk|Number)" || echo "Unable to analyze free space with parted"
+    echo
+    echo "Unallocated regions:"
+    parted --script "$DISK" print free 2>/dev/null | grep "Free Space" | while IFS= read -r line; do
+      echo "  $line"
+    done || echo "  No unallocated space found by parted"
   fi
   
   # Show sgdisk free space info
   echo
-  info "First available free sector: $(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "unknown")"
+  info "sgdisk analysis:"
+  echo "  First available free sector: $(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "unknown")"
+  local sgdisk_sectors=$(sgdisk -f "$DISK" 2>/dev/null | head -1 || echo "0")
+  if [[ "$sgdisk_sectors" != "0" && -n "$sgdisk_sectors" ]]; then
+    local sgdisk_mb=$((sgdisk_sectors * 512 / 1024 / 1024))
+    echo "  Largest free space: ${sgdisk_mb}MB (${sgdisk_sectors} sectors)"
+  fi
   echo
   
   step "EFI partition configuration..."
@@ -262,7 +277,9 @@ else
   info "Current partition table:"
   sgdisk -p "$DISK" 2>/dev/null || warning "Could not read partition table"
   echo
-  info "Available free space regions:"
+  
+  info "Free space analysis:"
+  echo "sgdisk free space regions:"
   sgdisk -f "$DISK" 2>/dev/null | while read -r start_sector; do
     if [[ -n "$start_sector" && "$start_sector" != "0" ]]; then
       # Get sector size (usually 512 bytes)
@@ -271,6 +288,14 @@ else
       echo "  Starting at sector $start_sector (approximately ${size_mb}MB available)"
     fi
   done
+  
+  if command -v parted >/dev/null 2>&1; then
+    echo
+    echo "parted unallocated space:"
+    parted --script "$DISK" print free 2>/dev/null | grep "Free Space" | while IFS= read -r line; do
+      echo "  $line"
+    done || echo "  No unallocated space detected by parted"
+  fi
   echo
   
   # Function to find next available partition number
@@ -292,15 +317,53 @@ else
   check_free_space() {
     local disk="$1"
     local required_mb="$2"
-    local free_space_sectors
+    local free_space_mb=0
     
-    # Get the largest free space available
-    free_space_sectors=$(sgdisk -f "$disk" 2>/dev/null | head -1)
+    # Method 1: Get the largest free space available from sgdisk
+    local sgdisk_free_sectors
+    sgdisk_free_sectors=$(sgdisk -f "$disk" 2>/dev/null | head -1)
     
-    if [[ -n "$free_space_sectors" && "$free_space_sectors" != "0" ]]; then
+    if [[ -n "$sgdisk_free_sectors" && "$sgdisk_free_sectors" != "0" ]]; then
       # Convert sectors to MB (assuming 512 byte sectors)
-      local free_space_mb=$((free_space_sectors * 512 / 1024 / 1024))
-      info "Available free space: ${free_space_mb}MB (${free_space_sectors} sectors)"
+      local sgdisk_free_mb=$((sgdisk_free_sectors * 512 / 1024 / 1024))
+      free_space_mb=$sgdisk_free_mb
+      info "sgdisk reports: ${sgdisk_free_mb}MB free (${sgdisk_free_sectors} sectors)"
+    fi
+    
+    # Method 2: Check for unallocated space using parted
+    if command -v parted >/dev/null 2>&1; then
+      local parted_free_mb=0
+      # Parse parted output for "Free Space" entries
+      while IFS= read -r line; do
+        if [[ $line =~ Free\ Space.*([0-9]+\.?[0-9]*)([KMGT]B) ]]; then
+          local size="${BASH_REMATCH[1]}"
+          local unit="${BASH_REMATCH[2]}"
+          local mb_size=0
+          
+          case "$unit" in
+            "KB") mb_size=$(echo "scale=0; $size / 1024" | bc -l 2>/dev/null || echo "0") ;;
+            "MB") mb_size=$(echo "scale=0; $size" | bc -l 2>/dev/null || echo "${size%.*}") ;;
+            "GB") mb_size=$(echo "scale=0; $size * 1024" | bc -l 2>/dev/null || echo "$((${size%.*} * 1024))") ;;
+            "TB") mb_size=$(echo "scale=0; $size * 1024 * 1024" | bc -l 2>/dev/null || echo "$((${size%.*} * 1024 * 1024))") ;;
+          esac
+          
+          if (( mb_size > parted_free_mb )); then
+            parted_free_mb=$mb_size
+          fi
+        fi
+      done < <(parted --script "$disk" print free 2>/dev/null || true)
+      
+      if (( parted_free_mb > 0 )); then
+        info "parted reports: ${parted_free_mb}MB largest unallocated space"
+        # Use the larger of the two values
+        if (( parted_free_mb > free_space_mb )); then
+          free_space_mb=$parted_free_mb
+        fi
+      fi
+    fi
+    
+    if (( free_space_mb > 0 )); then
+      info "Total available free space: ${free_space_mb}MB"
       
       if (( free_space_mb >= required_mb )); then
         return 0
