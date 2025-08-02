@@ -173,11 +173,11 @@ function SystemStatus() {
                 
                 <box className="status-item">
                     {/* <icon icon={network.wifi?.enabled ? "network-wireless-symbolic" : "network-wired-symbolic"} /> */}
-                    <icon icon={bind(network.wired, "iconName")} />
-                    <label label={
+                    {/* <icon icon={bind(network.wired, "iconName")} /> */}
+                    {[<label label={
                         network.wifi?.ssid ? `WiFi: ${network.wifi.ssid}` : 
                         network.wired.state === Network.DeviceState.ACTIVATED ? "Wired Connected" : "Disconnected"
-                    } />
+                    } />]}
                 </box>
 
                 {speaker ? (
