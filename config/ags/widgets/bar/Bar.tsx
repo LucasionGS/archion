@@ -208,7 +208,7 @@ function Wifi() {
 
     return (
         <box className="Wifi">
-            <box visible={wifi.as(Boolean)}>
+            {[<box visible={wifi.as(Boolean)}>
                 {wifi.as(wifi => wifi && ([
                     <icon
                         tooltipText={bind(wifi, "ssid").as(String)}
@@ -216,8 +216,8 @@ function Wifi() {
                         icon={bind(wifi, "iconName")}
                     />
                 ]))}
-            </box>
-            <box visible={ethernetState.as(a => a === Network.DeviceState.ACTIVATED)}>
+            </box>]}
+            {/* <box visible={ethernetState.as(a => a === Network.DeviceState.ACTIVATED)}>
                 {ethernet.as(eth => eth && ([
                     <icon
                         tooltipText={bind(eth, "iconName").as(String)}
@@ -225,7 +225,7 @@ function Wifi() {
                         icon={bind(eth, "iconName").as(String)}
                     />
                 ]))}
-            </box>
+            </box> */}
         </box>
     );
 }
