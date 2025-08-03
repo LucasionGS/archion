@@ -65,7 +65,7 @@ step "Installing authentication and desktop services..."
 install_packages "pacman" greetd greetd-gtkgreet polkit hyprpolkitagent
 
 step "Installing applications..."
-install_packages "pacman" thunderbird gparted cava man-db cronie blueman flatpak
+install_packages "pacman" thunderbird gparted cava man-db cronie blueman flatpak vlc
 
 section "Service Configuration"
 info "Enabling and configuring system services..."
