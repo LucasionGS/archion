@@ -25,3 +25,5 @@ source ~/.apps/fssh/fssh.fish
 
 # Source zoxide for the z command
 zoxide init fish | source
+
+alias s="kitten ssh"
