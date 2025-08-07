@@ -129,7 +129,7 @@ fi
 section "Font Installation"
 info "Installing essential fonts for better desktop experience..."
 step "Installing programming and system fonts..."
-install_packages "pacman" ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono
+install_packages "pacman" ttf-hack ttf-jetbrains-mono ttf-roboto ttf-roboto-mono ttf-dejavu ttf-dejavu-nerd ttf-liberation ttf-liberation-mono-nerd ttf-opensans noto-fonts
 
 section "Audio System Enhancement"
 info "Installing additional audio drivers and compatibility layers..."

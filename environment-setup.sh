@@ -125,6 +125,7 @@ declare -a aur_packages=(
   "rofi"
   "libcava"
   "clipse"
+  "ttf-ms-fonts"
 )
 
 step "Installing AUR packages..."
