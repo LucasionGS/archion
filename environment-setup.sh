@@ -39,10 +39,11 @@ fi
 
 section "Directory Setup"
 CONFIG_DIR="$HOME/.config"
+LOCAL_DIR="$HOME/.local"
 APP_DIR="$HOME/.apps"
 
 step "Creating configuration directories..."
-mkdir -p "$CONFIG_DIR" "$APP_DIR"
+mkdir -p "$CONFIG_DIR" "$APP_DIR" "$LOCAL_DIR" "$LOCAL_DIR/share"
 success "Configuration directories created"
 
 section "Configuration Files Setup"
@@ -59,6 +60,7 @@ if [[ "${ARCHION_DEV:-false}" == "true" ]]; then
   ln -sf "$SCRIPT_DIR/config/wleave"     "$CONFIG_DIR/."
   ln -sf "$SCRIPT_DIR/config/fish"       "$CONFIG_DIR/."
   ln -sf "$SCRIPT_DIR/config/gtk-3.0"    "$CONFIG_DIR/."
+  ln -sf "$SCRIPT_DIR/local/share/nemo"  "$LOCAL_DIR/share/."
   success "Configuration files linked (development mode)"
 else
   info "Production mode: Copying configuration files..."
@@ -73,6 +75,7 @@ else
   cp -r "$SCRIPT_DIR/config/wleave"     "$CONFIG_DIR/."
   cp -r "$SCRIPT_DIR/config/fish"       "$CONFIG_DIR/."
   cp -r "$SCRIPT_DIR/config/gtk-3.0"    "$CONFIG_DIR/."
+  cp -r "$SCRIPT_DIR/local/share/nemo"  "$LOCAL_DIR/share/."
   success "Configuration files copied"
 fi
 

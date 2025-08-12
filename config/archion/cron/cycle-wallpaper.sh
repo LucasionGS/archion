@@ -1,6 +1,7 @@
 #!/bin/bash
 ARCHION_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/archion"
 WALLPAPER_DIR="$ARCHION_DIR/.wallpapers_active"
+SWWW_ARGS="--transition-type=wave --transition-duration=2 --transition-fps=60 --transition-step=255"
 
 # Get info about the current wallpaper
 CURRENT_WALLPAPER=$(realpath $(swww query | grep -oP '(?<=image: ).*'))
@@ -21,7 +22,7 @@ fi
 RANDOM_WALLPAPER=$(realpath "${ALL_WALLPAPERS[0]}")
 
 # Set the wallpaper using swww
-swww img "$RANDOM_WALLPAPER"
+swww img $SWWW_ARGS "$RANDOM_WALLPAPER"
 # Notify the user
 # notify-send "Wallpaper Changed" "New wallpaper set: $(basename "$RANDOM_WALLPAPER")" -t 2000
 
