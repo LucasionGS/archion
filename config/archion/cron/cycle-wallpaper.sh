@@ -3,23 +3,24 @@ ARCHION_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/archion"
 WALLPAPER_DIR="$ARCHION_DIR/.wallpapers_active"
 SWWW_ARGS="--transition-type=wave --transition-duration=2 --transition-fps=60 --transition-step=255"
 
-# Get info about the current wallpaper
-CURRENT_WALLPAPER=$(realpath $(swww query | grep -oP '(?<=image: ).*'))
+# Get info about the current wallpaper (only use the first one from multiple displays)
+CURRENT_WALLPAPER=$(realpath $(swww query | grep -oP '(?<=image: ).*' | head -n 1))
 
 # Get all wallpapers except the current one
 ALL_WALLPAPERS=($(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \) | while read -r file; do
   if [ "$(realpath "$file")" != "$CURRENT_WALLPAPER" ]; then
     echo "$file"
   fi
-done | shuf))
+done))
 
 if [ ${#ALL_WALLPAPERS[@]} -eq 0 ]; then
   echo "No alternative wallpapers found in $WALLPAPER_DIR"
   exit 1
 fi
 
-# Select a random wallpaper (guaranteed to be different from current)
-RANDOM_WALLPAPER=$(realpath "${ALL_WALLPAPERS[0]}")
+# Shuffle the array and select the first one for true randomness
+SHUFFLED_WALLPAPERS=($(printf '%s\n' "${ALL_WALLPAPERS[@]}" | shuf))
+RANDOM_WALLPAPER=$(realpath "${SHUFFLED_WALLPAPERS[0]}")
 
 # Set the wallpaper using swww
 swww img $SWWW_ARGS "$RANDOM_WALLPAPER"
