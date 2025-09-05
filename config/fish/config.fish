@@ -8,6 +8,12 @@ set -g theme_display_docker_machine yes
 set -gx PATH $HOME/.local/bin $PATH
 set -gx PATH /var/lib/snapd/snap/bin $PATH
 
+# vscode
+
+set -Ux ELECTRON_OZONE_PLATFORM_HINT wayland
+alias code="code --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations"
+
+
 function wsudo
     sudo /bin/env WAYLAND_DISPLAY="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"  XDG_RUNTIME_DIR=/user/run/0 $argv
 end
