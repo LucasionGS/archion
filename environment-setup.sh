@@ -129,7 +129,7 @@ declare -a aur_packages=(
   "libcava"
   "clipse"
   "ttf-ms-fonts",
-  "hyprpanel"
+  "ags-hyprpanel-git"
 )
 
 step "Installing AUR packages..."
