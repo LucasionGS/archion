@@ -128,7 +128,8 @@ declare -a aur_packages=(
   "rofi"
   "libcava"
   "clipse"
-  "ttf-ms-fonts"
+  "ttf-ms-fonts",
+  "hyprpanel"
 )
 
 step "Installing AUR packages..."
