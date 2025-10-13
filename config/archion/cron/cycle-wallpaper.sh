@@ -12,7 +12,7 @@ if [ ${#ALL_WALLPAPERS[@]} -eq 0 ]; then
 fi
 
 # Get all connected displays
-DISPLAYS=($(swww query | grep -oP '^[^:]+'))
+DISPLAYS=($(swww query | grep -oP '(?<=: ).+(?=: \d+x\d+)'))
 
 if [ ${#DISPLAYS[@]} -eq 0 ]; then
   echo "No displays found"
@@ -23,6 +23,7 @@ fi
 declare -A CURRENT_WALLPAPERS
 for display in "${DISPLAYS[@]}"; do
   current_wall=$(swww query | grep "^$display:" | grep -oP '(?<=image: ).*')
+  display_name=$(echo "$display" | tr -d ' ')
   if [ -n "$current_wall" ]; then
     CURRENT_WALLPAPERS["$display"]="$(realpath "$current_wall")"
   fi
@@ -34,6 +35,7 @@ SHUFFLED_WALLPAPERS=($(printf '%s\n' "${ALL_WALLPAPERS[@]}" | shuf))
 # Assign a different wallpaper to each display
 wallpaper_index=0
 for display in "${DISPLAYS[@]}"; do
+  # display_name=$(echo "$display" | tr -d ' ')
   # Find a wallpaper that's not currently being used by this display
   selected_wallpaper=""
   for ((i = wallpaper_index; i < ${#SHUFFLED_WALLPAPERS[@]}; i++)); do
