@@ -127,7 +127,7 @@ declare -a aur_packages=(
   "neofetch"
   "rofi"
   "libcava"
-  "clipse"
+  "copyq" # Actually not AUR, but who cares
   "ttf-ms-fonts",
   "ags-hyprpanel-git"
 )
