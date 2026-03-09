@@ -3,6 +3,7 @@ import { Astal, Gtk, Gdk } from "ags/gtk3"
 import { createState } from "gnim"
 import style from "./style.scss"
 import panels from "./panels/index"
+import { getEngine } from "./panels/automation/engine"
 
 // Create state for each panel before app.start so both main() and
 // requestHandler() can reference them.
@@ -66,5 +67,8 @@ app.start({
         win.visible = visible()
       })
     }
+
+    // Start automation engine
+    getEngine().start()
   },
 })
