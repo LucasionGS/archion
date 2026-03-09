@@ -9,6 +9,53 @@ import { App, Astal, Gtk, Gdk } from "astal/gtk3"
 import { execAsync, timeout, Variable, bind, AstalIO } from "astal"
 import { GLib } from "astal"
 
+// Single shared CSS provider — created once for the lifetime of the process.
+// Previously a new provider was added to the global screen style context on
+// every image *and* on every grid rebuild, accumulating unboundedly and
+// visibly slowing GTK's CSS resolution for all widgets over time.
+let _sharedBgProvider: Gtk.CssProvider | null = null
+function ensureSharedCssProvider() {
+    if (_sharedBgProvider) return
+    const css = `
+        #background-images-container { background-color: transparent; }
+        .grid-layout { padding: 10px; }
+        .grid-row { margin-bottom: 10px; }
+        .background-image-container {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 4px;
+            margin: 4px;
+            border: none;
+        }
+        .image-info {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 4px 8px;
+            border-radius: 0 0 4px 4px;
+            font-size: 10px;
+            color: white;
+            opacity: 0;
+        }
+        .tag {
+            background-color: rgba(100, 100, 100, 0.7);
+            padding: 2px 4px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 8px;
+            color: white;
+        }
+    `
+    _sharedBgProvider = Gtk.CssProvider.new()
+    _sharedBgProvider.load_from_data(css)
+    const screen = Gdk.Screen.get_default()
+    if (screen) {
+        Gtk.StyleContext.add_provider_for_screen(
+            screen,
+            _sharedBgProvider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+    }
+}
+
 interface ICollectionItem {
   id: number
   collectionId: number
@@ -106,87 +153,30 @@ function createBackgroundImage(image: ICollectionItem): Gtk.Widget {
   // Get the image URL
   const imageUrl = getImageThumbnailUrl(image)
   
+  // Ensure the single shared CSS provider is registered (no-op after first call).
+  ensureSharedCssProvider()
+
   // Build the widget tree
   const imageBox = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
   imageBox.get_style_context().add_class("background-image-container")
-  
+
   // For grid layout
   imageBox.set_hexpand(true)
   imageBox.set_halign(Gtk.Align.FILL)
   imageBox.set_valign(CENTER)
-  
-  // Add CSS styling
-  imageBox.set_name(`background-image-${image.id}`)
-  const css = `
-    .background-image-container {
-      background-color: rgba(0, 0, 0, 0.5);
-      border-radius: 8px;
-      padding: 4px;
-      margin: 4px;
-      border: none;
-    }
-    
-    #background-image-${image.id} .image-wrapper {
-      opacity: ${config.get()!.opacity};
-    }
-    
-    #background-image-${image.id} .image-wrapper:hover {
-      opacity: 1.0;
-      margin: -1px;
-    }
-    
-    #background-image-${image.id} .image-box {
-      border-radius: 4px;
-      background-color: transparent;
-    }
 
-    .background-image {
-      transition: opacity 0.3s ease;
-      opacity: ${config.get()!.opacity};
-    }
-    
-    #background-image-${image.id} .image-info {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 4px 8px;
-      border-radius: 0 0 4px 4px;
-      font-size: 10px;
-      color: white;
-      opacity: 0;
-    }
-    
-    #background-image-${image.id}:hover .image-info {
-      opacity: 1;
-    }
-    
-    .tag {
-      background-color: rgba(100, 100, 100, 0.7);
-      padding: 2px 4px;
-      margin: 2px;
-      border-radius: 4px;
-      font-size: 8px;
-      color: white;
-      opacity: 0; /* Start hidden */
-    }
-  `
-  
-  const provider = Gtk.CssProvider.new()
-  provider.load_from_data(css)
-  
-  const screen = Gdk.Screen.get_default()
-  if (screen) {
-    Gtk.StyleContext.add_provider_for_screen(
-      screen,
-      provider,
-      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-    )
-  }
-  
   // Create overlay
   const overlay = Gtk.Overlay.new()
   
-  // Create image wrapper
+  // Create image wrapper — opacity is set directly on the widget instead of
+  // via per-image CSS providers (which would leak into the global style context).
   const imageWrapper = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
   imageWrapper.get_style_context().add_class("image-wrapper")
+  const baseOpacity = config.get()!.opacity
+  imageWrapper.set_opacity(baseOpacity)
+  imageWrapper.set_events(Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
+  imageWrapper.connect("enter-notify-event", () => { imageWrapper.set_opacity(1.0); return false })
+  imageWrapper.connect("leave-notify-event", () => { imageWrapper.set_opacity(baseOpacity); return false })
   
   // Create image box with background image
   const imageBoxBg = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
@@ -272,9 +262,14 @@ function createBackgroundImage(image: ICollectionItem): Gtk.Widget {
   const tagsBox = Gtk.Box.new(Gtk.Orientation.HORIZONTAL, 4)
   
   // Add tags (up to 3)
-  image.tags.sort(
-    (a, b) => Math.random() - 0.5 // Randomize order for variety
-  ).slice(0, 4).forEach(tag => {
+  // Shuffle tags with Fisher-Yates before slicing — Math.random()-0.5 is not a
+  // valid comparator (non-transitive) and can produce non-deterministic orderings.
+  const shuffledTags = [...image.tags]
+  for (let i = shuffledTags.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledTags[i], shuffledTags[j]] = [shuffledTags[j], shuffledTags[i]]
+  }
+  shuffledTags.slice(0, 4).forEach(tag => {
     const tagLabel = Gtk.Label.new(tag)
     tagLabel.get_style_context().add_class("tag")
     tagsBox.add(tagLabel)
@@ -323,28 +318,8 @@ function createGridLayout(images: ICollectionItem[]): Gtk.Widget {
   const gridBox = Gtk.Box.new(Gtk.Orientation.VERTICAL, 10)
   gridBox.set_hexpand(true)
   gridBox.get_style_context().add_class("grid-layout")
-  
-  // Add CSS for layout
-  const css = `
-    .grid-layout {
-      padding: 10px;
-    }
-    .grid-row {
-      margin-bottom: 10px;
-    }
-  `
-  
-  const provider = Gtk.CssProvider.new()
-  provider.load_from_data(css)
-  
-  const screen = Gdk.Screen.get_default()
-  if (screen) {
-    Gtk.StyleContext.add_provider_for_screen(
-      screen,
-      provider,
-      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-    )
-  }
+
+  // Styles are covered by the shared module-level CSS provider.
   
   // Create rows and add images
   grid.forEach(row => {
@@ -478,30 +453,10 @@ function createBackgroundImages(): Gtk.Widget {
   container.set_name("background-images-container")
   container.set_hexpand(true)
   container.set_vexpand(true)
-  
-  // Add CSS
-  const css = `
-    #background-images-container {
-      background-color: transparent;
-    }
-    
-    .background-image-container {
-      /* Empty but kept for selector */
-    }
-  `
-  
-  const provider = Gtk.CssProvider.new()
-  provider.load_from_data(css)
-  
-  const screen = Gdk.Screen.get_default()
-  if (screen) {
-    Gtk.StyleContext.add_provider_for_screen(
-      screen,
-      provider,
-      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-    )
-  }
-  
+
+  // The shared module-level CSS provider covers all container and image styles.
+  ensureSharedCssProvider()
+
   // Connect destroy signal
   container.connect("destroy", cleanup)
   

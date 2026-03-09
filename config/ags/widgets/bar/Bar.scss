@@ -10,24 +10,6 @@
             color.adjust($bg, $alpha: -0.2)
         );
     }
-    // 40% {
-    //     background: radial-gradient(
-    //         circle at 10% 35%,
-    //         color.adjust($secondary, $alpha: -0.4),
-    //         color.adjust($accent, $alpha: -0.4),
-    //         color.adjust($bg, $alpha: -0.2)
-    //     );
-    // }
-
-    // 60% {
-    //     background: radial-gradient(
-    //         circle at 30% 60%,
-    //         color.adjust($secondary, $alpha: -0.4),
-    //         color.adjust($accent, $alpha: -0.4),
-    //         color.adjust($bg, $alpha: -0.2)
-    //     );
-    // }
-    
     25% {
         background: radial-gradient(
             circle at 25% 10%,
@@ -52,27 +34,17 @@
             color.adjust($bg, $alpha: -0.2)
         );
     }
-    // 100% {
-    //     background: radial-gradient(
-    //         circle at 60% 50%,
-    //         color.adjust($secondary, $alpha: -0.4),
-    //         color.adjust($accent, $alpha: -0.4),
-    //         color.adjust($bg, $alpha: -0.2)
-    //     );
-    // }
 }
 
 window.Bar {
     border: none;
     box-shadow: none;
-    // background-color: transparentize($color: $bg, $amount: 0.3);
     background: radial-gradient(
         circle at 60% 50%,
         color.adjust($secondary, $alpha: -0.4),
         color.adjust($accent, $alpha: -0.4),
         color.adjust($bg, $alpha: -0.2)
     );
-    // Use animation, comment out to make it a static gradient
     animation: gradient-position 30s ease infinite;
 
     color: $fg;
@@ -84,7 +56,7 @@ window.Bar {
         margin: 0 8px;
     }
 
-    .Workspaces  {
+    .Workspaces {
         button {
             all: unset;
             background-color: transparent;
@@ -95,7 +67,7 @@ window.Bar {
             }
 
             &:active label {
-                background-color: color.adjust($fg, $alpha: -0.8)
+                background-color: color.adjust($fg, $alpha: -0.8);
             }
         }
 
@@ -110,6 +82,7 @@ window.Bar {
         .focused label {
             color: $secondary;
             border-color: $secondary;
+            background-color: color.adjust($secondary, $alpha: -0.88);
         }
     }
 
@@ -120,15 +93,22 @@ window.Bar {
             margin: 0 2px;
             background: transparent;
             border: none;
-            border-radius: 0;
-            border-bottom: $green 2px solid;
+            border-radius: $radius;
+            border-bottom: color.adjust($accent, $alpha: -0.4) 2px solid;
             color: $fg;
             font-size: 1.1em;
+            transition: background-color 150ms ease;
+
+            &:hover {
+                background-color: color.adjust($fg, $alpha: -0.9);
+            }
         }
     }
 
     .FocusedClient {
-        color: $accent;
+        color: color.adjust($accent, $lightness: 20%);
+        font-size: 0.95em;
+        font-weight: 500;
     }
 
     .Media .Cover {
@@ -136,7 +116,8 @@ window.Bar {
         min-width: 1.2em;
         border-radius: $radius;
         background-position: center;
-        background-size: contain;
+        background-size: cover;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     }
 
     .Media button {
@@ -192,95 +173,90 @@ window.Bar {
         }
     }
 
-    .SystemMenuButton {
-        margin-left: 8px;
-        margin-right: 8px;
-        button {
-            all: unset;
-        }
-    }
-    .SettingsButton {
-        margin-left: 8px;
-        margin-right: 8px;
-        button {
-            all: unset;
-        }
-    }
+    .SystemMenuButton,
+    .SettingsButton,
     .BarButton {
-        margin-left: 8px;
-        margin-right: 8px;
+        margin-left: 4px;
+        margin-right: 4px;
         button {
             all: unset;
+            padding: 2px 4px;
+            border-radius: $radius;
+            transition: background-color 150ms ease;
+
+            &:hover {
+                background-color: color.adjust($fg, $alpha: -0.88);
+            }
         }
     }
 
-    .CpuUsage, 
+    .CpuUsage,
     .RamUsage,
     .NetworkUsage {
         margin: 0 4px;
         padding: 2px 6px;
-        
+
         icon {
             margin-right: 4px;
             color: $accent;
         }
-        
+
         label {
             font-size: 0.9em;
             margin: 0 2px;
         }
-        
+
         levelbar {
             * {
                 all: unset;
             }
-            
+
             trough {
                 background-color: color.adjust($secondary, $alpha: -0.8);
                 border-radius: 2px;
                 min-height: 4px;
             }
-            
+
             block {
                 background-color: $secondary;
                 border-radius: 2px;
-                
+
                 &.filled {
                     background-color: $accent;
                 }
-                
+
                 &.high {
                     background-color: color.adjust($error, $alpha: -0.2);
                 }
             }
         }
     }
-    
+
     .CpuUsage {
         icon {
             color: color.adjust($secondary, $lightness: 10%);
         }
-        
+
         levelbar block.filled {
             background-color: color.adjust($secondary, $lightness: 10%);
         }
     }
-    
+
     .RamUsage {
         icon {
             color: color.adjust($green, $lightness: -10%);
         }
-        
+
         levelbar block.filled {
             background-color: color.adjust($green, $lightness: -10%);
         }
     }
-    
+
     .NetworkUsage {
         icon {
             color: color.adjust($fg, $lightness: 5%);
         }
-        
+
         label {
             font-size: 0.8em;
             color: color.adjust($fg, $alpha: -0.1);
@@ -294,16 +270,15 @@ window.Bar {
         border-radius: 6px;
         color: $fg;
         transition: all 0.2s ease;
-        
+
         &:hover {
-            background-color: color.adjust($bg, $alpha: -0.3);
-            color: $fg;
+            background-color: color.adjust($accent, $alpha: -0.82);
         }
-        
+
         &:active {
-            background-color: color.adjust($bg, $alpha: -0.1);
+            background-color: color.adjust($accent, $alpha: -0.72);
         }
-        
+
         label {
             font-size: 0.9em;
             font-weight: 500;

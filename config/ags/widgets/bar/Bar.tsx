@@ -7,7 +7,6 @@ import Battery from "gi://AstalBattery"
 import Wp from "gi://AstalWp"
 import Network from "gi://AstalNetwork"
 import Tray from "gi://AstalTray"
-import Cava from "gi://AstalCava"
 import Pango from "gi://Pango"
 
 

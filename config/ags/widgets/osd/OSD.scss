@@ -4,27 +4,51 @@
 window.OSD {
     box.OSD {
         border-radius: 100px;
-        background-color: $bg;
-        padding: 13px 16px;
+        background: radial-gradient(
+            circle at 30% 50%,
+            color.adjust($accent, $alpha: -0.6),
+            color.adjust($bg, $alpha: -0.05)
+        );
+        padding: 13px 20px;
         margin: 13px;
-        box-shadow: 3px 3px 7px 0 rgba(0, 0, 0, 0.4);
+        border: 1px solid color.adjust($accent, $alpha: -0.7);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px color.adjust($fg, $alpha: -0.95);
     }
 
     icon {
-        font-size: 4rem;
+        font-size: 3rem;
+        color: color.adjust($accent, $lightness: 25%);
+        margin-right: 4px;
     }
 
     label {
-        font-size: 2.4rem;
+        font-size: 2rem;
+        font-weight: bold;
+        color: $fg;
+        min-width: 3em;
     }
 
     levelbar {
         trough {
-            margin: 1px 0.6rem;
+            margin: 2px 0.8rem;
+            background-color: color.adjust($bg, $lightness: 8%);
+            border-radius: 100px;
         }
 
         block {
-            min-height: 2rem;
+            min-height: 1.6rem;
+            border-radius: 100px;
+            background-color: color.adjust($bg, $lightness: 15%);
+
+            &.filled {
+                background-color: $accent;
+                box-shadow: 0 0 8px color.adjust($accent, $alpha: -0.4);
+            }
+
+            &.high {
+                background-color: color.adjust($error, $alpha: -0.1);
+            }
         }
     }
 }

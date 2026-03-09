@@ -1,21 +1,25 @@
 /* Calendar Widget Styles */
+@use "sass:color";
 @use "../../variables" as *;
 
 .Calendar {
     color: $fg;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: color.adjust($bg, $alpha: -0.05);
     border-radius: $radius;
     padding: 0;
     margin: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid color.adjust($fg, $alpha: -0.85);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .calendar-container {
     padding: 20px;
     min-width: 320px;
-    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(10, 10, 10, 0.95));
+    background: radial-gradient(
+        circle at 100% 100%,
+        color.adjust($bg, $lightness: 4%),
+        color.adjust($bg, $lightness: 1%)
+    );
     border-radius: $radius;
 }
 
@@ -23,7 +27,7 @@
 .calendar-header {
     margin-bottom: 15px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid color.adjust($fg, $alpha: -0.88);
 }
 
 .calendar-nav {
@@ -31,8 +35,9 @@
 }
 
 .nav-button {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    all: unset;
+    background-color: color.adjust($bg, $lightness: 6%);
+    border: 1px solid color.adjust($fg, $alpha: -0.8);
     border-radius: $radius;
     padding: 8px;
     color: $fg;
@@ -42,19 +47,18 @@
 }
 
 .nav-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: color.adjust($accent, $alpha: -0.75);
+    border-color: color.adjust($accent, $alpha: -0.5);
 }
 
 .nav-button:active {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: color.adjust($accent, $alpha: -0.6);
 }
 
 .month-year-label {
-    font-size: 18px;
+    font-size: 1.1em;
     font-weight: bold;
     color: $fg;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Day names header */
@@ -64,9 +68,9 @@
 }
 
 .day-name {
-    font-size: 12px;
+    font-size: 0.75em;
     font-weight: 600;
-    color: rgba(241, 241, 241, 0.7); /* Based on $fg with transparency */
+    color: color.adjust($fg, $alpha: -0.35);
     min-width: 40px;
     letter-spacing: 1px;
 }
@@ -81,74 +85,78 @@
 }
 
 .calendar-day {
+    all: unset;
     min-width: 40px;
     min-height: 40px;
     border-radius: $radius;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: color.adjust($fg, $alpha: -0.93);
+    border: 1px solid color.adjust($fg, $alpha: -0.88);
     color: $fg;
-    font-size: 14px;
+    font-size: 0.9em;
     font-weight: 500;
     transition: all 0.2s ease;
 }
 
 .calendar-day:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: color.adjust($fg, $alpha: -0.85);
+    border-color: color.adjust($fg, $alpha: -0.7);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .calendar-day:active {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: color.adjust($fg, $alpha: -0.78);
 }
 
 .calendar-day.empty {
     background-color: transparent;
     border-color: transparent;
-    /* Non-interactive behavior handled in component logic */
 }
 
 .calendar-day.today {
-    background-color: rgba(66, 165, 245, 0.8); /* Material Blue 400 */
-    border-color: #42a5f5; /* Material Blue 400 solid */
+    background-color: color.adjust($accent, $alpha: -0.2);
+    border-color: $accent;
     color: $fg;
     font-weight: bold;
-    box-shadow: 0 0 15px rgba(66, 165, 245, 0.5);
+    box-shadow: 0 0 15px color.adjust($accent, $alpha: -0.55);
 }
 
 .calendar-day.today:hover {
-    background-color: rgba(66, 165, 245, 0.9);
-    box-shadow: 0 0 20px rgba(66, 165, 245, 0.7);
+    background-color: color.adjust($accent, $alpha: -0.1);
+    box-shadow: 0 0 20px color.adjust($accent, $alpha: -0.35);
 }
 
 .calendar-day.selected {
-    background-color: rgba(156, 39, 176, 0.8); /* Material Purple 600 */
-    border-color: #9c27b0; /* Material Purple 600 solid */
+    background-color: color.adjust($secondary, $alpha: -0.2);
+    border-color: $secondary;
     color: $fg;
     font-weight: bold;
-    box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
+    box-shadow: 0 0 15px color.adjust($secondary, $alpha: -0.55);
 }
 
 .calendar-day.selected:hover {
-    background-color: rgba(156, 39, 176, 0.9);
-    box-shadow: 0 0 20px rgba(156, 39, 176, 0.7);
+    background-color: color.adjust($secondary, $alpha: -0.1);
+    box-shadow: 0 0 20px color.adjust($secondary, $alpha: -0.35);
 }
 
 .calendar-day.today.selected {
-    background: linear-gradient(135deg, rgba(66, 165, 245, 0.8), rgba(156, 39, 176, 0.8));
-    border-color: #9c27b0;
-    box-shadow: 0 0 20px rgba(111, 102, 210, 0.6);
+    background: linear-gradient(
+        to bottom right,
+        color.adjust($accent, $alpha: -0.2),
+        color.adjust($secondary, $alpha: -0.2)
+    );
+    border-color: $secondary;
+    box-shadow: 0 0 20px color.adjust($accent, $alpha: -0.45);
 }
 
 /* Footer */
 .calendar-footer {
     margin-top: 15px;
     padding: 10px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid color.adjust($fg, $alpha: -0.88);
 }
 
 .selected-date-label {
-    font-size: 12px;
-    color: rgba(241, 241, 241, 0.8); /* Based on $fg with transparency */
+    font-size: 0.75em;
+    color: color.adjust($fg, $alpha: -0.25);
     font-style: italic;
 }
