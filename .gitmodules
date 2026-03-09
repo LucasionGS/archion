@@ -1,0 +1,3 @@
+[submodule "apps/ionix-shell-ags"]
+	path = apps/ionix-shell-ags
+	url = https://github.com/LucasionGS/ionix-shell-ags.git
