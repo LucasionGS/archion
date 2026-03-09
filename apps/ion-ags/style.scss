@@ -1,6 +1,7 @@
 @use "variables" as *;
 @use "panels/ssh/SshPanel";
 @use "panels/vpn/VpnPanel";
+@use "panels/docker/DockerPanel";
 
 // Global window reset for overlay panels
 window {
