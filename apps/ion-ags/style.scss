@@ -1,0 +1,9 @@
+@use "variables" as *;
+@use "panels/ssh/SshPanel";
+@use "panels/vpn/VpnPanel";
+
+// Global window reset for overlay panels
+window {
+  all: unset;
+  background: transparent;
+}
