@@ -33,3 +33,6 @@ source ~/.apps/fssh/fssh.fish
 zoxide init fish | source
 
 alias s="kitten ssh"
+if test -f ~/.config/fish/additional.fish
+    source ~/.config/fish/additional.fish
+end
